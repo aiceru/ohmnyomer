@@ -1,9 +1,8 @@
-import 'dart:convert';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/all.dart' as kakaosdk;
-import 'package:ohmnyom/src/models/account.dart';
+import 'package:ohmnyomer/src/models/account.dart';
+import 'package:ohmnyomer/src/models/credential.dart';
+import 'package:ohmnyomer/src/resources/signin_api_provider.dart';
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: <String>[
@@ -11,65 +10,86 @@ GoogleSignIn _googleSignIn = GoogleSignIn(
   ],
 );
 
-Future<Account> _handleGoogleSignIn() async {
-  GoogleSignInAccount? gAccount;
-  try {
-    await _googleSignIn.signIn();
-    gAccount = _googleSignIn.currentUser;
-    if (gAccount != null) {
-      return Account(
-        email: gAccount.email,
-        name: gAccount.displayName,
-        oAuthType: OAuthType.google,
-        photoUrl: gAccount.photoUrl,
-      );
-    }
-  } catch (error) {
-    print('$error');
-  }
-  return Account(email: "");
-}
-
-Future<void> _handleGoogleSignOut() => _googleSignIn.disconnect();
-
 class SignInProvider {
-  static final _storage = FlutterSecureStorage();
+  final SignInApiProvider apiProvider = SignInApiProvider();
 
   SignInProvider() {
     _googleSignIn.signInSilently();
+    kakaosdk.KakaoContext.clientId = "4e54eb14cdee9e5e27da630b30c02a2b";
   }
 
-  Future<Account> _signIn(Account account) {
+  Future<Account?> signIn(Credential cred) {
     // TODO: implement
     // sign in to the backend
+    apiProvider.signIn();
     //
-    _storage.write(key: "account", value: jsonEncode(account));
+    Account account = Account(
+        id: "test-id",
+        email: cred.email?? "test-email",
+        name: "testname",
+        oAuthID: cred.oAuthID?? "test-oauth-id",
+        oAuthType: cred.oAuthType,
+        photoUrl: "https://lh3.googleusercontent.com/a-/AOh14GgW6EQt1TEkfEVQnOr66MqEXoeBxK2mi5hecvmIenU",
+        signedUp: DateTime(2022, 1, 5, 13, 24),
+    );
+
+    if (cred.oAuthType == OAuthType.none) {
+      // email/password sign in
+    } else {
+      // oauth id sign in
+    }
     return Future<Account>.value(account);
   }
 
-  Future<Account> signInWithGoogle() async {
-    Account account = await _handleGoogleSignIn();
-    return _signIn(account);
+  temptest() {
   }
 
-  Future<Account> signInWithKakao() async {
-    kakaosdk.KakaoContext.clientId = "4e54eb14cdee9e5e27da630b30c02a2b";
+  Future<Account?> signInWithGoogle() async {
+    GoogleSignInAccount? gAccount;
+    Account? account;
+    try {
+      await _googleSignIn.signIn();
+      gAccount = _googleSignIn.currentUser;
+      if (gAccount != null) {
+        account = await signIn(Credential(
+          oAuthID: gAccount.id,
+          email: gAccount.email,
+          oAuthType: OAuthType.google,
+        ));
+        if (account != null && account.photoUrl != gAccount.photoUrl) {
+          // TODO: update photoURL
+          // SignInApiProvider.update...
+        }
+        _googleSignIn.disconnect();
+      }
+    } catch (error) {
+      print('$error');
+    }
+    return account;
+  }
+
+  Future<Account?> signInWithKakao() async {
+    Account? account;
     try {
       await kakaosdk.UserApi.instance.loginWithKakaoTalk();
       var me = await kakaosdk.UserApi.instance.me();
       var kAccount = me.kakaoAccount;
       if (kAccount != null) {
-        return Account(
-          email: kAccount.email!,
-          name: kAccount.name,
+        account = await signIn(Credential(
+          oAuthID: me.id.toString(),
+          email: kAccount.email,
           oAuthType: OAuthType.kakao,
-          photoUrl: kAccount.profile?.thumbnailImageUrl,
-        );
+        ));
+        if (account != null && account.photoUrl != kAccount.profile?.thumbnailImageUrl) {
+          // TODO: update photoURL
+          // SignInApiProvider.update...
+        }
+        kakaosdk.UserApi.instance.logout();
       }
     } catch (error) {
       print('$error');
     }
-    return Account(email: "");
+    return account;
   }
 
   //{
@@ -96,20 +116,6 @@ class SignInProvider {
   //}
 
   signOut(Account account) {
-    switch (account.oAuthType) {
-      case OAuthType.none:
-        // TODO: Handle this case.
-        break;
-      case OAuthType.google:
-        _handleGoogleSignOut();
-        break;
-      case OAuthType.kakao:
-        // TODO: Handle this case.
-        break;
-      case OAuthType.naver:
-        // TODO: Handle this case.
-        break;
-    }
-    _storage.delete(key: "account");
+    // TODO: implement?
   }
 }

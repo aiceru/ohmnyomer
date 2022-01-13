@@ -1,12 +1,15 @@
-import 'package:ohmnyom/src/models/account.dart';
-import 'package:ohmnyom/src/resources/repository.dart';
+import 'package:ohmnyomer/src/models/account.dart';
+import 'package:ohmnyomer/src/models/pet.dart';
+import 'package:ohmnyomer/src/resources/repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FeedBloc {
   final _repository = Repository();
   final _accountSubject = PublishSubject<Account?>();
+  final _petSubject = PublishSubject<Pet?>();
 
   Stream<Account?> get accountSubject => _accountSubject.stream;
+  Stream<Pet?> get petSubject => _petSubject.stream;
 
   dispose() {
     _accountSubject.close();

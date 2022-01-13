@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ohmnyom/src/blocs/feed_bloc.dart';
+import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 
 class FeedBlocProvider extends InheritedWidget {
   final FeedBloc bloc;

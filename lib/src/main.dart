@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ohmnyom/src/blocs/feed_bloc_provider.dart';
-import 'package:ohmnyom/src/ui/feed_route.dart';
+import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
+import 'package:ohmnyomer/src/ui/feed_route.dart';
 
 void main() => runApp(const AppMain());
 

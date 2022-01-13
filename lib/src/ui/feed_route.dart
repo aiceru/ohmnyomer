@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ohmnyom/src/blocs/feed_bloc.dart';
-import 'package:ohmnyom/src/blocs/feed_bloc_provider.dart';
-import 'package:ohmnyom/src/blocs/signin_bloc_provider.dart';
-import 'package:ohmnyom/src/models/account.dart';
-import 'package:ohmnyom/src/ui/signin_route.dart';
+import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
+import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
+import 'package:ohmnyomer/src/blocs/signin_bloc_provider.dart';
+import 'package:ohmnyomer/src/models/account.dart';
+import 'package:ohmnyomer/src/ui/signin_route.dart';
 import 'feed_list.dart';
 
 class FeedRoute extends StatefulWidget {
@@ -113,32 +113,29 @@ class _FeedRouteState extends State<FeedRoute> {
       stream: bloc.accountSubject,
       builder: (context, AsyncSnapshot<Account?> snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data!.isSignedIn()) {
-            return Scaffold(
-                body: Column(
-                  children: [
-                    _topPanel(snapshot.data!),
-                    Expanded(child: FeedList()),
-                  ],
+          return Scaffold(
+              body: Column(
+                children: [
+                  _topPanel(snapshot.data!),
+                  Expanded(child: FeedList()),
+                ],
+              ),
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.all(8),
+                child: ElevatedButton.icon(
+                  onPressed: () {  },
+                  icon: Icon(Icons.add),
+                  label: const Text('밥 먹자', style: TextStyle(
+                    fontSize: 20,
+                  ),),
                 ),
-                floatingActionButton: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: ElevatedButton.icon(
-                    onPressed: () {  },
-                    icon: Icon(Icons.add),
-                    label: const Text('밥 먹자', style: TextStyle(
-                      fontSize: 20,
-                    ),),
-                  ),
-                )
-            );
-          } else {
-            return SignInBlocProvider(child: SignInRoute());
-          }
+              )
+          );
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
+        } else {
+          return SignInBlocProvider(child: SignInRoute());
         }
-        return Center(child: CircularProgressIndicator());
       },
     );
   }

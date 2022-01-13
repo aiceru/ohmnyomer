@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
-import 'package:ohmnyom/src/blocs/feed_bloc_provider.dart';
-import 'package:ohmnyom/src/blocs/signin_bloc.dart';
-import 'package:ohmnyom/src/blocs/signin_bloc_provider.dart';
-import 'package:ohmnyom/src/ui/feed_route.dart';
+import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
+import 'package:ohmnyomer/src/blocs/signin_bloc.dart';
+import 'package:ohmnyomer/src/blocs/signin_bloc_provider.dart';
+import 'package:ohmnyomer/src/ui/feed_route.dart';
 
 import 'constants.dart';
-import 'singup_route.dart';
+import 'signup_route.dart';
 
 class SignInRoute extends StatefulWidget {
   const SignInRoute({Key? key}) : super(key: key);
@@ -196,15 +196,16 @@ class SignInRouteState extends State<SignInRoute> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildSocialBtn(() => bloc.signInWithGoogle(),
+          _buildSocialBtn(() => {
+            buildLoading(context),
+            bloc.signInWithGoogle(),
+          },
               const Svg('assets/signin/btn_google.svg')),
-          _buildSocialBtn(() => bloc.signInWithKakao(),
-            const Svg('assets/signin/btn_kakao.svg'),
-          ),
-          _buildSocialBtn(
-                () => print('Sign in with Naver'),
-            const Svg('assets/signin/btn_naver.svg'),
-          )
+          _buildSocialBtn(() => {
+            buildLoading(context),
+            bloc.signInWithKakao(),
+          },
+            const Svg('assets/signin/btn_kakao.svg')),
         ],
       ),
     );
@@ -237,68 +238,74 @@ class SignInRouteState extends State<SignInRoute> {
     );
   }
 
+  Widget _signInRoute() {
+    String splashPath = 'assets/signin/splash-' + _splashIndex.toString() + '.jpg';
+    return Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(splashPath),
+            fit: BoxFit.fitHeight,
+            colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.6), BlendMode.dstATop),
+          ),
+        ),
+        child: SizedBox(
+          height: double.infinity,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 40.0,
+              vertical: 120.0,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                RichText(text: TextSpan(
+                  text: 'Sign In',
+                  style: kLabelStyle,
+                )),
+                const SizedBox(height: 30.0),
+                _buildEmailTF(),
+                const SizedBox(height: 10.0),
+                _buildPasswordTF(),
+                const SizedBox(height: 10.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildRememberMeCheckbox(),
+                    _buildForgotPasswordBtn(),
+                  ],
+                ),
+                _buildLoginBtn(),
+                Text('OR', style: kSmallLabelStyle),
+                Text('Sign In with', style: kSmallLabelStyle),
+                const SizedBox(height: 20.0),
+                _buildSocialBtnRow(),
+                const SizedBox(height: 50.0),
+                _buildSignupBtn(),
+              ],
+            ),
+          ),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    String splashPath = 'assets/signin/splash-' + _splashIndex.toString() + '.jpg';
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: StreamBuilder(
           stream: bloc.resultSubject,
           builder: (context, AsyncSnapshot<SignInResult> snapshot) {
             if (snapshot.hasData) {
+              var nav = Navigator.of(context);
+              if (nav.canPop()) nav.pop();
               if (snapshot.data == SignInResult.success) {
                 return FeedBlocProvider(child: FeedRoute());
               }
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             }
-            return Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(splashPath),
-                    fit: BoxFit.fitHeight,
-                    colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.6), BlendMode.dstATop),
-                  ),
-                ),
-                child: SizedBox(
-                  height: double.infinity,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40.0,
-                      vertical: 120.0,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RichText(text: TextSpan(
-                          text: 'Sign In',
-                          style: kLabelStyle,
-                        )),
-                        const SizedBox(height: 30.0),
-                        _buildEmailTF(),
-                        const SizedBox(height: 10.0),
-                        _buildPasswordTF(),
-                        const SizedBox(height: 10.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildRememberMeCheckbox(),
-                            _buildForgotPasswordBtn(),
-                          ],
-                        ),
-                        _buildLoginBtn(),
-                        Text('OR', style: kSmallLabelStyle),
-                        Text('Sign In with', style: kSmallLabelStyle),
-                        const SizedBox(height: 20.0),
-                        _buildSocialBtnRow(),
-                        const SizedBox(height: 50.0),
-                        _buildSignupBtn(),
-                      ],
-                    ),
-                  ),
-                )
-            );
+            return _signInRoute();
           },
         )
     );

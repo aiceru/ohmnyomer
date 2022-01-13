@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ohmnyom/src/blocs/signin_bloc.dart';
+import 'package:ohmnyomer/src/blocs/signin_bloc.dart';
 
 class SignInBlocProvider extends InheritedWidget {
   final SignInBloc bloc;

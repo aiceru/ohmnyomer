@@ -1,4 +1,5 @@
-import 'package:ohmnyom/src/resources/repository.dart';
+import 'package:ohmnyomer/src/models/credential.dart';
+import 'package:ohmnyomer/src/resources/repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum SignInResult {
@@ -11,6 +12,11 @@ class SignInBloc {
   final _resultSubject = PublishSubject<SignInResult>();
 
   Stream<SignInResult> get resultSubject => _resultSubject.stream;
+
+  signIn(Credential cred) {
+    Future<SignInResult> result = _repository.signIn(cred);
+    result.then((value) => _resultSubject.sink.add(value));
+  }
 
   signInWithGoogle() {
     Future<SignInResult> result = _repository.signInWithGoogle();

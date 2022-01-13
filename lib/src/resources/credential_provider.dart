@@ -1,19 +1,26 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:ohmnyom/src/models/account.dart';
+import 'package:ohmnyomer/src/models/credential.dart';
 
 
-class AccountProvider {
+class CredentialProvider {
   static final _storage = FlutterSecureStorage();
 
-  Future<Account?> fetchAccount() async {
-    String? jsonAccount = await _storage.read(key: "account");
-    if (jsonAccount != null) {
-      return Account.fromJson(jsonDecode(jsonAccount));
+  Future<Credential?> loadCredential() async {
+    String? jsonCred = await _storage.read(key: "cred");
+    if (jsonCred != null) {
+      return Credential.fromJson(jsonDecode(jsonCred));
     }
-    return Account(email: "");
+    return null;
+  }
+
+  saveCredential(cred) {
+    _storage.write(key: "cred", value: jsonEncode(cred));
+  }
+
+  deleteCredential() {
+    _storage.delete(key: "cred");
   }
 }
 
