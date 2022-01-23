@@ -1,9 +1,11 @@
 import 'dart:math';
+import 'package:dartnyom/model.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
-import 'package:ohmnyomer/src/blocs/signin_bloc.dart';
-import 'package:ohmnyomer/src/blocs/signin_bloc_provider.dart';
+import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
+import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
+import 'package:ohmnyomer/src/models/credential.dart';
 import 'package:ohmnyomer/src/ui/feed_route.dart';
 
 import 'constants.dart';
@@ -17,7 +19,7 @@ class SignInRoute extends StatefulWidget {
 }
 
 class SignInRouteState extends State<SignInRoute> {
-  late SignInBloc bloc;
+  late SignBloc bloc;
 
   int _splashIndex = 0;
   bool? _rememberMe = false;
@@ -32,7 +34,7 @@ class SignInRouteState extends State<SignInRoute> {
 
   @override
   void didChangeDependencies() {
-    bloc = SignInBlocProvider.of(context);
+    bloc = SignBlocProvider.of(context);
     super.didChangeDependencies();
   }
 
@@ -196,16 +198,10 @@ class SignInRouteState extends State<SignInRoute> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildSocialBtn(() => {
-            buildLoading(context),
-            bloc.signInWithGoogle(),
-          },
+          _buildSocialBtn(() => bloc.signInWithGoogle(context),
               const Svg('assets/signin/btn_google.svg')),
-          _buildSocialBtn(() => {
-            buildLoading(context),
-            bloc.signInWithKakao(),
-          },
-            const Svg('assets/signin/btn_kakao.svg')),
+          _buildSocialBtn(() => bloc.signInWithKakao(context),
+              const Svg('assets/signin/btn_kakao.svg')),
         ],
       ),
     );
@@ -217,7 +213,9 @@ class SignInRouteState extends State<SignInRoute> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SignupRoute(splashIndex: _splashIndex),
+            builder: (context) => SignBlocProvider(
+                child: SignUpRoute(splashIndex: _splashIndex),
+            ),
           ),
         );
       },
@@ -294,14 +292,10 @@ class SignInRouteState extends State<SignInRoute> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: StreamBuilder(
-          stream: bloc.resultSubject,
-          builder: (context, AsyncSnapshot<SignInResult> snapshot) {
+          stream: bloc.accountSubject,
+          builder: (context, AsyncSnapshot<Account> snapshot) {
             if (snapshot.hasData) {
-              var nav = Navigator.of(context);
-              if (nav.canPop()) nav.pop();
-              if (snapshot.data == SignInResult.success) {
                 return FeedBlocProvider(child: FeedRoute());
-              }
             } else if (snapshot.hasError) {
               return Text(snapshot.error.toString());
             }

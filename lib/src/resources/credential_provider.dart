@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ohmnyomer/src/models/credential.dart';
-
 
 class CredentialProvider {
   static final _storage = FlutterSecureStorage();
@@ -15,7 +13,7 @@ class CredentialProvider {
     return null;
   }
 
-  saveCredential(cred) {
+  saveCredential(Credential cred) {
     _storage.write(key: "cred", value: jsonEncode(cred));
   }
 

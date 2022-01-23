@@ -1,30 +1,25 @@
-import 'package:ohmnyomer/src/models/account.dart';
+import 'package:dartnyom/model.pb.dart';
 
 class Credential {
-  Credential({
-    this.email, this.password, this.oAuthType = OAuthType.none, this.oAuthID});
-
-  String? email;
+  String email;
   String? password;
-  OAuthType oAuthType;
-  String? oAuthID;
+  OAuthInfo? oauthinfo;
 
-  Credential.fromAccount(Account account)
-      : email = account.email,
-        password = account.password,
-        oAuthType = account.oAuthType,
-        oAuthID = account.oAuthID;
+  Credential(this.email, {this.password, this.oauthinfo});
 
   Credential.fromJson(Map<String, dynamic> json)
       : email = json['email'],
         password = json['password'],
-        oAuthType = OAuthType.values.elementAt(json['oauthtype']),
-        oAuthID = json['oauthid'];
+        oauthinfo = OAuthInfo(
+          // provider: OAuthInfo_Provider.values.elementAt(json['oauth_provider']),
+          provider: OAuthInfo_Provider.valueOf(json['oauth_provider']),
+          id: json['oauth_id'],
+        );
 
   Map<String, dynamic> toJson() => {
     'email': email,
     'password': password,
-    'oauthtype': oAuthType.index,
-    'oauthid': oAuthID,
+    'oauth_provider': oauthinfo?.provider.value,
+    'oauth_id': oauthinfo?.id,
   };
 }

@@ -1,10 +1,10 @@
+import 'package:dartnyom/model.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
-import 'package:ohmnyomer/src/blocs/signin_bloc_provider.dart';
-import 'package:ohmnyomer/src/models/account.dart';
+import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
+import 'package:ohmnyomer/src/ui/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/signin_route.dart';
-import 'feed_list.dart';
 
 class FeedRoute extends StatefulWidget {
   const FeedRoute({Key? key}) : super(key: key);
@@ -15,6 +15,7 @@ class FeedRoute extends StatefulWidget {
 
 class _FeedRouteState extends State<FeedRoute> {
   late FeedBloc bloc;
+  // Account? _account;
 
   @override
   void didChangeDependencies() {
@@ -46,7 +47,7 @@ class _FeedRouteState extends State<FeedRoute> {
                   backgroundColor: Colors.black26,
                   child: Builder(
                       builder: (BuildContext context) {
-                        return CircleAvatar(
+                        return const CircleAvatar(
                           radius: 21,
                           foregroundImage: AssetImage('assets/dev/iu1.jpeg'),
                           backgroundColor: Colors.white,
@@ -68,7 +69,7 @@ class _FeedRouteState extends State<FeedRoute> {
                 GestureDetector(
                   onTap: () => {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Signing Out')),
+                      const SnackBar(content: Text('Signing Out')),
                     ),
                     bloc.signOut(),
                   },
@@ -77,14 +78,14 @@ class _FeedRouteState extends State<FeedRoute> {
                       backgroundColor: Colors.black26,
                       child: Builder(
                         builder: (BuildContext context) {
-                          if (account.photoUrl != null) {
+                          if (account.photourl != "") {
                             return CircleAvatar(
                               radius: 19,
-                              foregroundImage: NetworkImage(account.photoUrl!),
+                              foregroundImage: NetworkImage(account.photourl),
                               backgroundColor: Colors.white,
                             );
                           }
-                          return CircleAvatar(
+                          return const CircleAvatar(
                             radius: 19,
                             child: Icon(Icons.person, color: Colors.black54),
                             backgroundColor: Colors.white,
@@ -107,35 +108,65 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
+  Widget _feedList() {
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: ListView.separated(
+        itemCount: 20,
+        itemBuilder: (BuildContext context, int index) {
+          return const ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
+            ),
+            title: Text('오전 07:23'),
+            trailing: Text('1/4 컵'),
+            // tileColor: Colors.lightGreenAccent,
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return const Divider();
+        },
+      ),
+    );
+  }
+
+  Widget _feedRoute(Account account) {
+    return Scaffold(
+        body: Column(
+          children: [
+            _topPanel(account),
+            Expanded(child: _feedList()),
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8),
+          child: ElevatedButton.icon(
+            onPressed: () {  },
+            icon: const Icon(Icons.add),
+            label: const Text('밥 먹자', style: TextStyle(
+              fontSize: 20,
+            ),),
+          ),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: bloc.accountSubject,
       builder: (context, AsyncSnapshot<Account?> snapshot) {
         if (snapshot.hasData) {
-          return Scaffold(
-              body: Column(
-                children: [
-                  _topPanel(snapshot.data!),
-                  Expanded(child: FeedList()),
-                ],
-              ),
-              floatingActionButton: Padding(
-                padding: const EdgeInsets.all(8),
-                child: ElevatedButton.icon(
-                  onPressed: () {  },
-                  icon: Icon(Icons.add),
-                  label: const Text('밥 먹자', style: TextStyle(
-                    fontSize: 20,
-                  ),),
-                ),
-              )
-          );
+          Account account = snapshot.data!;
+          return _feedRoute(account);
         } else if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        } else {
-          return SignInBlocProvider(child: SignInRoute());
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            ErrorDialog().show(context, snapshot.error!);
+          });
         }
+        return SignBlocProvider(child: const SignInRoute());
       },
     );
   }

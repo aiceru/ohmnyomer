@@ -61,13 +61,13 @@ final kBoxDecorationStyle = BoxDecoration(
   ],
 );
 
-buildLoading(BuildContext context) {
-  return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      });
-}
+// buildLoading(BuildContext context) {
+//   return showDialog(
+//       context: context,
+//       barrierDismissible: false,
+//       builder: (BuildContext context) {
+//         return Center(
+//           child: CircularProgressIndicator(),
+//         );
+//       });
+// }

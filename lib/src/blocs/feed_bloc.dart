@@ -1,5 +1,4 @@
-import 'package:ohmnyomer/src/models/account.dart';
-import 'package:ohmnyomer/src/models/pet.dart';
+import 'package:dartnyom/model.pb.dart';
 import 'package:ohmnyomer/src/resources/repository.dart';
 import 'package:rxdart/rxdart.dart';
 
