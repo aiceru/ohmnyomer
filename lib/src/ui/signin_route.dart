@@ -29,6 +29,8 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   final _emailInputController = TextEditingController();
   final _passwordInputController = TextEditingController();
 
+  StreamBuilder<SigningValues>? _emailTFBuilder;
+
   @override
   void didChangeDependencies() {
     _bloc = SignBlocProvider.of(context);
@@ -43,9 +45,10 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   }
 
   Widget _buildEmailTF() {
-    return StreamBuilder(
+    _emailTFBuilder ??= StreamBuilder(
         stream: _bloc.valuesSubject,
         builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+          print('email builder');
           if (snapshot.hasData && snapshot.data != null) {
             if (snapshot.data!.rememberMe) {
               _emailInputController.text = snapshot.data!.lastEmail;
@@ -54,6 +57,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
           return buildTextField(Icons.email, 'Email', validateEmail, _emailInputController);
         }
     );
+    return _emailTFBuilder!;
   }
 
   Widget _buildPasswordTF() {

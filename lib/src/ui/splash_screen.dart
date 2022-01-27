@@ -14,19 +14,20 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: SharedPreferences.getInstance(),
-      builder: (context, AsyncSnapshot<SharedPreferences> snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          Repository().init(snapshot.data!);
-          WidgetsBinding.instance?.addPostFrameCallback((_) {
-            Navigator.of(context).pushReplacementNamed(SignInRoute.routeName);
-          });
-        }
-        return Center(
-            child: Text('Splashhhhhh'),
-        );
-      },
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: FutureBuilder(
+        future: SharedPreferences.getInstance(),
+        builder: (context, AsyncSnapshot<SharedPreferences> snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            Repository().init(snapshot.data!);
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              Navigator.of(context).pushReplacementNamed(SignInRoute.routeName);
+            });
+          }
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }
