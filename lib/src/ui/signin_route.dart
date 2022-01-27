@@ -1,107 +1,63 @@
 import 'dart:math';
-import 'package:dartnyom/model.pb.dart';
+import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
-import 'package:ohmnyomer/src/models/credential.dart';
+import 'package:ohmnyomer/src/constants.dart';
+import 'package:ohmnyomer/src/resources/repository.dart';
 import 'package:ohmnyomer/src/ui/feed_route.dart';
+import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 
-import 'constants.dart';
+import 'factory.dart';
+import 'error_dialog.dart';
 import 'signup_route.dart';
 
 class SignInRoute extends StatefulWidget {
   const SignInRoute({Key? key}) : super(key: key);
+  static const routeName = '/signInRoute';
 
   @override
   SignInRouteState createState() => SignInRouteState();
 }
 
-class SignInRouteState extends State<SignInRoute> {
-  late SignBloc bloc;
+class SignInRouteState extends State<SignInRoute> with ValidationMixin {
+  late SignBloc _bloc;
+  final String _splashPath = 'assets/signin/splash-' + (Random().nextInt(5) + 1).toString() + '.jpg';
 
-  int _splashIndex = 0;
-  bool? _rememberMe = false;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      _splashIndex = Random().nextInt(5) + 1;
-    });
-  }
+  final _emailInputController = TextEditingController();
+  final _passwordInputController = TextEditingController();
 
   @override
   void didChangeDependencies() {
-    bloc = SignBlocProvider.of(context);
+    _bloc = SignBlocProvider.of(context);
+    _bloc.fetchValues();
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    bloc.dispose();
+    _bloc.dispose();
     super.dispose();
   }
 
   Widget _buildEmailTF() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(
-              color: Colors.black54,
-            ),
-            cursorColor: Colors.grey,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(top: 14.0),
-              prefixIcon: const Icon(
-                Icons.email,
-                color: Colors.black38,
-              ),
-              hintText: 'Email',
-              hintStyle: kHintTextStyle,
-            ),
-          ),
-        )
-      ],
+    return StreamBuilder(
+        stream: _bloc.valuesSubject,
+        builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            if (snapshot.data!.rememberMe) {
+              _emailInputController.text = snapshot.data!.lastEmail;
+            }
+          }
+          return buildTextField(Icons.email, 'Email', validateEmail, _emailInputController);
+        }
     );
   }
 
   Widget _buildPasswordTF() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            obscureText: true,
-            style: const TextStyle(
-              color: Colors.black54,
-            ),
-            cursorColor: Colors.grey,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(top: 14.0),
-              prefixIcon: const Icon(
-                Icons.lock,
-                color: Colors.black38,
-              ),
-              hintText: 'Password',
-              hintStyle: kHintTextStyle,
-            ),
-          ),
-        )
-      ],
-    );
+    return buildTextField(Icons.password, 'Password', validatePassword, _passwordInputController, obsecureText: true);
   }
 
   Widget _buildForgotPasswordBtn() {
@@ -109,44 +65,70 @@ class SignInRouteState extends State<SignInRoute> {
       onTap: () => print('Forgot Password Button Pressed'),
       child: Container(
         // padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Text(
-          'Forgot Password?',
-          style: kSmallLabelStyle,
-        ),
+        child: smallLabel('Forgot Password?'),
       ),
     );
   }
 
   Widget _buildRememberMeCheckbox() {
-    return Row(
-      children: <Widget>[
-        Theme(
-          data: ThemeData(unselectedWidgetColor: Colors.white),
-          child: Checkbox(
-            value: _rememberMe,
-            checkColor: Colors.deepOrangeAccent,
-            activeColor: Colors.white,
-            onChanged: (value) {
-              setState(() {
-                _rememberMe = value;
-              });
-            },
-          ),
-        ),
-        Text(
-          'Remember me',
-          style: kSmallLabelStyle,
-        )
-      ],
+    return StreamBuilder(
+        stream: _bloc.valuesSubject,
+        builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+          var rememberMe = snapshot.hasData && snapshot.data != null ? snapshot.data!.rememberMe : false;
+          return Row(
+            children: [
+              Theme(
+                data: ThemeData(unselectedWidgetColor: Colors.white),
+                child: Checkbox(
+                  value: rememberMe,
+                  checkColor: Colors.deepOrangeAccent,
+                  activeColor: Colors.white,
+                  onChanged: (value) {
+                    _bloc.setRememberMe(value!);
+                  },
+                ),
+              ),
+              smallLabel('Remember me'),
+            ],
+          );
+        }
     );
   }
 
+  Widget _buildAutoLoginCheckBox() {
+    return StreamBuilder(
+      stream: _bloc.valuesSubject,
+      builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+        var autoSignIn = snapshot.hasData && snapshot.data != null ? snapshot.data!.autoSignIn : false;
+        return Row(
+          children: [
+            Theme(
+              data: ThemeData(unselectedWidgetColor: Colors.white),
+              child: Checkbox(
+                value: autoSignIn,
+                checkColor: Colors.deepOrangeAccent,
+                activeColor: Colors.white,
+                onChanged: (value) {
+                  _bloc.setAutoSignIn(value!);
+                },
+              ),
+            ),
+            smallLabel('Sign in automatically'),
+          ],
+        );
+      },
+    );
+}
+
   Widget _buildLoginBtn() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      padding: const EdgeInsets.only(top: 25.0),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () => print('Login Button Pressed'),
+        onPressed: () => _bloc.signInWithEmail(context,
+          _emailInputController.text,
+          _passwordInputController.text,
+        ),
         style: ElevatedButton.styleFrom(
           elevation: 5.0,
           padding: const EdgeInsets.all(15.0),
@@ -169,25 +151,7 @@ class SignInRouteState extends State<SignInRoute> {
   Widget _buildSocialBtn(VoidCallback onTap, ImageProvider img) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        height: 60.0,
-        width: 60.0,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black26,
-                offset: Offset(0, 2),
-                blurRadius: 6.0,
-              ),
-            ],
-            image: DecorationImage(
-              image: img,
-              fit: BoxFit.scaleDown,
-            )
-        ),
-      ),
+      child: socialLogo(img)
     );
   }
 
@@ -198,29 +162,25 @@ class SignInRouteState extends State<SignInRoute> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildSocialBtn(() => bloc.signInWithGoogle(context),
-              const Svg('assets/signin/btn_google.svg')),
-          _buildSocialBtn(() => bloc.signInWithKakao(context),
-              const Svg('assets/signin/btn_kakao.svg')),
+          _buildSocialBtn(() => _bloc.signInWithGoogle(context),
+              const Svg(ciPathGoogle)),
+          _buildSocialBtn(() => _bloc.signInWithKakao(context),
+              const Svg(ciPathKakao)),
         ],
       ),
     );
   }
 
-  Widget _buildSignupBtn() {
+  Widget _buildSignupBtn(String splashPath) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SignBlocProvider(
-                child: SignUpRoute(splashIndex: _splashIndex),
-            ),
-          ),
+        Navigator.of(context).pushNamed(
+          SignUpRoute.routeName,
+          arguments: splashPath,
         );
       },
       child: RichText(
-        text: TextSpan(
+        text: const TextSpan(
           children: [
             TextSpan(
               text: 'Don\'t have an Account?  ',
@@ -236,8 +196,7 @@ class SignInRouteState extends State<SignInRoute> {
     );
   }
 
-  Widget _signInRoute() {
-    String splashPath = 'assets/signin/splash-' + _splashIndex.toString() + '.jpg';
+  Widget _signInRoute(String splashPath) {
     return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -257,7 +216,7 @@ class SignInRouteState extends State<SignInRoute> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RichText(text: TextSpan(
+                RichText(text: const TextSpan(
                   text: 'Sign In',
                   style: kLabelStyle,
                 )),
@@ -274,12 +233,14 @@ class SignInRouteState extends State<SignInRoute> {
                   ],
                 ),
                 _buildLoginBtn(),
-                Text('OR', style: kSmallLabelStyle),
-                Text('Sign In with', style: kSmallLabelStyle),
+                _buildAutoLoginCheckBox(),
+                const SizedBox(height: 20.0),
+                smallLabel('OR'),
+                smallLabel('Sign In with'),
                 const SizedBox(height: 20.0),
                 _buildSocialBtnRow(),
                 const SizedBox(height: 50.0),
-                _buildSignupBtn(),
+                _buildSignupBtn(splashPath),
               ],
             ),
           ),
@@ -292,14 +253,18 @@ class SignInRouteState extends State<SignInRoute> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: StreamBuilder(
-          stream: bloc.accountSubject,
-          builder: (context, AsyncSnapshot<Account> snapshot) {
-            if (snapshot.hasData) {
-                return FeedBlocProvider(child: FeedRoute());
+          stream: _bloc.resultSubject,
+          builder: (context, AsyncSnapshot<SignInResult> snapshot) {
+            if (snapshot.hasData && snapshot.data == SignInResult.success) {
+              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                Navigator.of(context).pushReplacementNamed(FeedRoute.routeName);
+              });
             } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
+              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                ErrorDialog().show(context, snapshot.error!);
+              });
             }
-            return _signInRoute();
+            return _signInRoute(_splashPath);
           },
         )
     );

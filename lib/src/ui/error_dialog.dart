@@ -33,13 +33,13 @@ class ErrorDialog {
     if (e is GrpcError) {
       return e.codeName;
     }
-    return 'Unknown';
+    return e.runtimeType.toString();
   }
 
   String _content(Object e) {
     if (e is GrpcError) {
       return e.message!;
     }
-    return 'unknown error';
+    return e.toString();
   }
 }

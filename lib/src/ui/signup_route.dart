@@ -1,24 +1,24 @@
-import 'package:dartnyom/model.pb.dart';
+import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
-import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
+import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 
-import 'constants.dart';
+import 'factory.dart';
 
 class SignUpRoute extends StatefulWidget {
-  final int splashIndex;
-  const SignUpRoute({Key? key, required this.splashIndex}) : super(key: key);
+  const SignUpRoute({Key? key}) : super(key: key);
+  static const routeName = '/signUpRoute';
 
   @override
   _SignUpRouteState createState() => _SignUpRouteState();
 }
 
 class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
-  late SignBloc bloc;
+  late SignBloc _bloc;
   final _nameInputController = TextEditingController();
   final _emailInputController = TextEditingController();
   final _passwdInputController = TextEditingController();
@@ -27,102 +27,30 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
 
   @override
   void didChangeDependencies() {
-    bloc = SignBlocProvider.of(context);
+    _bloc = SignBlocProvider.of(context);
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
-    bloc.dispose();
+    _bloc.dispose();
     super.dispose();
   }
 
   Widget _buildNameTF() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-      alignment: Alignment.centerLeft,
-      decoration: kBoxDecorationStyle,
-      height: 60.0,
-      child: TextFormField(
-        validator: (value) => validateName(value),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        controller: _nameInputController,
-        keyboardType: TextInputType.name,
-        style: const TextStyle(
-          color: Colors.black54,
-        ),
-        cursorColor: Colors.grey,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          icon: const Icon(
-            Icons.face,
-            color: Colors.black38,
-          ),
-          hintText: 'Name',
-          hintStyle: kHintTextStyle,
-        ),
-      ),
-    );
+    return buildTextField(Icons.face, 'Name', validateName, _nameInputController);
   }
 
   Widget _buildEmailTF() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-      alignment: Alignment.centerLeft,
-      decoration: kBoxDecorationStyle,
-      height: 60.0,
-      child: TextFormField(
-        validator: (value) => validateEmail(value),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        controller: _emailInputController,
-        keyboardType: TextInputType.emailAddress,
-        style: const TextStyle(
-          color: Colors.black54,
-        ),
-        cursorColor: Colors.grey,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          icon: const Icon(
-            Icons.email,
-            color: Colors.black38,
-          ),
-          hintText: 'Email',
-          hintStyle: kHintTextStyle,
-        ),
-      ),
-    );
+    return buildTextField(Icons.email, 'Email', validateEmail, _emailInputController);
   }
 
   Widget _buildPasswordTF() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
-      alignment: Alignment.centerLeft,
-      decoration: kBoxDecorationStyle,
-      height: 60.0,
-      child: TextFormField(
-        validator: (value) => validatePassword(value),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        controller: _passwdInputController,
-        obscureText: true,
-        style: const TextStyle(
-          color: Colors.black54,
-        ),
-        cursorColor: Colors.grey,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          icon: const Icon(
-            Icons.lock,
-            color: Colors.black38,
-          ),
-          hintText: 'Password',
-          hintStyle: kHintTextStyle,
-        ),
-      ),
-    );
+    return buildTextField(Icons.password, 'Password', validatePassword, _passwdInputController, obsecureText: true);
   }
 
   void _doSignUp() {
-    bloc.signUpWithEmail(
+    _bloc.signUpWithEmail(
       context,
       _nameInputController.text,
       _emailInputController.text,
@@ -155,8 +83,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
     );
   }
 
-  Widget _signUpRoute() {
-    String splashPath = 'assets/signin/splash-' + widget.splashIndex.toString() + '.jpg';
+  Widget _signUpRoute(String splashPath) {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -165,7 +92,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
           colorFilter: ColorFilter.mode(Colors.white.withOpacity(0.6), BlendMode.dstATop),
         ),
       ),
-      child: Container(
+      child: SizedBox(
         height: double.infinity,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -176,7 +103,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RichText(text: TextSpan(
+              RichText(text: const TextSpan(
                 text: 'Sign Up',
                 style: kLabelStyle,
               )),
@@ -205,22 +132,24 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
 
   @override
   Widget build(BuildContext context) {
+    final splashPath = ModalRoute.of(context)!.settings.arguments as String;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: StreamBuilder(
-        stream: bloc.accountSubject,
-        builder: (context, AsyncSnapshot<Account> snapshot) {
-          if (snapshot.hasData) {
-            return FeedBlocProvider(child: const FeedRoute());
+        stream: _bloc.resultSubject,
+        builder: (context, AsyncSnapshot<SignInResult> snapshot) {
+          if (snapshot.hasData && snapshot.data == SignInResult.success) {
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              Navigator.of(context).pushNamedAndRemoveUntil(FeedRoute.routeName, (route) => false);
+            });
           } else if (snapshot.hasError) {
             WidgetsBinding.instance?.addPostFrameCallback((_) {
               ErrorDialog().show(context, snapshot.error!);
             });
           }
-          return _signUpRoute();
+          return _signUpRoute(splashPath);
         },
       ),
     );
   }
 }
-

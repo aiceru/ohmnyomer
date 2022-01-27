@@ -11,9 +11,9 @@ class OAuthIdentity {
   String email;
   Source source;
   String id;
-  String? photourl;
+  String photourl;
 
-  OAuthIdentity(this.name, this.email, this.source, this.id, {this.photourl});
+  OAuthIdentity(this.name, this.email, this.source, this.id, this.photourl);
 }
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -28,7 +28,7 @@ class OAuthProvider {
     kakaosdk.KakaoContext.clientId = "4e54eb14cdee9e5e27da630b30c02a2b";
   }
 
-  Future<OAuthIdentity?> getGoogleIdentity() async {
+  Future<OAuthIdentity> getGoogleIdentity() async {
     GoogleSignInAccount? gAccount;
     await _googleSignIn.signIn();
     gAccount = _googleSignIn.currentUser;
@@ -38,27 +38,27 @@ class OAuthProvider {
         gAccount.email,
         Source.google,
         gAccount.id,
-        photourl: gAccount.photoUrl ?? "",
+        gAccount.photoUrl ?? "",
       );
     }
-    return null;
+    return Future.error('google account is nil');
   }
 
-  Future<OAuthIdentity?> getKakaoIdentity() async {
+  Future<OAuthIdentity> getKakaoIdentity() async {
     await kakaosdk.UserApi.instance.loginWithKakaoTalk();
     var me = await kakaosdk.UserApi.instance.me();
     var kAccount = me.kakaoAccount;
     if (kAccount != null) {
       kakaosdk.UserApi.instance.logout();
       return OAuthIdentity(
-        kAccount.name ?? "kakao-"+me.id.toString(),
+        kAccount.profile?.nickname ?? "kakao-"+me.id.toString(),
         kAccount.email ?? "",
         Source.kakao,
         me.id.toString(),
-        photourl: kAccount.profile?.profileImageUrl ?? "",
+        kAccount.profile?.profileImageUrl ?? "",
       );
     }
-    return null;
+    return Future.error('kakao account is nil');
   }
 
   //{

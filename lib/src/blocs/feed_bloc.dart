@@ -1,4 +1,4 @@
-import 'package:dartnyom/model.pb.dart';
+import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/repository.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -20,6 +20,7 @@ class FeedBloc {
   }
 
   signOut() {
-    _accountSubject.sink.add(_repository.signOut());
+    _repository.signOut();
+    // _accountSubject.sink.add(null);
   }
 }

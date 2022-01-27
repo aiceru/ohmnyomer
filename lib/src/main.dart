@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
+import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/ui/feed_route.dart';
+import 'package:ohmnyomer/src/ui/signin_route.dart';
+import 'package:ohmnyomer/src/ui/signup_route.dart';
+import 'package:ohmnyomer/src/ui/splash_screen.dart';
 
 void main() => runApp(const AppMain());
 
@@ -35,9 +39,13 @@ class AppMain extends StatelessWidget {
               )
           )
       ),
-        home: FeedBlocProvider(
-          child: FeedRoute(),
-        )
+      initialRoute: SplashScreen.routeName,
+      routes: {
+        SplashScreen.routeName: (context) => const SplashScreen(),
+        SignInRoute.routeName: (context) => SignBlocProvider(child: const SignInRoute()),
+        SignUpRoute.routeName : (context) => SignBlocProvider(child: const SignUpRoute()),
+        FeedRoute.routeName: (context) => FeedBlocProvider(child: const FeedRoute()),
+      },
     );
   }
 }

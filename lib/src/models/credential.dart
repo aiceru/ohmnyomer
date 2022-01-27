@@ -1,4 +1,4 @@
-import 'package:dartnyom/model.pb.dart';
+import 'package:dartnyom/protonyom_models.pb.dart';
 
 class Credential {
   String email;
@@ -9,12 +9,12 @@ class Credential {
 
   Credential.fromJson(Map<String, dynamic> json)
       : email = json['email'],
-        password = json['password'],
-        oauthinfo = OAuthInfo(
-          // provider: OAuthInfo_Provider.values.elementAt(json['oauth_provider']),
-          provider: OAuthInfo_Provider.valueOf(json['oauth_provider']),
-          id: json['oauth_id'],
-        );
+        password = json['password'] {
+    oauthinfo = json['oauth_provider'] != null ? OAuthInfo(
+      provider: OAuthInfo_Provider.valueOf(json['oauth_provider']),
+      id: json['oauth_id'],
+    ) : null;
+  }
 
   Map<String, dynamic> toJson() => {
     'email': email,
