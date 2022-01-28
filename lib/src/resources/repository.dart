@@ -1,5 +1,6 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/constants.dart';
+import 'package:ohmnyomer/src/models/credential.dart';
 import 'package:ohmnyomer/src/resources/credential_provider.dart';
 import 'package:ohmnyomer/src/resources/sign_api_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,8 @@ class Repository {
   }
 
   Account? _account;
+  Account? get account => _account;
+
   String? _authToken;
 
   SharedPreferences? _prefs;
@@ -68,21 +71,17 @@ class Repository {
     _prefs?.remove(key);
   }
 
-  Future<Account?> fetchAccount() async {
-    if (_account != null) {
-      return Future<Account?>.value(_account);
+  Future<SignInResult> signInWithCredential() async {
+    Credential? cred = await _credentialProvider.loadCredential();
+    SignInResult result = SignInResult.fail;
+    if (cred != null) {
+      if (cred.password != null) {
+        result = await signInWithEmail(cred.email, cred.password);
+      } else if (cred.oauthinfo != null && cred.oauthProvider != null) {
+        result = await signInWithOAuthInfo(cred.oauthinfo!, cred.oauthProvider!);
+      }
     }
-    // if (_autoLogin) {
-    //   Credential? cred = await _credentialProvider.loadCredential();
-    //   if (cred != null) {
-    //     // if (cred.password != null) {
-    //     //   return _signApiProvider.signInWithEmail(cred.email, cred.password);
-    //     // } else if (cred.oauthinfo != null) {
-    //     //   return _signApiProvider.signInWithOAuthInfo(cred.email, cred.oauthinfo!);
-    //     // }
-    //   }
-    // }
-    return null;
+    return result;
   }
 
   Future<SignInResult> signUpWithEmail(String name, email, password) async {
@@ -90,22 +89,16 @@ class Repository {
     _account = auth.account;
     _authToken = auth.token;
 
-    // TODO: if autologin
-    // _credentialProvider.saveCredential(
-    //     Credential(_account!.email, password: password));
     return SignInResult.success;
   }
 
   Future<SignInResult> signUpWithOAuthInfo(
-      String name, email, OAuthInfo info, String photourl) async {
+      String name, OAuthInfo info, String provider, String photourl) async {
     Authorization auth = await _signApiProvider.signUpWithOAuthInfo(
-        name, email, info, photourl);
+        name, info, provider, photourl);
     _account = auth.account;
     _authToken = auth.token;
 
-    // TODO: if autologin
-    // _credentialProvider.saveCredential(
-    //     Credential(_account!.email, oauthinfo: _account!.oauthinfo[0]));
     return SignInResult.success;
   }
 
@@ -119,30 +112,27 @@ class Repository {
       _setStringPref(sharedPrefEmailKey, email);
     }
 
-    // TODO: if autologin
-    // _credentialProvider.saveCredential(
-    //     Credential(_account!.email, password: password));
+    if (_autoSignIn) {
+      _credentialProvider.saveCredential(Credential(_account!.email, password: password));
+    }
     return SignInResult.success;
   }
 
-  Future<SignInResult> signInWithOAuthInfo(String email, OAuthInfo info) async {
-    Authorization auth = await _signApiProvider.signInWithOAuthInfo(email, info);
+  Future<SignInResult> signInWithOAuthInfo(OAuthInfo info, String provider) async {
+    Authorization auth = await _signApiProvider.signInWithOAuthInfo(info, provider);
     _account = auth.account;
     _authToken = auth.token;
 
-    // TODO: if autologin
-    // _credentialProvider.saveCredential(
-    //     Credential(_account!.email, oauthinfo: _account!.oauthinfo[0]));
+    if (_autoSignIn) {
+      _credentialProvider.saveCredential(Credential(_account!.email, oauthinfo: _account!.oauthinfo[0]));
+    }
     return SignInResult.success;
   }
 
   signOut() {
-    // TODO: remove credential
-    // TODO: remove token
     _account = null;
     _authToken = null;
 
     _credentialProvider.deleteCredential();
-    // do nothing now
   }
 }

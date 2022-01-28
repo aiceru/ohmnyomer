@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 
 class FeedBloc {
   final _repository = Repository();
-  final _accountSubject = PublishSubject<Account?>();
+  final _accountSubject = BehaviorSubject<Account?>();
   final _petSubject = PublishSubject<Pet?>();
 
   Stream<Account?> get accountSubject => _accountSubject.stream;
@@ -15,8 +15,7 @@ class FeedBloc {
   }
 
   fetchAccount() {
-    Future<Account?> account = _repository.fetchAccount();
-    account.then((value) => _accountSubject.sink.add(value));
+    _accountSubject.sink.add(_repository.account);
   }
 
   signOut() {

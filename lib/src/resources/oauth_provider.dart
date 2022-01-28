@@ -1,19 +1,15 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakao_flutter_sdk/all.dart' as kakaosdk;
-
-enum Source {
-  google,
-  kakao,
-}
+import 'package:ohmnyomer/src/constants.dart';
 
 class OAuthIdentity {
   String name;
   String email;
-  Source source;
+  String provider;
   String id;
   String photourl;
 
-  OAuthIdentity(this.name, this.email, this.source, this.id, this.photourl);
+  OAuthIdentity(this.name, this.email, this.provider, this.id, this.photourl);
 }
 
 GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -36,7 +32,7 @@ class OAuthProvider {
       return OAuthIdentity(
         gAccount.displayName ?? "google-"+gAccount.id,
         gAccount.email,
-        Source.google,
+        oauthProviderGoogle,
         gAccount.id,
         gAccount.photoUrl ?? "",
       );
@@ -53,7 +49,7 @@ class OAuthProvider {
       return OAuthIdentity(
         kAccount.profile?.nickname ?? "kakao-"+me.id.toString(),
         kAccount.email ?? "",
-        Source.kakao,
+        oauthProviderKakao,
         me.id.toString(),
         kAccount.profile?.profileImageUrl ?? "",
       );

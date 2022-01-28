@@ -7,6 +7,9 @@ const sharedPrefAutoLoginKey = 'autologin';
 const sharedPrefRememberMeKey = 'rememberme';
 const sharedPrefEmailKey = 'email';
 
+const oauthProviderGoogle = "google";
+const oauthProviderKakao = "kakao";
+
 const ciPathGoogle = 'assets/ci/google.svg';
 const ciPathKakao = 'assets/ci/kakao.svg';
 

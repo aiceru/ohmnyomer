@@ -1,12 +1,8 @@
 import 'dart:math';
-import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
-import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/resources/repository.dart';
 import 'package:ohmnyomer/src/ui/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 
@@ -35,6 +31,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   void didChangeDependencies() {
     _bloc = SignBlocProvider.of(context);
     _bloc.fetchValues();
+    _bloc.checkSignInStatus();
     super.didChangeDependencies();
   }
 
@@ -48,7 +45,6 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
     _emailTFBuilder ??= StreamBuilder(
         stream: _bloc.valuesSubject,
         builder: (context, AsyncSnapshot<SigningValues> snapshot) {
-          print('email builder');
           if (snapshot.hasData && snapshot.data != null) {
             if (snapshot.data!.rememberMe) {
               _emailInputController.text = snapshot.data!.lastEmail;
@@ -152,10 +148,10 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
     );
   }
 
-  Widget _buildSocialBtn(VoidCallback onTap, ImageProvider img) {
+  Widget _buildSocialBtn(VoidCallback onTap, String provider) {
     return GestureDetector(
       onTap: onTap,
-      child: socialLogo(img)
+      child: socialLogo(provider, 60.0)
     );
   }
 
@@ -167,9 +163,9 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildSocialBtn(() => _bloc.signInWithGoogle(context),
-              const Svg(ciPathGoogle)),
+              oauthProviderGoogle),
           _buildSocialBtn(() => _bloc.signInWithKakao(context),
-              const Svg(ciPathKakao)),
+              oauthProviderKakao),
         ],
       ),
     );

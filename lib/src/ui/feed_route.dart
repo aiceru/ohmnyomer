@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
-import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/factory.dart';
 import 'package:ohmnyomer/src/ui/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/signin_route.dart';
+
+import 'edit_account_route.dart';
 
 class FeedRoute extends StatefulWidget {
   const FeedRoute({Key? key}) : super(key: key);
@@ -63,11 +64,11 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
-  Widget _buildOAuthLinkAvatar(OAuthInfo_Provider provider) {
+  Widget _buildOAuthLinkAvatar(String provider) {
     switch (provider) {
-      case OAuthInfo_Provider.GOOGLE:
+      case oauthProviderGoogle:
         return const Image(image: Svg(ciPathGoogle));
-      case OAuthInfo_Provider.KAKAO:
+      case oauthProviderKakao:
         return const Image(image: Svg(ciPathKakao));
     }
     return const SizedBox.shrink();
@@ -81,8 +82,8 @@ class _FeedRouteState extends State<FeedRoute> {
         children: [
           const Icon(Icons.link, color: Colors.grey),
           const SizedBox(width: 20),
-          for (var info in account.oauthinfo)
-            _buildOAuthLinkAvatar(info.provider),
+          for (var p in account.oauthinfo.keys)
+            _buildOAuthLinkAvatar(p),
         ],
       ),
     );
@@ -102,7 +103,8 @@ class _FeedRouteState extends State<FeedRoute> {
   Widget _buildEditButton() {
     return GestureDetector(
       onTap:() {
-
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed(EditAccountRoute.routeName);  // go to sign in route
       },
       child: const Icon(Icons.edit, color: Colors.black54),
     );
@@ -185,7 +187,7 @@ class _FeedRouteState extends State<FeedRoute> {
           )
         ],
       ),
-      // color: Colors.red,
+      color: const Color.fromRGBO(33, 87, 82, 0.7)
     );
   }
 
@@ -214,39 +216,8 @@ class _FeedRouteState extends State<FeedRoute> {
   }
 
   Widget _feedRoute(Account account) {
-    _userAvatar = CircleAvatar(
-        radius: 20,
-        backgroundColor: Colors.black26,
-        child: Builder(
-          builder: (BuildContext context) {
-            if (account.photourl != "") {
-              return CircleAvatar(
-                radius: 19,
-                foregroundImage: NetworkImage(account.photourl),
-                backgroundColor: Colors.white,
-              );
-            }
-            return const CircleAvatar(
-              radius: 19,
-              child: Icon(Icons.person, color: Colors.black54),
-              backgroundColor: Colors.white,
-            );
-          },
-        )
-    );
-    _petAvatar = CircleAvatar(
-      radius: 22,
-      backgroundColor: Colors.black26,
-      child: Builder(
-          builder: (BuildContext context) {
-            return const CircleAvatar(
-              radius: 21,
-              foregroundImage: AssetImage('assets/dev/iu1.jpeg'),
-              backgroundColor: Colors.white,
-            );
-          }
-      ),
-    );
+    _userAvatar = BorderedCircleAvatar(account.photourl, 20.0);
+    _petAvatar = BorderedCircleAvatar("", 22.0);
 
     return Column(
       children: [
@@ -288,3 +259,4 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 }
+

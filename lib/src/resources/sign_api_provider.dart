@@ -50,10 +50,11 @@ class SignApiProvider {
     return _signUp(req);
   }
 
-  Future<Authorization> signUpWithOAuthInfo(String name, email,
-      OAuthInfo info, String photourl) {
+  Future<Authorization> signUpWithOAuthInfo(String name, OAuthInfo info,
+      String provider, String photourl) {
     SignUpRequest req = SignUpRequest(
-      name: name, email: email, oauthinfo: info, photourl: photourl);
+      name: name, email: info.email, oauthinfo: info,
+        oauthprovider: provider, photourl: photourl);
     return _signUp(req);
   }
 
@@ -63,8 +64,8 @@ class SignApiProvider {
     return _signIn(req);
   }
 
-  Future<Authorization> signInWithOAuthInfo(String email, OAuthInfo info) {
-    SignInRequest req = SignInRequest(oauthinfo: info);
+  Future<Authorization> signInWithOAuthInfo(OAuthInfo info, String provider) {
+    SignInRequest req = SignInRequest(oauthinfo: info, oauthprovider: provider);
     return _signIn(req);
   }
 }

@@ -1,4 +1,7 @@
+import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:ohmnyomer/src/constants.dart';
 
 Text hintText(String content) {
   return Text(
@@ -113,10 +116,21 @@ Widget buildTextField(
   );
 }
 
-Widget socialLogo(ImageProvider img) {
+Widget socialLogo(String provider, double size) {
+  ImageProvider img;
+  switch (provider) {
+    case oauthProviderGoogle:
+      img = const Svg(ciPathGoogle);
+      break;
+    case oauthProviderKakao:
+      img = const Svg(ciPathKakao);
+      break;
+    default:
+      return const SizedBox.shrink();
+  }
   return Container(
-    height: 60.0,
-    width: 60.0,
+    height: size,
+    width: size,
     decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.white,
@@ -133,4 +147,75 @@ Widget socialLogo(ImageProvider img) {
         )
     ),
   );
+}
+
+class BorderedCircleAvatar extends StatelessWidget {
+  const BorderedCircleAvatar(String url, double size, {Key? key})
+      : _url = url,
+        _size = size,
+        super(key: key);
+
+  final double _size;
+  final String _url;
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+        radius: _size,
+        backgroundColor: Colors.black26,
+        child: Builder(
+          builder: (BuildContext context) {
+            if (_url != "") {
+              return CircleAvatar(
+                radius: _size-1.0,
+                foregroundImage: NetworkImage(_url),
+                backgroundColor: Colors.white,
+              );
+            }
+            return CircleAvatar(
+              radius: _size-1.0,
+              child: const Icon(Icons.person, color: Colors.black54),
+              backgroundColor: Colors.white,
+            );
+          },
+        )
+    );
+  }
+}
+
+class ListCard extends StatelessWidget {
+  const ListCard(Widget leading, String content, String subContent,
+      {Key? key, Widget? trailing})
+      : _leading = leading,
+        _trailing = trailing,
+        _content = content,
+        _subContent = subContent,
+        super(key: key);
+
+  final Widget _leading;
+  final Widget? _trailing;
+  final String _content;
+  final String _subContent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: SizedBox(
+          width: 60,
+          child: Center(
+            child: _leading,
+          )
+        ),
+        title: Text(_content),
+        subtitle: Text(_subContent),
+        trailing: _trailing != null ? Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _trailing!,
+          ],
+        ) : null,
+      ),
+    );
+  }
 }

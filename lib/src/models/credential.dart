@@ -1,25 +1,28 @@
+import 'dart:convert';
+
 import 'package:dartnyom/protonyom_models.pb.dart';
 
 class Credential {
   String email;
   String? password;
+  String? oauthProvider;
   OAuthInfo? oauthinfo;
 
-  Credential(this.email, {this.password, this.oauthinfo});
+  Credential(this.email, {this.password, this.oauthProvider, this.oauthinfo});
 
   Credential.fromJson(Map<String, dynamic> json)
       : email = json['email'],
-        password = json['password'] {
-    oauthinfo = json['oauth_provider'] != null ? OAuthInfo(
-      provider: OAuthInfo_Provider.valueOf(json['oauth_provider']),
-      id: json['oauth_id'],
-    ) : null;
-  }
+        password = json['password'],
+        oauthProvider = json['oauth_provider'],
+        oauthinfo = OAuthInfo.fromJson(jsonDecode(json['oauth_info']));
 
-  Map<String, dynamic> toJson() => {
-    'email': email,
-    'password': password,
-    'oauth_provider': oauthinfo?.provider.value,
-    'oauth_id': oauthinfo?.id,
-  };
+  Map<String, dynamic> toJson() {
+    var info = oauthinfo?.toProto3Json();
+    return {
+      'email': email,
+      'password': password,
+      'oauth_provider': oauthProvider,
+      'oauth_info': jsonEncode(info),
+    };
+  }
 }
