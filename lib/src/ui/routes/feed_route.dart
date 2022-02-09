@@ -4,11 +4,12 @@ import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/ui/factory.dart';
-import 'package:ohmnyomer/src/ui/error_dialog.dart';
-import 'package:ohmnyomer/src/ui/signin_route.dart';
+import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
+import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
+import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 
-import 'edit_account_route.dart';
+import 'account_route.dart';
 
 class FeedRoute extends StatefulWidget {
   const FeedRoute({Key? key}) : super(key: key);
@@ -20,9 +21,6 @@ class FeedRoute extends StatefulWidget {
 
 class _FeedRouteState extends State<FeedRoute> {
   late FeedBloc _bloc;
-  // Account? _account;
-  late Widget _userAvatar;
-  late Widget _petAvatar;
 
   @override
   void didChangeDependencies() {
@@ -42,7 +40,7 @@ class _FeedRouteState extends State<FeedRoute> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _userAvatar,
+        BorderedCircleAvatar(22.0, networkSrc: account.photourl),
         const SizedBox(width: 20),
         Text(account.email, style: const TextStyle(fontSize: 16.0)),
         const SizedBox(width: 20),
@@ -90,23 +88,23 @@ class _FeedRouteState extends State<FeedRoute> {
   }
 
   Widget _buildSignOutButton() {
-    return GestureDetector(
-      onTap:() {
+    return IconButton(
+      onPressed:() {
         Navigator.of(context).pop();    // dismiss dialog
         _bloc.signOut();
         Navigator.of(context).pushReplacementNamed(SignInRoute.routeName);  // go to sign in route
       },
-      child: const Icon(Icons.logout, color: Colors.black54),
+      icon: const Icon(Icons.logout, color: Colors.black54),
     );
   }
 
   Widget _buildEditButton() {
-    return GestureDetector(
-      onTap:() {
+    return IconButton(
+      onPressed:() {
         Navigator.of(context).pop();
-        Navigator.of(context).pushNamed(EditAccountRoute.routeName);  // go to sign in route
+        Navigator.of(context).pushNamed(AccountRoute.routeName);  // go to sign in route
       },
-      child: const Icon(Icons.edit, color: Colors.black54),
+      icon: const Icon(Icons.edit, color: Colors.black54),
     );
   }
 
@@ -159,12 +157,15 @@ class _FeedRouteState extends State<FeedRoute> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _petAvatar,
+                GestureDetector(
+                  child: const BorderedCircleAvatar(22.0, iconData: Icons.add),
+                  onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName),
+                ),
                 Expanded(
                     child: Container(
                       padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
                       alignment: Alignment.centerLeft,
-                      child: const Text('춘식이',
+                      child: const Text('아직 미구현 ㅠㅠ',
                         style: TextStyle(
                           fontSize: 22,
                         ),
@@ -172,11 +173,8 @@ class _FeedRouteState extends State<FeedRoute> {
                     )
                 ),
                 GestureDetector(
-                  onTap: () =>
-                  {
-                    _dialogAccountDetail(context, account),
-                  },
-                  child: _userAvatar,
+                  onTap: () => _dialogAccountDetail(context, account),
+                  child: BorderedCircleAvatar(20.0, networkSrc: account.photourl),
                 ),
               ],
             ),
@@ -216,9 +214,6 @@ class _FeedRouteState extends State<FeedRoute> {
   }
 
   Widget _feedRoute(Account account) {
-    _userAvatar = BorderedCircleAvatar(account.photourl, 20.0);
-    _petAvatar = BorderedCircleAvatar("", 22.0);
-
     return Column(
       children: [
         _topPanel(account),
@@ -246,15 +241,10 @@ class _FeedRouteState extends State<FeedRoute> {
             return const SizedBox.shrink();
           },
         ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(8),
-          child: ElevatedButton.icon(
-            onPressed: () {  },
-            icon: const Icon(Icons.add),
-            label: const Text('밥 먹자', style: TextStyle(
-              fontSize: 20,
-            ),),
-          ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {  },
+            backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
+          child: const Icon(Icons.add)
         )
     );
   }

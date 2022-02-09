@@ -9,6 +9,7 @@ const sharedPrefEmailKey = 'email';
 
 const oauthProviderGoogle = "google";
 const oauthProviderKakao = "kakao";
+const listProviders = [oauthProviderGoogle, oauthProviderKakao];
 
 const ciPathGoogle = 'assets/ci/google.svg';
 const ciPathKakao = 'assets/ci/kakao.svg';

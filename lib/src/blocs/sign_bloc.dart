@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/oauth_provider.dart';
-import 'package:ohmnyomer/src/resources/repository.dart';
-import 'package:ohmnyomer/src/ui/loading_indicator_dialog.dart';
+import 'package:ohmnyomer/src/resources/repository/repository.dart';
+import 'package:ohmnyomer/src/resources/repository/repository_sign_ext.dart';
+import 'package:ohmnyomer/src/ui/widgets/loading_indicator_dialog.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SigningValues {
@@ -16,7 +17,7 @@ class SigningValues {
 }
 
 class SignBloc {
-  final _repository = Repository();
+  final Repository _repository = Repository();
   final _oauthProvider = OAuthProvider();
 
   final _resultSubject = PublishSubject<SignInResult>();

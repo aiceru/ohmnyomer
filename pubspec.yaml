@@ -29,6 +29,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   google_fonts: ^2.1.1
   rxdart: ^0.27.3
   google_sign_in: ^5.2.1
@@ -37,6 +39,8 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   shared_preferences: ^2.0.12
   grpc: ^3.0.2
+  intl: ^0.17.0
+  fixnum: ^1.0.0
   dartnyom:
     path: ../protonyom/dartnyom
 #    git:

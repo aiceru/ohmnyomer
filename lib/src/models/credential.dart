@@ -14,15 +14,15 @@ class Credential {
       : email = json['email'],
         password = json['password'],
         oauthProvider = json['oauth_provider'],
-        oauthinfo = OAuthInfo.fromJson(jsonDecode(json['oauth_info']));
+        oauthinfo = OAuthInfo.fromJson(json['oauth_info']);
 
   Map<String, dynamic> toJson() {
-    var info = oauthinfo?.toProto3Json();
+    var info = oauthinfo?.writeToJson();
     return {
       'email': email,
       'password': password,
       'oauth_provider': oauthProvider,
-      'oauth_info': jsonEncode(info),
+      'oauth_info': info,
     };
   }
 }

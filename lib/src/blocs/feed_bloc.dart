@@ -1,9 +1,10 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
-import 'package:ohmnyomer/src/resources/repository.dart';
+import 'package:ohmnyomer/src/resources/repository/repository.dart';
+import 'package:ohmnyomer/src/resources/repository/repository_sign_ext.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FeedBloc {
-  final _repository = Repository();
+  final Repository _repository = Repository();
   final _accountSubject = BehaviorSubject<Account?>();
   final _petSubject = PublishSubject<Pet?>();
 

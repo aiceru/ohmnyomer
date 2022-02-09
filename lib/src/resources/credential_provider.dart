@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/models/credential.dart';
@@ -12,6 +13,11 @@ class CredentialProvider {
       return Credential.fromJson(jsonDecode(jsonCred));
     }
     return null;
+  }
+
+  replaceCredential(Credential cred) {
+    deleteCredential();
+    saveCredential(cred);
   }
 
   saveCredential(Credential cred) {

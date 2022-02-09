@@ -1,13 +1,12 @@
-import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/ui/error_dialog.dart';
-import 'package:ohmnyomer/src/ui/feed_route.dart';
+import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
+import 'package:ohmnyomer/src/ui/widgets/constants.dart';
+import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
-
-import 'factory.dart';
 
 class SignUpRoute extends StatefulWidget {
   const SignUpRoute({Key? key}) : super(key: key);
@@ -22,7 +21,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
   final _nameInputController = TextEditingController();
   final _emailInputController = TextEditingController();
   final _passwdInputController = TextEditingController();
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool _formValidated = false;
 
   @override
@@ -38,15 +37,18 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
   }
 
   Widget _buildNameTF() {
-    return buildTextField(Icons.face, 'Name', validateName, _nameInputController);
+    return buildTextField(Icons.face, 'Name', TextInputType.name,
+        validateName, _nameInputController);
   }
 
   Widget _buildEmailTF() {
-    return buildTextField(Icons.email, 'Email', validateEmail, _emailInputController);
+    return buildTextField(Icons.email, 'Email', TextInputType.emailAddress,
+        validateEmail, _emailInputController);
   }
 
   Widget _buildPasswordTF() {
-    return buildTextField(Icons.password, 'Password', validatePassword, _passwdInputController, obsecureText: true);
+    return buildTextField(Icons.password, 'Password', TextInputType.visiblePassword,
+        validatePassword, _passwdInputController, obsecureText: true);
   }
 
   void _doSignUp() {
@@ -95,10 +97,10 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
       child: SizedBox(
         height: double.infinity,
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(
             horizontal: 40.0,
-            vertical: 120.0,
+            vertical: 100.0,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -108,8 +110,8 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
                 style: kLabelStyle,
               )),
               Form(
-                key: _formkey,
-                onChanged: () => setState(() => _formValidated = _formkey.currentState!.validate()),
+                key: _formKey,
+                onChanged: () => setState(() => _formValidated = _formKey.currentState!.validate()),
                 child: Column(
                   children: [
                     const SizedBox(height: 30.0),

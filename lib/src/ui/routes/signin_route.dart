@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/ui/feed_route.dart';
+import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
+import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
 
-import 'factory.dart';
-import 'error_dialog.dart';
+import '../widgets/constants.dart';
+import '../widgets/error_dialog.dart';
 import 'signup_route.dart';
 
 class SignInRoute extends StatefulWidget {
@@ -21,6 +22,8 @@ class SignInRoute extends StatefulWidget {
 class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   late SignBloc _bloc;
   final String _splashPath = 'assets/signin/splash-' + (Random().nextInt(5) + 1).toString() + '.jpg';
+  final _formKey = GlobalKey<FormState>();
+  bool _formValidated = false;
 
   final _emailInputController = TextEditingController();
   final _passwordInputController = TextEditingController();
@@ -50,14 +53,16 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
               _emailInputController.text = snapshot.data!.lastEmail;
             }
           }
-          return buildTextField(Icons.email, 'Email', validateEmail, _emailInputController);
+          return buildTextField(Icons.email, 'Email', TextInputType.emailAddress
+              , validateEmail, _emailInputController);
         }
     );
     return _emailTFBuilder!;
   }
 
   Widget _buildPasswordTF() {
-    return buildTextField(Icons.password, 'Password', validatePassword, _passwordInputController, obsecureText: true);
+    return buildTextField(Icons.password, 'Password', TextInputType.visiblePassword,
+        validatePassword, _passwordInputController, obsecureText: true);
   }
 
   Widget _buildForgotPasswordBtn() {
@@ -118,17 +123,21 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
         );
       },
     );
-}
+  }
+
+  void _doLogin() {
+    _bloc.signInWithEmail(context,
+      _emailInputController.text,
+      _passwordInputController.text,
+    );
+  }
 
   Widget _buildLoginBtn() {
     return Container(
       padding: const EdgeInsets.only(top: 25.0),
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () => _bloc.signInWithEmail(context,
-          _emailInputController.text,
-          _passwordInputController.text,
-        ),
+        onPressed: _formValidated ? _doLogin : null,
         style: ElevatedButton.styleFrom(
           elevation: 5.0,
           padding: const EdgeInsets.all(15.0),
@@ -208,10 +217,10 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
         child: SizedBox(
           height: double.infinity,
           child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(
               horizontal: 40.0,
-              vertical: 120.0,
+              vertical: 100.0,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -220,10 +229,18 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                   text: 'Sign In',
                   style: kLabelStyle,
                 )),
-                const SizedBox(height: 30.0),
-                _buildEmailTF(),
-                const SizedBox(height: 10.0),
-                _buildPasswordTF(),
+                Form(
+                  key: _formKey,
+                  onChanged: () => setState(() => _formValidated = _formKey.currentState!.validate()),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30.0),
+                      _buildEmailTF(),
+                      const SizedBox(height: 10.0),
+                      _buildPasswordTF(),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 10.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

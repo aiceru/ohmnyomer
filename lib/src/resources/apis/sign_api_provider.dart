@@ -32,15 +32,22 @@ class SignApiProvider {
     ),
   );
 
+  SignApiClient _newClient() {
+    return SignApiClient(
+      channel,
+      options: _callOptions,
+    );
+  }
+
   Future<Authorization> _signUp(SignUpRequest req) async {
     final client = SignApiClient(channel);
-    final resp = await client.signUp(req, options: _callOptions);
+    final resp = await client.signUp(req);
     return Authorization.fromProto(resp);
   }
 
   Future<Authorization> _signIn(SignInRequest req) async {
     final client = SignApiClient(channel);
-    final resp = await client.signIn(req, options: _callOptions);
+    final resp = await client.signIn(req);
     return Authorization.fromProto(resp);
   }
 
