@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -146,7 +147,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
           ),
         ),
         child: const Text(
-          'LOGIN',
+          "LOG IN",
           style: TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,

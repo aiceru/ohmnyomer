@@ -1,0 +1,6 @@
+{
+  "login": "LOG IN",
+  "@login": {
+    "description": "Log in button label"
+  }
+}
