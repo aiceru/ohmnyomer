@@ -1,6 +1,6 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -22,11 +22,15 @@ class AccountRoute extends StatefulWidget {
 
 class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
   late AccountBloc _bloc;
+  bool _init = false;
 
   @override
   void didChangeDependencies() {
-    _bloc = AccountBlocProvider.of(context);
-    _bloc.fetchAccount();
+    if(!_init) {
+      _bloc = AccountBlocProvider.of(context);
+      _bloc.getAccount();
+      _init = true;
+    }
     super.didChangeDependencies();
   }
 
@@ -44,7 +48,8 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
       builder: (context)
       {
         _textEditingController.text = '';
-        return DialogTextFormField('Edit name',
+        return DialogTextFormField(
+          AppLocalizations.of(context)!.editName,
           labelText: 'Enter new name',
           validator: validateName,
           inputType: TextInputType.name,
@@ -188,7 +193,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
             WidgetsBinding.instance?.addPostFrameCallback((_) {
               ErrorDialog().show(context, snapshot.error!);
             });
-            _bloc.fetchAccount(); // fetch locally saved account
+            _bloc.getAccount(); // fetch locally saved account
           }
           return const SizedBox.shrink();
         },

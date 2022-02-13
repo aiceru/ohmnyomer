@@ -25,17 +25,21 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   final String _splashPath = 'assets/signin/splash-' + (Random().nextInt(5) + 1).toString() + '.jpg';
   final _formKey = GlobalKey<FormState>();
   bool _formValidated = false;
+  bool _init = false;
 
   final _emailInputController = TextEditingController();
   final _passwordInputController = TextEditingController();
 
-  StreamBuilder<SigningValues>? _emailTFBuilder;
+  StreamBuilder<SharedPrefValues>? _emailTFBuilder;
 
   @override
   void didChangeDependencies() {
-    _bloc = SignBlocProvider.of(context);
-    _bloc.fetchValues();
-    _bloc.checkSignInStatus();
+    if (!_init) {
+      _bloc = SignBlocProvider.of(context);
+      _bloc.getSharedPrefValues();
+      _bloc.checkSignInStatus();
+      _init = true;
+    }
     super.didChangeDependencies();
   }
 
@@ -48,7 +52,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   Widget _buildEmailTF() {
     _emailTFBuilder ??= StreamBuilder(
         stream: _bloc.valuesSubject,
-        builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+        builder: (context, AsyncSnapshot<SharedPrefValues> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             if (snapshot.data!.rememberMe) {
               _emailInputController.text = snapshot.data!.lastEmail;
@@ -79,7 +83,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   Widget _buildRememberMeCheckbox() {
     return StreamBuilder(
         stream: _bloc.valuesSubject,
-        builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+        builder: (context, AsyncSnapshot<SharedPrefValues> snapshot) {
           var rememberMe = snapshot.hasData && snapshot.data != null ? snapshot.data!.rememberMe : false;
           return Row(
             children: [
@@ -104,7 +108,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   Widget _buildAutoLoginCheckBox() {
     return StreamBuilder(
       stream: _bloc.valuesSubject,
-      builder: (context, AsyncSnapshot<SigningValues> snapshot) {
+      builder: (context, AsyncSnapshot<SharedPrefValues> snapshot) {
         var autoSignIn = snapshot.hasData && snapshot.data != null ? snapshot.data!.autoSignIn : false;
         return Row(
           children: [

@@ -2,6 +2,7 @@ import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
@@ -48,23 +49,19 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     super.initState();
   }
 
+  _pickAndCropImage() async {
+    XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    debugPrint('$image');
+  }
+
   Widget _buildPetDetailTitleRow() {
-    return BorderedCircleAvatar(28.0,
-      networkSrc: _photourl == '' ? null : _photourl,
-      iconData: _photourl == '' ? Icons.add_a_photo : null,
+    return GestureDetector(
+      onTap: _pickAndCropImage,
+      child: BorderedCircleAvatar(28.0,
+        networkSrc: _photourl == '' ? null : _photourl,
+        iconData: _photourl == '' ? Icons.add_a_photo : null,
+      ),
     );
-  }
-
-  void selectFamilyCallback(String value) {
-    setState(() {
-      _familyKey = value;
-    });
-  }
-
-  void selectSpeciesCallback(String value) {
-    setState(() {
-      _speciesKey = value;
-    });
   }
 
   Future<dynamic> selectListDialog(Map<String, String> kv, String title) async {

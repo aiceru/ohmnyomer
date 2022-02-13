@@ -8,12 +8,12 @@ import 'package:ohmnyomer/src/resources/repository/repository_sign_ext.dart';
 import 'package:ohmnyomer/src/ui/widgets/loading_indicator_dialog.dart';
 import 'package:rxdart/rxdart.dart';
 
-class SigningValues {
+class SharedPrefValues {
   bool rememberMe;
   bool autoSignIn;
   String lastEmail;
 
-  SigningValues(this.rememberMe, this.autoSignIn, this.lastEmail);
+  SharedPrefValues(this.rememberMe, this.autoSignIn, this.lastEmail);
 }
 
 class SignBloc {
@@ -21,26 +21,22 @@ class SignBloc {
   final _oauthProvider = OAuthProvider();
 
   final _resultSubject = PublishSubject<SignInResult>();
-  final _valuesSubject = BehaviorSubject<SigningValues>();
+  final _valuesSubject = BehaviorSubject<SharedPrefValues>();
 
   Stream<SignInResult> get resultSubject => _resultSubject.stream;
-  Stream<SigningValues> get valuesSubject => _valuesSubject.stream;
+  Stream<SharedPrefValues> get valuesSubject => _valuesSubject.stream;
 
   checkSignInStatus() {
     Account? account = _repository.account;
     if (account == null && _repository.autoSignIn) {
-      // LoadingIndicatorDialog().show(context);
       _repository.signInWithCredential()
-          .then((value) {
-        _resultSubject.sink.add(value);
-      }).catchError((e) {
-        _resultSubject.sink.addError(e);
-      });//.whenComplete(() => LoadingIndicatorDialog().dismiss());
+          .then((value) => _resultSubject.sink.add(value))
+          .catchError((e) => _resultSubject.sink.addError(e));
     }
   }
 
-  fetchValues() {
-    var values = SigningValues(
+  getSharedPrefValues() {
+    var values = SharedPrefValues(
       _repository.rememberMe,
       _repository.autoSignIn,
       _repository.signInEmail,
@@ -101,11 +97,11 @@ class SignBloc {
 
   setAutoSignIn(bool value) {
     _repository.autoSignIn = value;
-    fetchValues();
+    getSharedPrefValues();
   }
   setRememberMe(bool value) {
     _repository.rememberMe = value;
-    fetchValues();
+    getSharedPrefValues();
   }
 
   dispose() {

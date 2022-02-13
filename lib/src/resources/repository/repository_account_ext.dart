@@ -2,6 +2,11 @@ import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
 
 extension RepositoryAccountExt on Repository {
+  Future<Account> fetchAccount() async {
+    account = await accountApiProvider.getAccount(authToken!);
+    return account!;
+  }
+
   Future<Account> updateName(String name) async {
     account = await accountApiProvider.updateName(authToken!, name);
     return account!;

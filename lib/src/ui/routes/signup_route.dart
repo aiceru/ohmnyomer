@@ -23,10 +23,14 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
   final _passwdInputController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _formValidated = false;
+  bool _init = false;
 
   @override
   void didChangeDependencies() {
-    _bloc = SignBlocProvider.of(context);
+    if (!_init) {
+      _bloc = SignBlocProvider.of(context);
+      _init = true;
+    }
     super.didChangeDependencies();
   }
 

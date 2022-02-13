@@ -16,7 +16,7 @@ class PetsBloc {
     _petListSubject.close();
   }
 
-  fetchAccount() {
+  getAccount() {
     _accountSubject.sink.add(_repository.account!);
   }
 

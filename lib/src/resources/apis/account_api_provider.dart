@@ -29,6 +29,14 @@ class AccountApiProvider {
     );
   }
 
+  Future<Account> getAccount(String authToken) async {
+    final client = _newClient(authToken);
+    final resp = await client.get(
+      GetAccountRequest()
+    );
+    return resp.account;
+  }
+
   Future<Account> updateName(String authToken, String name) async {
     final client = _newClient(authToken);
     final resp = await client.update(

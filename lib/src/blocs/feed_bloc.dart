@@ -15,7 +15,7 @@ class FeedBloc {
     _accountSubject.close();
   }
 
-  fetchAccount() {
+  getAccount() {
     _accountSubject.sink.add(_repository.account);
   }
 

@@ -15,23 +15,29 @@ class AccountBloc {
     _accountSubject.close();
   }
 
-  fetchAccount() {
+  getAccount() {
     _accountSubject.sink.add(_repository.account!);
   }
 
+  fetchAccount() {
+    _repository.fetchAccount()
+        .then((value) => _accountSubject.sink.add(value))
+        .catchError((e) => _accountSubject.sink.addError(e));
+  }
+
   updateName(BuildContext context, String name) {
-    LoadingIndicatorDialog().show(context);
+    // LoadingIndicatorDialog().show(context);
     _repository.updateName(name)
         .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => _accountSubject.sink.addError(e))
-        .whenComplete(() => LoadingIndicatorDialog().dismiss());
+        .catchError((e) => _accountSubject.sink.addError(e));
+        // .whenComplete(() => LoadingIndicatorDialog().dismiss());
   }
 
   updatePassword(BuildContext context, String password) {
-    LoadingIndicatorDialog().show(context);
+    // LoadingIndicatorDialog().show(context);
     _repository.updatePassword(password)
         .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => _accountSubject.sink.addError(e))
-        .whenComplete(() => LoadingIndicatorDialog().dismiss());
+        .catchError((e) => _accountSubject.sink.addError(e));
+        // .whenComplete(() => LoadingIndicatorDialog().dismiss());
   }
 }

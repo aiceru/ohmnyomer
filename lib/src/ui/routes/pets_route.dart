@@ -21,15 +21,17 @@ class _PetsRouteState extends State<PetsRoute> {
   Map<String, Family>? _families = {};
   late PetsBloc _bloc;
   late List<Pet> _petList;
-
-  @override
+  bool _init = false;
 
   @override
   void didChangeDependencies() {
-    _bloc = PetsBlocProvider.of(context);
-    _bloc.fetchAccount();
-    _bloc.fetchPetList();
-    _families = _bloc.getSupportedFamilies();
+    if (!_init) {
+      _bloc = PetsBlocProvider.of(context);
+      _bloc.getAccount();
+      _bloc.fetchPetList();
+      _families = _bloc.getSupportedFamilies();
+      _init = true;
+    }
     super.didChangeDependencies();
   }
 
@@ -92,7 +94,7 @@ class _PetsRouteState extends State<PetsRoute> {
                   WidgetsBinding.instance?.addPostFrameCallback((_) {
                     ErrorDialog().show(context, snapshot.error!);
                   });
-                  _bloc.fetchAccount(); // fetch locally saved account
+                  _bloc.getAccount(); // fetch locally saved account
                 }
                 return const SizedBox.shrink();
               },

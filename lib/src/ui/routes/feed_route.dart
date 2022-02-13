@@ -21,11 +21,15 @@ class FeedRoute extends StatefulWidget {
 
 class _FeedRouteState extends State<FeedRoute> {
   late FeedBloc _bloc;
+  bool _init = false;
 
   @override
   void didChangeDependencies() {
-    _bloc = FeedBlocProvider.of(context);
-    _bloc.fetchAccount();
+    if (!_init) {
+      _bloc = FeedBlocProvider.of(context);
+      _bloc.getAccount();
+      _init = true;
+    }
     super.didChangeDependencies();
   }
 

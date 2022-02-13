@@ -41,6 +41,8 @@ dependencies:
   shared_preferences: ^2.0.12
   grpc: ^3.0.2
   fixnum: ^1.0.0
+  image_picker: ^0.8.4+8
+  image_cropper: ^1.4.1
   dartnyom:
     path: ../protonyom/dartnyom
 #    git:
