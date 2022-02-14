@@ -1,6 +1,7 @@
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/apis/account_api_provider.dart';
 import 'package:ohmnyomer/src/resources/credential_provider.dart';
@@ -69,6 +70,8 @@ class Repository {
   }
 
   Future<bool> initConfigData(BuildContext context) async {
+    String temp = Intl.getCurrentLocale();
+    debugPrint('$temp');
     _locale = Localizations.localeOf(context).languageCode;
     familyMap = await _petApiProvider.getSupportedFamilies(_locale);
     return true;

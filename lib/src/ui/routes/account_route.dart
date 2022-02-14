@@ -1,6 +1,6 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -49,8 +49,8 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
       {
         _textEditingController.text = '';
         return DialogTextFormField(
-          AppLocalizations.of(context)!.editName,
-          labelText: 'Enter new name',
+          S.of(context).editName,
+          labelText: S.of(context).enterNewName,
           validator: validateName,
           inputType: TextInputType.name,
           controller: _textEditingController,
@@ -71,7 +71,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
       {
         _textEditingController.text = '';
         return DialogTextFormField('Edit password',
-            labelText: 'Enter new password',
+            labelText: S.of(context).enterNewPassword,
             obscureText: true,
             validator: validatePassword,
             inputType: TextInputType.visiblePassword,
@@ -127,7 +127,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
     return ListCard(
       const Icon(Icons.face, size: 32.0),
       account.name,
-      'Display name, tap to edit',
+      S.of(context).nameTapToEdit,
       ontap: () => _showEditNameDialog(context)
     );
   }
