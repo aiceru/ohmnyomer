@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -41,18 +42,18 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
   }
 
   Widget _buildNameTF() {
-    return buildTextField(Icons.face, 'Name', TextInputType.name,
-        validateName, _nameInputController);
+    return buildTextField(Icons.face, S.of(context).name, TextInputType.name,
+        validateNameFunc(context), _nameInputController);
   }
 
   Widget _buildEmailTF() {
-    return buildTextField(Icons.email, 'Email', TextInputType.emailAddress,
-        validateEmail, _emailInputController);
+    return buildTextField(Icons.email, S.of(context).email, TextInputType.emailAddress,
+        validateEmailFunc(context), _emailInputController);
   }
 
   Widget _buildPasswordTF() {
-    return buildTextField(Icons.password, 'Password', TextInputType.visiblePassword,
-        validatePassword, _passwdInputController, obsecureText: true);
+    return buildTextField(Icons.password, S.of(context).password, TextInputType.visiblePassword,
+        validatePasswordFunc(context), _passwdInputController, obsecureText: true);
   }
 
   void _doSignUp() {
@@ -77,9 +78,9 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        child: const Text(
-          'REGISTER',
-          style: TextStyle(
+        child: Text(
+          S.of(context).register,
+          style: const TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
             fontSize: 18.0,
@@ -109,8 +110,8 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              RichText(text: const TextSpan(
-                text: 'Sign Up',
+              RichText(text: TextSpan(
+                text: S.of(context).signUp,
                 style: kLabelStyle,
               )),
               Form(

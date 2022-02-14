@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 
 class DialogTextFormField extends StatefulWidget {
   final String title;
@@ -45,11 +46,11 @@ class _DialogTextFormFieldState extends State<DialogTextFormField> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(S.of(context).cancel),
         ),
         TextButton(
           onPressed: _isValidated ? widget.onSave : null,
-          child: const Text('Save'),
+          child: Text(S.of(context).save),
         )
       ],
     );

@@ -20,14 +20,50 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
+  static String m0(chars) =>
+      "too short, please enter ${chars} characters or more";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "adoptedAt": MessageLookupByLibrary.simpleMessage("Adopted at"),
+        "appName": MessageLookupByLibrary.simpleMessage("OhmNyom"),
+        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "dontHaveAnAccount":
+            MessageLookupByLibrary.simpleMessage("Don\'t have an Account? "),
         "editName": MessageLookupByLibrary.simpleMessage("Edit display name"),
+        "editPassword": MessageLookupByLibrary.simpleMessage("Edit password"),
+        "email": MessageLookupByLibrary.simpleMessage("Email"),
         "enterNewName": MessageLookupByLibrary.simpleMessage("Enter new name"),
         "enterNewPassword":
             MessageLookupByLibrary.simpleMessage("Enter new password"),
+        "enterValidEmail":
+            MessageLookupByLibrary.simpleMessage("Enter valid email"),
+        "forgotPassword":
+            MessageLookupByLibrary.simpleMessage("Forgot Password?"),
+        "joinedAt": MessageLookupByLibrary.simpleMessage("Joined at"),
+        "linkedAccount": MessageLookupByLibrary.simpleMessage("Linked account"),
         "login": MessageLookupByLibrary.simpleMessage("LOG IN"),
-        "nameTapToEdit":
-            MessageLookupByLibrary.simpleMessage("Display name, Tap to edit")
+        "name": MessageLookupByLibrary.simpleMessage("Name"),
+        "oauthNotLinked": MessageLookupByLibrary.simpleMessage("Not linked"),
+        "obscuredPassword": MessageLookupByLibrary.simpleMessage("********"),
+        "or": MessageLookupByLibrary.simpleMessage("OR"),
+        "password": MessageLookupByLibrary.simpleMessage("Password"),
+        "passwordNotSet":
+            MessageLookupByLibrary.simpleMessage("Password not set"),
+        "register": MessageLookupByLibrary.simpleMessage("REGISTER"),
+        "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
+        "save": MessageLookupByLibrary.simpleMessage("Save"),
+        "selectKind": MessageLookupByLibrary.simpleMessage("Select kind"),
+        "selectPet": MessageLookupByLibrary.simpleMessage("Select pet"),
+        "signIn": MessageLookupByLibrary.simpleMessage("Sign In"),
+        "signInAutomatically":
+            MessageLookupByLibrary.simpleMessage("Sign in automatically"),
+        "signInWith": MessageLookupByLibrary.simpleMessage("Sign In with"),
+        "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
+        "tapToEditName":
+            MessageLookupByLibrary.simpleMessage("Display name, Tap to edit"),
+        "tapToEditPassword":
+            MessageLookupByLibrary.simpleMessage("Tap to edit password"),
+        "tooShort": m0
       };
 }

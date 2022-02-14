@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -57,16 +58,16 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
               _emailInputController.text = snapshot.data!.lastEmail;
             }
           }
-          return buildTextField(Icons.email, 'Email', TextInputType.emailAddress
-              , validateEmail, _emailInputController);
+          return buildTextField(Icons.email, S.of(context).email, TextInputType.emailAddress,
+              validateEmailFunc(context), _emailInputController);
         }
     );
     return _emailTFBuilder!;
   }
 
   Widget _buildPasswordTF() {
-    return buildTextField(Icons.password, 'Password', TextInputType.visiblePassword,
-        validatePassword, _passwordInputController, obsecureText: true);
+    return buildTextField(Icons.password, S.of(context).password, TextInputType.visiblePassword,
+        validatePasswordFunc(context), _passwordInputController, obsecureText: true);
   }
 
   Widget _buildForgotPasswordBtn() {
@@ -74,7 +75,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
       onTap: () => print('Forgot Password Button Pressed'),
       child: Container(
         // padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: smallLabel('Forgot Password?'),
+        child: smallLabel(S.of(context).forgotPassword),
       ),
     );
   }
@@ -97,7 +98,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                   },
                 ),
               ),
-              smallLabel('Remember me'),
+              smallLabel(S.of(context).rememberMe),
             ],
           );
         }
@@ -122,7 +123,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                 },
               ),
             ),
-            smallLabel('Sign in automatically'),
+            smallLabel(S.of(context).signInAutomatically),
           ],
         );
       },
@@ -149,9 +150,9 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
-        child: const Text(
-          "LOG IN",
-          style: TextStyle(
+        child: Text(
+          S.of(context).login,
+          style: const TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
             fontSize: 18.0,
@@ -193,14 +194,14 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
         );
       },
       child: RichText(
-        text: const TextSpan(
+        text: TextSpan(
           children: [
             TextSpan(
-              text: 'Don\'t have an Account?  ',
+              text: S.of(context).dontHaveAnAccount,
               style: kSmallLabelStyle,
             ),
             TextSpan(
-              text: 'Sign Up',
+              text: S.of(context).signUp,
               style: kSmallLabelStyle,
             ),
           ],
@@ -229,8 +230,8 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RichText(text: const TextSpan(
-                  text: 'Sign In',
+                RichText(text: TextSpan(
+                  text: S.of(context).signIn,
                   style: kLabelStyle,
                 )),
                 Form(
@@ -256,8 +257,8 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                 _buildLoginBtn(),
                 _buildAutoLoginCheckBox(),
                 const SizedBox(height: 20.0),
-                smallLabel('OR'),
-                smallLabel('Sign In with'),
+                smallLabel(S.of(context).or),
+                smallLabel(S.of(context).signInWith),
                 const SizedBox(height: 20.0),
                 _buildSocialBtnRow(),
                 const SizedBox(height: 50.0),

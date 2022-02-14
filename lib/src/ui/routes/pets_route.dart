@@ -1,6 +1,7 @@
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
@@ -130,7 +131,7 @@ class _PetsRouteState extends State<PetsRoute> {
                         if (pet.adopted.toInt() > 0)
                           Padding(padding: const EdgeInsets.all(6.0),
                               child: infoText(
-                                  'Adopted at ' +
+                                  S.of(context).adoptedAt + ': ' +
                                       dateTimeFromEpochSeconds(pet.adopted.toInt()).formatDate()
                               )
                           ),

@@ -3,6 +3,7 @@ import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
@@ -113,7 +114,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
               const Icon(Icons.more_horiz, color: Colors.black54),
               TextButton(
                   onPressed: () {
-                    selectListDialog(familyMap, 'Select pet').then((value) {
+                    selectListDialog(familyMap, S.of(context).selectPet).then((value) {
                       if (value != null) {
                         setState(() {
                           _familyKey = value;
@@ -140,7 +141,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
               TextButton(
                   onPressed: () {
                     if (_familyMap[_familyKey] != null) {
-                      selectListDialog(_familyMap[_familyKey]!.species, 'Select kind').then((value) {
+                      selectListDialog(_familyMap[_familyKey]!.species, S.of(context).selectKind).then((value) {
                         setState(() => _speciesKey = value);
                       });
                     }
@@ -166,7 +167,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
       decoration: kBoxDecorationStyle,
       height: 60.0,
       child: InkWell(
-        child: Center(child: infoText('Adopted at: ' + _adopted.formatDate())),
+        child: Center(child: infoText(S.of(context).adoptedAt + ': ' + _adopted.formatDate())),
         onTap: () {
           Future<DateTime?> selectedDate = showDatePicker(
             context: context,
@@ -238,7 +239,8 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
         title: _buildPetDetailTitleRow(),
         children: [
           const Divider(),
-          buildTextField(Icons.pets, 'Name', TextInputType.name, validateName, _nameInputController),
+          buildTextField(Icons.pets, S.of(context).name, TextInputType.name,
+              validateNameFunc(context), _nameInputController),
           const Divider(),
           _buildFamilyRow(),
           const Divider(),

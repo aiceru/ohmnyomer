@@ -51,7 +51,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
         return DialogTextFormField(
           S.of(context).editName,
           labelText: S.of(context).enterNewName,
-          validator: validateName,
+          validator: validateNameFunc(context),
           inputType: TextInputType.name,
           controller: _textEditingController,
           onSave: () =>
@@ -70,10 +70,11 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
       builder: (context)
       {
         _textEditingController.text = '';
-        return DialogTextFormField('Edit password',
+        return DialogTextFormField(
+            S.of(context).editPassword,
             labelText: S.of(context).enterNewPassword,
             obscureText: true,
-            validator: validatePassword,
+            validator: validatePasswordFunc(context),
             inputType: TextInputType.visiblePassword,
             controller: _textEditingController,
             onSave: () =>
@@ -127,7 +128,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
     return ListCard(
       const Icon(Icons.face, size: 32.0),
       account.name,
-      S.of(context).nameTapToEdit,
+      S.of(context).tapToEditName,
       ontap: () => _showEditNameDialog(context)
     );
   }
@@ -135,8 +136,8 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
   Widget _buildPasswordListCard(Account account) {
     return ListCard(
       const Icon(Icons.password, size: 32.0),
-      account.hasPassword ? '********' : 'Password not set',
-      'Tap to edit password',
+      account.hasPassword ? S.of(context).obscuredPassword : S.of(context).passwordNotSet,
+      S.of(context).tapToEditPassword,
       ontap: () => _showEditPasswordDialog(context)
     );
   }
@@ -145,8 +146,8 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
     return ListCard(
       socialLogo(provider, 36.0),
       account.oauthinfo[provider] == null ?
-      'Not linked' : account.oauthinfo[provider]!.email,
-      'Linked account',
+      S.of(context).oauthNotLinked : account.oauthinfo[provider]!.email,
+      S.of(context).linkedAccount,
     );
   }
 
@@ -154,7 +155,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
     return ListCard(
       const Icon(Icons.access_time, size: 32.0),
       dateTimeFromEpochSeconds(account.signedup.toInt()).formatDateTime(),
-      'Feeding since...',
+      S.of(context).joinedAt,
     );
   }
 
