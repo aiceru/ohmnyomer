@@ -77,10 +77,6 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     });
   }
 
-  _uploadImage(File file) {
-    _bloc.uploadProfileImage(_id, file);
-  }
-
   Widget _buildPetDetailTitleRow() {
     return GestureDetector(
       onTap: () => _pickAndCropImage(),
@@ -232,9 +228,9 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
           ..family = _familyKey
           ..species = _speciesKey;
         if (pet.id == "") {
-          _bloc.addPet(pet);
+          _bloc.addPet(pet, _localProfile);
         } else {
-          _bloc.updatePet(pet);
+          _bloc.updatePet(pet, _localProfile);
         }
         Navigator.of(context).pop();
       },

@@ -62,18 +62,26 @@ class PetApiProvider{
     return resp.families;
   }
 
-  Future<PetListWithAccount> addPet(String authToken, Pet pet) async {
+  Future<PetListWithAccount> addPet(String authToken, Pet pet,
+      String? contentType, Uint8List? bytes) async {
     final client = _newClientWithAuth(authToken);
     final resp = await client.addPet(
-      AddPetRequest()..pet = pet
+      AddPetRequest()
+        ..pet = pet
+        ..profileContentType = contentType ?? ''
+        ..profilePhoto = bytes ?? Uint8List(0)
     );
     return PetListWithAccount.fromAddPetReply(resp);
   }
 
-  Future<List<Pet>> updatePet(String authToken, Pet pet) async {
+  Future<List<Pet>> updatePet(String authToken, Pet pet,
+      String? contentType, Uint8List? bytes) async {
     final client = _newClientWithAuth(authToken);
     final resp = await client.updatePet(
-      UpdatePetRequest()..pet = pet
+      UpdatePetRequest()
+        ..pet = pet
+        ..profileContentType = contentType ?? ''
+        ..profilePhoto = bytes ?? Uint8List(0)
     );
     return resp.pets;
   }
@@ -91,19 +99,6 @@ class PetApiProvider{
     final resp = await client.getPetList(
       GetPetListRequest(
         petIds: petIds,
-      )
-    );
-    return resp.pets;
-  }
-
-  Future<List<Pet>> uploadPetProfile(String authToken, String petId,
-      String contentType, Uint8List bytes) async {
-    final client = _newClientWithAuth(authToken);
-    final resp = await client.uploadPetProfile(
-      UploadPetProfileRequest(
-        petId: petId,
-        contentType: contentType,
-        content: bytes,
       )
     );
     return resp.pets;

@@ -246,7 +246,7 @@ class _FeedRouteState extends State<FeedRoute> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {  },
+          onPressed: () { debugPrint('밥이다냥!'); },
             backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
           child: const Icon(Icons.add)
         )

@@ -34,22 +34,26 @@ class PetsBloc {
     return _repository.familyMap;
   }
 
-  addPet(Pet pet) {
-    _repository.addPet(pet)
+  addPet(Pet pet, File? image) {
+    String? cType;
+    Uint8List? content;
+    if (image != null) {
+      cType = lookupMimeType(image.path);
+      content = image.readAsBytesSync();
+    }
+    _repository.addPet(pet, cType, content)
         .then((value) => _petListSubject.sink.add(value))
         .catchError((e) => _petListSubject.sink.addError(e));
   }
 
-  updatePet(Pet pet) {
-    _repository.updatePet(pet)
-        .then((value) => _petListSubject.sink.add(value))
-        .catchError((e) => _petListSubject.sink.addError(e));
-  }
-
-  uploadProfileImage(String petId, File image) {
-    String? contentType = lookupMimeType(image.path);
-    Uint8List bytes = image.readAsBytesSync();
-    _repository.uploadPetProfile(petId, contentType ?? 'image/jpeg', bytes)
+  updatePet(Pet pet, File? image) {
+    String? cType;
+    Uint8List? content;
+    if (image != null) {
+      cType = lookupMimeType(image.path);
+      content = image.readAsBytesSync();
+    }
+    _repository.updatePet(pet, cType, content)
         .then((value) => _petListSubject.sink.add(value))
         .catchError((e) => _petListSubject.sink.addError(e));
   }
