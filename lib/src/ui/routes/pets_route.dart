@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
@@ -116,7 +120,13 @@ class _PetsRouteState extends State<PetsRoute> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const BorderedCircleAvatar(22.0, iconData: Icons.pets),
+                    // GestureDetector(
+                    //   onTap: () => _uploadProfileImage(pet.id),
+                    BorderedCircleAvatar(28.0,
+                        networkSrc: pet.photourl == '' ? null : pet.photourl,
+                        iconData: pet.photourl == '' ? Icons.pets : null,
+                    ),
+                    // ),
                     const SizedBox(width: 30.0),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

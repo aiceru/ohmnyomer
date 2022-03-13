@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
@@ -29,7 +32,10 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
   String _familyKey = '';
   String _speciesKey = '';
   DateTime _adopted = DateTime.now();
+
   Map<String, Family> _familyMap = {};
+  File? _localProfile;
+
   late PetsBloc _bloc;
   final TextEditingController _nameInputController = TextEditingController();
 
@@ -50,18 +56,39 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     super.initState();
   }
 
-  _pickAndCropImage() async {
-    XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    debugPrint('$image');
+  _pickAndCropImage() {
+    ImagePicker().pickImage(source: ImageSource.gallery)
+        .then((value) =>
+    {
+      if (value != null) {
+        ImageCropper.cropImage(
+            sourcePath: value.path,
+            maxWidth: 512,
+            maxHeight: 512,
+            aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+            cropStyle: CropStyle.circle)
+            .then((value) =>
+        {
+          setState(() {
+            _localProfile = value;
+          })
+        })
+      }
+    });
+  }
+
+  _uploadImage(File file) {
+    _bloc.uploadProfileImage(_id, file);
   }
 
   Widget _buildPetDetailTitleRow() {
     return GestureDetector(
-      onTap: _pickAndCropImage,
+      onTap: () => _pickAndCropImage(),
       child: BorderedCircleAvatar(28.0,
-        networkSrc: _photourl == '' ? null : _photourl,
-        iconData: _photourl == '' ? Icons.add_a_photo : null,
-      ),
+          file: _localProfile,
+          networkSrc: _photourl,
+          iconData: Icons.add_a_photo,
+        ),
     );
   }
 
@@ -232,7 +259,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
 
   @override
   Widget build(BuildContext context) {
-    return StatefulBuilder(builder: (_, __) {
+    return StatefulBuilder(builder: (context, setState) {
       return SimpleDialog(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0)),

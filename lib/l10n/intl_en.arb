@@ -31,5 +31,7 @@
   "cancel": "Cancel",
   "save": "Save",
   "tooShort": "too short, please enter {chars} characters or more",
-  "enterValidEmail": "Enter valid email"
+  "enterValidEmail": "Enter valid email",
+  "addNewPet": "Add new pet",
+  "edit": "Edit"
 }

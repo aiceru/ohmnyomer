@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/apis/pet_api_provider.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
@@ -18,5 +20,9 @@ extension RepositoryPetExt on Repository {
       return Future.value([]);
     }
     return petApiProvider.getPetList(authToken!, account!.pets);
+  }
+
+  Future<List<Pet>> uploadPetProfile(String petId, String contentType, Uint8List bytes) {
+    return petApiProvider.uploadPetProfile(authToken!, petId, contentType, bytes);
   }
 }

@@ -24,11 +24,13 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "addNewPet": MessageLookupByLibrary.simpleMessage("새로 추가하기"),
         "adoptedAt": MessageLookupByLibrary.simpleMessage("입양일"),
         "appName": MessageLookupByLibrary.simpleMessage("옴뇸뇸뇸"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("아직 가입하지 않았다냥? "),
+        "edit": MessageLookupByLibrary.simpleMessage("정보 수정하기"),
         "editName": MessageLookupByLibrary.simpleMessage("이름 변경하기"),
         "editPassword": MessageLookupByLibrary.simpleMessage("패스워드 변경하기"),
         "email": MessageLookupByLibrary.simpleMessage("이메일 주소"),

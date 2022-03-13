@@ -43,6 +43,7 @@ dependencies:
   fixnum: ^1.0.0
   image_picker: ^0.8.4+8
   image_cropper: ^1.4.1
+  mime: ^1.0.1
   dartnyom:
     path: ../protonyom/dartnyom
 #    git:

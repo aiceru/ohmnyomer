@@ -1,6 +1,7 @@
 {
   "@@locale": "ko",
   "appName": "옴뇸뇸뇸",
+
   "login": "로그인",
   "editName": "이름 변경하기",
   "enterNewName": "새 이름",
@@ -31,5 +32,7 @@
   "cancel": "취소",
   "save": "저장",
   "tooShort": "너무 짧다냥 {chars}자 이상 입력하라냥",
-  "enterValidEmail": "메일 주소가 이상하다냥!"
+  "enterValidEmail": "메일 주소가 이상하다냥!",
+  "addNewPet": "새로 추가하기",
+  "edit": "정보 수정하기"
 }

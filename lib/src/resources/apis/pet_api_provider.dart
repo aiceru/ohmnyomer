@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartnyom/protonyom_api_pet.pbgrpc.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:grpc/grpc.dart';
@@ -89,6 +91,19 @@ class PetApiProvider{
     final resp = await client.getPetList(
       GetPetListRequest(
         petIds: petIds,
+      )
+    );
+    return resp.pets;
+  }
+
+  Future<List<Pet>> uploadPetProfile(String authToken, String petId,
+      String contentType, Uint8List bytes) async {
+    final client = _newClientWithAuth(authToken);
+    final resp = await client.uploadPetProfile(
+      UploadPetProfileRequest(
+        petId: petId,
+        contentType: contentType,
+        content: bytes,
       )
     );
     return resp.pets;
