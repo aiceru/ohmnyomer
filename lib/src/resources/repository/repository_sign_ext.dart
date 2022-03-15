@@ -21,6 +21,9 @@ extension RepositorySignExt on Repository {
   Future<SignInResult> signUpWithEmail(String name, email, password) async {
     Authorization auth = await signApiProvider.signUpWithEmail(name, email, password);
     account = auth.account;
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
     authToken = auth.token;
 
     return SignInResult.success;
@@ -31,6 +34,9 @@ extension RepositorySignExt on Repository {
     Authorization auth = await signApiProvider.signUpWithOAuthInfo(
         name, info, provider, photourl);
     account = auth.account;
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
     authToken = auth.token;
 
     return SignInResult.success;
@@ -39,6 +45,9 @@ extension RepositorySignExt on Repository {
   Future<SignInResult> signInWithEmail(String email, password) async {
     Authorization auth = await signApiProvider.signInWithEmail(email, password);
     account = auth.account;
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
     authToken = auth.token;
 
     if (rememberMe) {
@@ -54,6 +63,9 @@ extension RepositorySignExt on Repository {
   Future<SignInResult> signInWithOAuthInfo(OAuthInfo info, String provider) async {
     Authorization auth = await signApiProvider.signInWithOAuthInfo(info, provider);
     account = auth.account;
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
     authToken = auth.token;
 
     if (autoSignIn) {
@@ -65,6 +77,7 @@ extension RepositorySignExt on Repository {
 
   signOut() {
     account = null;
+    petId = null;
     authToken = null;
 
     credentialProvider.deleteCredential();

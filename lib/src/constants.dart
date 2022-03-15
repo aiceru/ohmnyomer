@@ -6,6 +6,7 @@ const secureStorageKeyCredential = 'cred';
 const sharedPrefAutoLoginKey = 'autologin';
 const sharedPrefRememberMeKey = 'rememberme';
 const sharedPrefEmailKey = 'email';
+const sharedPrefPetIdKey = 'petid';
 
 const oauthProviderGoogle = "google";
 const oauthProviderKakao = "kakao";

@@ -48,10 +48,10 @@ class _PetsRouteState extends State<PetsRoute> {
 
   void _dialogPetDetail(BuildContext context, Pet? pet) {
     showDialog(
-        context: context,
-        builder: (_) {
-          return DialogPetDetail(_bloc, pet, _families!);
-        },
+      context: context,
+      builder: (_) {
+        return DialogPetDetail(_bloc, pet, _families!);
+      },
     );
   }
 
@@ -115,6 +115,7 @@ class _PetsRouteState extends State<PetsRoute> {
         elevation: 2.0,
         margin: const EdgeInsets.all(5.0),
         child: InkWell(
+            onTap: () => Navigator.of(context).pop(pet.id),
             child: Padding(
                 padding: const EdgeInsets.fromLTRB(26, 20, 26, 26),
                 child: Row(
@@ -123,8 +124,8 @@ class _PetsRouteState extends State<PetsRoute> {
                     // GestureDetector(
                     //   onTap: () => _uploadProfileImage(pet.id),
                     BorderedCircleAvatar(28.0,
-                        networkSrc: pet.photourl == '' ? null : pet.photourl,
-                        iconData: pet.photourl == '' ? Icons.pets : null,
+                      networkSrc: pet.photourl == '' ? null : pet.photourl,
+                      iconData: pet.photourl == '' ? Icons.pets : null,
                     ),
                     // ),
                     const SizedBox(width: 30.0),
@@ -181,7 +182,7 @@ class _PetsRouteState extends State<PetsRoute> {
         return Future.value(false);
       },
       background: Container(
-        padding: const EdgeInsets.only(left: 30.0),
+          padding: const EdgeInsets.only(left: 30.0),
           alignment: Alignment.centerLeft,
           child: const Icon(Icons.delete, color: Colors.white, size: 32.0),
           color: const Color.fromRGBO(200, 50, 50, 1.0)

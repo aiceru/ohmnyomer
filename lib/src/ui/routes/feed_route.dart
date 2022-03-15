@@ -1,6 +1,7 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -22,6 +23,7 @@ class FeedRoute extends StatefulWidget {
 class _FeedRouteState extends State<FeedRoute> {
   late FeedBloc _bloc;
   bool _init = false;
+  String? _petId;
 
   @override
   void didChangeDependencies() {
@@ -29,6 +31,10 @@ class _FeedRouteState extends State<FeedRoute> {
       _bloc = FeedBlocProvider.of(context);
       _bloc.getAccount();
       _init = true;
+    }
+    _petId = _bloc.getPetId();
+    if (_petId != null) {
+      _bloc.fetchPetWithFeeds(_petId!);
     }
     super.didChangeDependencies();
   }
@@ -149,7 +155,9 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
-  Widget _topPanel(Account account) {
+  Widget _topPanel() {
+    Widget petAvatar = const BorderedCircleAvatar(22.0, iconData: Icons.add);
+    String petName = S.of(context).addNewPet;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Column(
@@ -161,25 +169,60 @@ class _FeedRouteState extends State<FeedRoute> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                GestureDetector(
-                  child: const BorderedCircleAvatar(22.0, iconData: Icons.add),
-                  onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName),
+                StreamBuilder(
+                  stream: _bloc.petFeedsSubject,
+                  builder: (context, AsyncSnapshot<PetFeeds?> snapshot) {
+                    if (snapshot.hasError) {
+                      WidgetsBinding.instance?.addPostFrameCallback((_) {
+                        ErrorDialog().show(context, snapshot.error!);
+                      });
+                    }
+                    if (snapshot.hasData) {
+                      Pet p = snapshot.data!.pet;
+                      petAvatar = BorderedCircleAvatar(22.0, networkSrc: p.photourl, iconData: Icons.pets);
+                      petName = p.name;
+                    }
+                    return Expanded(
+                        child:Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              child: petAvatar,
+                              onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName)
+                                  .then((value) {
+                                _bloc.setPetId(value as String?);
+                                didChangeDependencies();
+                              }),
+                            ),
+                            Expanded(
+                                child: Container(
+                                  padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(petName, style: const TextStyle(fontSize: 22)),
+                                )
+                            ),
+                          ],
+                        )
+                    );
+                  },
                 ),
-                Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                      alignment: Alignment.centerLeft,
-                      child: const Text('아직 미구현 ㅠㅠ',
-                        style: TextStyle(
-                          fontSize: 22,
-                        ),
-                      ),
-                    )
-                ),
-                GestureDetector(
-                  onTap: () => _dialogAccountDetail(context, account),
-                  child: BorderedCircleAvatar(20.0, networkSrc: account.photourl),
-                ),
+                StreamBuilder(
+                    stream: _bloc.accountSubject,
+                    builder: (context, AsyncSnapshot<Account?> snapshot) {
+                      if (snapshot.hasError) {
+                        WidgetsBinding.instance?.addPostFrameCallback((_) {
+                          ErrorDialog().show(context, snapshot.error!);
+                        });
+                      }
+                      if (snapshot.hasData) {
+                        Account account = snapshot.data!;
+                        return GestureDetector(
+                          onTap: () => _dialogAccountDetail(context, account),
+                          child: BorderedCircleAvatar(20.0, networkSrc: account.photourl),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    })
               ],
             ),
             height: MediaQuery
@@ -189,7 +232,7 @@ class _FeedRouteState extends State<FeedRoute> {
           )
         ],
       ),
-      color: const Color.fromRGBO(33, 87, 82, 0.7)
+        color: const Color.fromRGBO(33, 87, 82, 0.7)
     );
   }
 
@@ -217,10 +260,10 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
-  Widget _feedRoute(Account account) {
+  Widget _feedRoute() {
     return Column(
       children: [
-        _topPanel(account),
+        _topPanel(),
         Expanded(child: _feedList()),
       ],
     );
@@ -230,21 +273,22 @@ class _FeedRouteState extends State<FeedRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: StreamBuilder(
-          stream: _bloc.accountSubject,
-          builder: (context, AsyncSnapshot<Account?> snapshot) {
-            if (snapshot.hasError) {
-              WidgetsBinding.instance?.addPostFrameCallback((_) {
-                ErrorDialog().show(context, snapshot.error!);
-              });
-            }
-            if (snapshot.hasData) {
-              Account account = snapshot.data!;
-              return _feedRoute(account);
-            }
-            return const SizedBox.shrink();
-          },
-        ),
+        // body: StreamBuilder(
+        //   stream: _bloc.accountSubject,
+        //   builder: (context, AsyncSnapshot<Account?> snapshot) {
+        //     if (snapshot.hasError) {
+        //       WidgetsBinding.instance?.addPostFrameCallback((_) {
+        //         ErrorDialog().show(context, snapshot.error!);
+        //       });
+        //     }
+        //     if (snapshot.hasData) {
+        //       Account account = snapshot.data!;
+        //       return _feedRoute(account);
+        //     }
+        //     return const SizedBox.shrink();
+        //   },
+        // ),
+        body: _feedRoute(),
         floatingActionButton: FloatingActionButton(
           onPressed: () { debugPrint('밥이다냥!'); },
             backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dartnyom/protonyom_models.pb.dart';
 
 class Credential {

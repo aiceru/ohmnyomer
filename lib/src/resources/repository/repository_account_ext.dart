@@ -4,6 +4,9 @@ import 'package:ohmnyomer/src/resources/repository/repository.dart';
 extension RepositoryAccountExt on Repository {
   Future<Account> fetchAccount() async {
     account = await accountApiProvider.getAccount(authToken!);
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
     return account!;
   }
 

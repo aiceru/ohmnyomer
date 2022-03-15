@@ -20,6 +20,8 @@ class Repository {
   Account? account;
   String? authToken;
 
+  String? _petId;
+
   bool _rememberMe = false;
   bool _autoSignIn = false;
   String _signInEmail = "";
@@ -61,17 +63,33 @@ class Repository {
     _signInEmail = value;
   }
 
+  String? get petId => _petId;
+  set petId(String? value) {
+    if (value == null) {
+      _prefs?.remove(sharedPrefPetIdKey);
+    } else {
+      _setStringPref(sharedPrefPetIdKey, value);
+    }
+    _petId = value;
+  }
+
+  checkPetId(List<String> petIds) {
+    if (petIds.isNotEmpty && !petIds.contains(petId)) {
+      petId = petIds[0];
+      debugPrint('$petId');
+    }
+  }
+
   Future<bool> initSharedPreference() async {
     _prefs = await SharedPreferences.getInstance();
     _autoSignIn = _getBoolPref(sharedPrefAutoLoginKey);
     _rememberMe = _getBoolPref(sharedPrefRememberMeKey);
     _signInEmail = _getStringPref(sharedPrefEmailKey);
+    petId = _getStringPref(sharedPrefPetIdKey);
     return true;
   }
 
   Future<bool> initConfigData(BuildContext context) async {
-    String temp = Intl.getCurrentLocale();
-    debugPrint('$temp');
     _locale = Localizations.localeOf(context).languageCode;
     familyMap = await _petApiProvider.getSupportedFamilies(_locale);
     return true;
