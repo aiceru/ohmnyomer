@@ -38,6 +38,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "enterNewPassword": MessageLookupByLibrary.simpleMessage("새 패스워드"),
         "enterValidEmail":
             MessageLookupByLibrary.simpleMessage("메일 주소가 이상하다냥!"),
+        "feed_delete_confirm": MessageLookupByLibrary.simpleMessage("삭제할거다냥?"),
         "feed_zero_amount": MessageLookupByLibrary.simpleMessage("밥이 없다냥...?"),
         "forgotPassword": MessageLookupByLibrary.simpleMessage("비밀번호를 잊어버렸다냥?"),
         "input_error_title": MessageLookupByLibrary.simpleMessage("입력 오류"),

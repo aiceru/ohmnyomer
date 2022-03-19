@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:dartnyom/protonyom_models.pb.dart';
-import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
@@ -11,6 +8,7 @@ import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
+import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 import 'package:ohmnyomer/src/ui/widgets/dialog_feed_detail.dart';
@@ -254,6 +252,35 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
+  deleteFeed(int index) {
+    _bloc.deleteFeed(_petId!, _feeds[index].id)
+        .then((value) => setState(() => {
+      _feeds.removeAt(index)
+    }));
+  }
+
+  void _onLongPressFeedItem(int index) {
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: Text(S.of(context).feed_delete_confirm),
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            icon: const Icon(Icons.cancel_outlined, color: Colors.black54,),
+          ),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: const Icon(Icons.send, color: Colors.black54),
+          )
+        ],
+      );
+    }).then((confirm) => {
+      if (confirm) {
+        deleteFeed(index)
+      }
+    });
+  }
+
   Widget _feedList() {
     return StreamBuilder(
         stream: _bloc.feedListSubject,
@@ -272,14 +299,18 @@ class _FeedRouteState extends State<FeedRoute> {
                   itemCount: _feeds.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
-                        leading: const CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
-                        ),
-                        title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDateTime()),
-                        trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
+                      leading: const CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
+                      ),
+                      minLeadingWidth: 50.0,
+                      title: infoTitleText(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
+                      subtitle: infoText(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
+                      trailing: infoTitleText(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      onLongPress: () => _onLongPressFeedItem(index),
                     );
-                      // tileColor: Colors.lightGreenAccent,
+                    // tileColor: Colors.lightGreenAccent,
                   },
                   separatorBuilder: (BuildContext context, int index) { return const Divider(); },
                 )

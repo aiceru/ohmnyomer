@@ -439,6 +439,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Delete?`
+  String get feed_delete_confirm {
+    return Intl.message(
+      'Delete?',
+      name: 'feed_delete_confirm',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

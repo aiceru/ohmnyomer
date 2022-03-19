@@ -40,6 +40,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Enter new password"),
         "enterValidEmail":
             MessageLookupByLibrary.simpleMessage("Enter valid email"),
+        "feed_delete_confirm": MessageLookupByLibrary.simpleMessage("Delete?"),
         "feed_zero_amount":
             MessageLookupByLibrary.simpleMessage("No food in bowl!"),
         "forgotPassword":

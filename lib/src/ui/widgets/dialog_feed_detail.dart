@@ -114,7 +114,12 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
   Widget _buildSaveButton() {
     return IconButton(
         onPressed: () {
-          double amount = double.parse(_amountInputController.text);
+          double amount = 0.0;
+          try {
+            amount = double.parse(_amountInputController.text);
+          } catch (e) {
+            amount = 0.0;
+          }
           if (amount <= 0.0) {
             ErrorDialog().showInputAssert(context,
               S.of(context).feed_zero_amount,
