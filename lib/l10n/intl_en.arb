@@ -34,5 +34,9 @@
   "enterValidEmail": "Enter valid email",
   "addNewPet": "Add new pet",
   "edit": "Edit",
-  "pet_delete_confirm": "Delete?"
+  "pet_delete_confirm": "Delete?",
+  "input_error_title": "Input error",
+  "pet_detail_input_error": "Fill all inputs",
+  "feed_zero_amount": "No food in bowl!",
+  "more_food_please": "Give me some more..."
 }

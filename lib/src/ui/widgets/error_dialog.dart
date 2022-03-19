@@ -29,6 +29,24 @@ class ErrorDialog {
     );
   }
 
+  showInputAssert(BuildContext context, String title, String content) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   String _title(Object e) {
     if (e is GrpcError) {
       return e.codeName;

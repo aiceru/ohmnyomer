@@ -38,10 +38,14 @@ class MessageLookup extends MessageLookupByLibrary {
         "enterNewPassword": MessageLookupByLibrary.simpleMessage("새 패스워드"),
         "enterValidEmail":
             MessageLookupByLibrary.simpleMessage("메일 주소가 이상하다냥!"),
+        "feed_zero_amount": MessageLookupByLibrary.simpleMessage("밥이 없다냥...?"),
         "forgotPassword": MessageLookupByLibrary.simpleMessage("비밀번호를 잊어버렸다냥?"),
+        "input_error_title": MessageLookupByLibrary.simpleMessage("입력 오류"),
         "joinedAt": MessageLookupByLibrary.simpleMessage("가입한 날짜"),
         "linkedAccount": MessageLookupByLibrary.simpleMessage("연결된 계정"),
         "login": MessageLookupByLibrary.simpleMessage("로그인"),
+        "more_food_please":
+            MessageLookupByLibrary.simpleMessage("인심 좀 써라냥 =ㅅ=)"),
         "name": MessageLookupByLibrary.simpleMessage("이름"),
         "oauthNotLinked":
             MessageLookupByLibrary.simpleMessage("이 서비스는 연결되지 않았다냥"),
@@ -52,6 +56,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("패스워드가 설정되지 않았다냥"),
         "pet_delete_confirm":
             MessageLookupByLibrary.simpleMessage("삭제할거다냥? ㅠㅠ"),
+        "pet_detail_input_error":
+            MessageLookupByLibrary.simpleMessage("입력 칸을 모두 채워달라냥"),
         "register": MessageLookupByLibrary.simpleMessage("가입하기"),
         "rememberMe": MessageLookupByLibrary.simpleMessage("아이디 기억하기"),
         "save": MessageLookupByLibrary.simpleMessage("저장"),

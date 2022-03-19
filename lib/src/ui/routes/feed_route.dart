@@ -13,7 +13,7 @@ import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
-import 'package:ohmnyomer/src/ui/widgets/feed_dialog.dart';
+import 'package:ohmnyomer/src/ui/widgets/dialog_feed_detail.dart';
 
 import 'account_route.dart';
 
@@ -46,10 +46,8 @@ class _FeedRouteState extends State<FeedRoute> {
       _init = true;
     }
     _petId = _bloc.getPetId();
-    if (_petId != null && _petId != '') {
-      _bloc.fetchPet(_petId!);
-      _bloc.fetchFeeds(_petId!, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10);
-    }
+    _bloc.fetchPet(_petId);
+    _bloc.fetchFeeds(_petId, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10);
     super.didChangeDependencies();
   }
 
@@ -170,8 +168,6 @@ class _FeedRouteState extends State<FeedRoute> {
   }
 
   Widget _topPanel() {
-    Widget petAvatar = const BorderedCircleAvatar(22.0, iconData: Icons.add);
-    String petName = S.of(context).addNewPet;
     return Container(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         child: Column(
@@ -192,8 +188,14 @@ class _FeedRouteState extends State<FeedRoute> {
                         });
                         petId = null;
                       }
+
+                      Pet? p;
+                      Widget petAvatar = const BorderedCircleAvatar(22.0, iconData: Icons.add);
+                      String petName = S.of(context).addNewPet;
                       if (snapshot.hasData) {
-                        Pet p = snapshot.data!;
+                        p = snapshot.data!;
+                      }
+                      if (_petId != null && p != null) {
                         petAvatar = BorderedCircleAvatar(22.0, networkSrc: p.photourl, iconData: Icons.pets);
                         petName = p.name;
                       }
@@ -203,9 +205,10 @@ class _FeedRouteState extends State<FeedRoute> {
                             children: [
                               GestureDetector(
                                 child: petAvatar,
-                                onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName)
-                                    .then((value) {
-                                  _bloc.setPetId(value as String?);
+                                onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName).then((value) {
+                                  if (value != null) {
+                                    _bloc.setPetId(value as String?);
+                                  }
                                   didChangeDependencies();
                                 }),
                               ),
@@ -326,6 +329,7 @@ class _FeedRouteState extends State<FeedRoute> {
         body: _feedRoute(),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
+              _petId == null || _petId!.isEmpty ? null :
               _dialogFeedDetail(0.0, unitGram, DateTime.now());
             },
             backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
@@ -334,4 +338,3 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 }
-

@@ -31,20 +31,28 @@ class FeedBloc {
     _repository.petId = petId;
   }
 
-  fetchPet(String petId) {
-    _repository.fetchPet(petId)
-        .then((value) => _petSubject.sink.add(value))
-        .catchError((e) => _petSubject.sink.addError(e));
+  fetchPet(String? petId) {
+    if (petId == null || petId.isEmpty) {
+      _petSubject.sink.add(null);
+    } else {
+      _repository.fetchPet(petId)
+          .then((value) => _petSubject.sink.add(value))
+          .catchError((e) => _petSubject.sink.addError(e));
+    }
   }
 
   Future<Feed> addFeed(Feed feed) {
     return _repository.addFeed(feed);
   }
 
-  fetchFeeds(String petId, int startAfter, int limit) {
-    _repository.getFeeds(petId, startAfter, limit)
-        .then((value) => _feedListSubject.sink.add(value))
-        .catchError((e) => _feedListSubject.sink.addError(e));
+  fetchFeeds(String? petId, int startAfter, int limit) {
+    if (petId == null || petId.isEmpty) {
+      _feedListSubject.sink.add(<Feed>[]);
+    } else {
+      _repository.getFeeds(petId, startAfter, limit)
+          .then((value) => _feedListSubject.sink.add(value))
+          .catchError((e) => _feedListSubject.sink.addError(e));
+    }
   }
 
   Future deleteFeed(String petId, String feedId) {

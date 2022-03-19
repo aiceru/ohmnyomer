@@ -35,7 +35,7 @@ Widget buildTextField(
   );
 }
 
-Widget buildSimpleTextField(
+Widget buildSimpleTextField(String? hintText,
     TextInputType? keyboardType, TextEditingController controller) {
   return Container(
     padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
@@ -50,8 +50,10 @@ Widget buildSimpleTextField(
         color: Colors.black54,
       ),
       cursorColor: Colors.grey,
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         border: InputBorder.none,
+        hintText: hintText,
+        hintStyle: kHintTextStyle,
       ),
     ),
   );

@@ -1,9 +1,11 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
+import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 
 class DialogFeedDetail extends StatefulWidget {
   const DialogFeedDetail(this._amount, this._unit, this._feedTime, {Key? key}) : super(key: key);
@@ -26,7 +28,9 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
     _feedTime = widget._feedTime;
     _amount = widget._amount;
     _unit = widget._unit;
-    _amountInputController.text = _amount.toString();
+    if (_amount > 0.0) {
+      _amountInputController.text = _amount.toString();
+    }
     super.initState();
   }
 
@@ -39,7 +43,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: buildSimpleTextField(TextInputType.number, _amountInputController),
+              child: buildSimpleTextField('0.0', TextInputType.number, _amountInputController),
               flex: 5,
             ),
             const SizedBox(width: 20.0),
@@ -110,11 +114,19 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
   Widget _buildSaveButton() {
     return IconButton(
         onPressed: () {
-          Feed f = Feed()
-          ..amount = double.parse(_amountInputController.text)
-          ..unit = _unit
-          ..timestamp = Int64(_feedTime.toSecondsSinceEpoch());
-          Navigator.of(context).pop(f);
+          double amount = double.parse(_amountInputController.text);
+          if (amount <= 0.0) {
+            ErrorDialog().showInputAssert(context,
+              S.of(context).feed_zero_amount,
+              S.of(context).more_food_please,
+            );
+          } else {
+            Feed f = Feed()
+              ..amount = double.parse(_amountInputController.text)
+              ..unit = _unit
+              ..timestamp = Int64(_feedTime.toSecondsSinceEpoch());
+            Navigator.of(context).pop(f);
+          }
         },
         icon: const Icon(Icons.send, color: Colors.black54),
     );

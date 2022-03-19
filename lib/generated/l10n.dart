@@ -399,6 +399,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Input error`
+  String get input_error_title {
+    return Intl.message(
+      'Input error',
+      name: 'input_error_title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fill all inputs`
+  String get pet_detail_input_error {
+    return Intl.message(
+      'Fill all inputs',
+      name: 'pet_detail_input_error',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No food in bowl!`
+  String get feed_zero_amount {
+    return Intl.message(
+      'No food in bowl!',
+      name: 'feed_zero_amount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Give me some more...`
+  String get more_food_please {
+    return Intl.message(
+      'Give me some more...',
+      name: 'more_food_please',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

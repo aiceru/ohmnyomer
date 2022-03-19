@@ -40,11 +40,17 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Enter new password"),
         "enterValidEmail":
             MessageLookupByLibrary.simpleMessage("Enter valid email"),
+        "feed_zero_amount":
+            MessageLookupByLibrary.simpleMessage("No food in bowl!"),
         "forgotPassword":
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
+        "input_error_title":
+            MessageLookupByLibrary.simpleMessage("Input error"),
         "joinedAt": MessageLookupByLibrary.simpleMessage("Joined at"),
         "linkedAccount": MessageLookupByLibrary.simpleMessage("Linked account"),
         "login": MessageLookupByLibrary.simpleMessage("LOG IN"),
+        "more_food_please":
+            MessageLookupByLibrary.simpleMessage("Give me some more..."),
         "name": MessageLookupByLibrary.simpleMessage("Name"),
         "oauthNotLinked": MessageLookupByLibrary.simpleMessage("Not linked"),
         "obscuredPassword": MessageLookupByLibrary.simpleMessage("********"),
@@ -53,6 +59,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "passwordNotSet":
             MessageLookupByLibrary.simpleMessage("Password not set"),
         "pet_delete_confirm": MessageLookupByLibrary.simpleMessage("Delete?"),
+        "pet_detail_input_error":
+            MessageLookupByLibrary.simpleMessage("Fill all inputs"),
         "register": MessageLookupByLibrary.simpleMessage("REGISTER"),
         "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),

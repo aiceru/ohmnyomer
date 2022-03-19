@@ -13,6 +13,7 @@ import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
+import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 
 class DialogPetDetail extends StatefulWidget {
   const DialogPetDetail(this._bloc, this._pet, this._familyMap, {Key? key}) :super(key: key);
@@ -220,19 +221,26 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
   Widget _buildSaveButton() {
     return IconButton(
       onPressed: () {
-        Pet pet = Pet()
-          ..id = _id
-          ..name = _nameInputController.text
-          ..photourl = _photourl
-          ..adopted = Int64(_adopted.toSecondsSinceEpoch())
-          ..family = _familyKey
-          ..species = _speciesKey;
-        if (pet.id == "") {
-          _bloc.addPet(pet, _localProfile);
+        if (_nameInputController.text.isEmpty || _familyKey.isEmpty || _speciesKey.isEmpty) {
+          ErrorDialog().showInputAssert(context,
+            S.of(context).input_error_title,
+            S.of(context).pet_detail_input_error,
+          );
         } else {
-          _bloc.updatePet(pet, _localProfile);
+          Pet pet = Pet()
+            ..id = _id
+            ..name = _nameInputController.text
+            ..photourl = _photourl
+            ..adopted = Int64(_adopted.toSecondsSinceEpoch())
+            ..family = _familyKey
+            ..species = _speciesKey;
+          if (pet.id == "") {
+            _bloc.addPet(pet, _localProfile);
+          } else {
+            _bloc.updatePet(pet, _localProfile);
+          }
+          Navigator.of(context).pop();
         }
-        Navigator.of(context).pop();
       },
       icon: const Icon(Icons.send, color: Colors.black54),
     );

@@ -35,5 +35,9 @@
   "enterValidEmail": "메일 주소가 이상하다냥!",
   "addNewPet": "새로 추가하기",
   "edit": "정보 수정하기",
-  "pet_delete_confirm": "삭제할거다냥? ㅠㅠ"
+  "pet_delete_confirm": "삭제할거다냥? ㅠㅠ",
+  "input_error_title": "입력 오류",
+  "pet_detail_input_error": "입력 칸을 모두 채워달라냥",
+  "feed_zero_amount": "밥이 없다냥...?",
+  "more_food_please": "인심 좀 써라냥 =ㅅ=)"
 }
