@@ -77,7 +77,6 @@ extension RepositorySignExt on Repository {
 
   signOut() {
     account = null;
-    petId = null;
     authToken = null;
 
     credentialProvider.deleteCredential();

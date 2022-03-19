@@ -57,4 +57,10 @@ class PetsBloc {
         .then((value) => _petListSubject.sink.add(value))
         .catchError((e) => _petListSubject.sink.addError(e));
   }
+
+  deletePet(String petId) {
+    _repository.deletePet(petId)
+        .then((value) => _petListSubject.sink.add(value))
+        .catchError((e) => _petListSubject.sink.addError(e));
+  }
 }

@@ -33,5 +33,6 @@
   "tooShort": "too short, please enter {chars} characters or more",
   "enterValidEmail": "Enter valid email",
   "addNewPet": "Add new pet",
-  "edit": "Edit"
+  "edit": "Edit",
+  "pet_delete_confirm": "Delete?"
 }

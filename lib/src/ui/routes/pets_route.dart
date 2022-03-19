@@ -1,10 +1,6 @@
-import 'dart:io';
-
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
@@ -13,6 +9,15 @@ import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/dialog_pet_detail.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+
+String itemKey(int index, String id) {
+  return index.toString() + ':' + id;
+}
+
+int indexFromKey(String key) {
+  List<String> splits = key.split(':');
+  return int.parse(splits[0]);
+}
 
 class PetsRoute extends StatefulWidget {
   const PetsRoute({Key? key}) : super(key: key);
@@ -158,9 +163,8 @@ class _PetsRouteState extends State<PetsRoute> {
       key: Key(key),
       onDismissed: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          // delete
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('start to end')));
+          int index = indexFromKey(key);
+          _bloc.deletePet(_petList[index].id);
         }
       },
       dismissThresholds: const {
@@ -169,13 +173,28 @@ class _PetsRouteState extends State<PetsRoute> {
       },
       confirmDismiss: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          // showDialog(
-          //     context: context,
-          //     builder: builder
-          // );
+          return showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(_petList[indexFromKey(key)].name),
+                  content: Text(S.of(context).pet_delete_confirm),
+                  actions: [
+                    IconButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        icon: const Icon(Icons.cancel_outlined, color: Colors.black54,),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      icon: const Icon(Icons.send, color: Colors.black54),
+                    )
+                  ],
+                );
+              }
+          );
         }
         if (direction == DismissDirection.endToStart) {
-          _dialogPetDetail(context, _petList[int.parse(key)]);
+          _dialogPetDetail(context, _petList[indexFromKey(key)]);
         }
         return Future.value(false);
       },
@@ -211,7 +230,7 @@ class _PetsRouteState extends State<PetsRoute> {
             itemCount: _petList.length,
             itemBuilder: (BuildContext context, int index) {
               return _buildDismissibleListItem(
-                index.toString(),
+                itemKey(index, _petList[index].id),
                 _buildPetListCard(_petList[index]),
               );
             },

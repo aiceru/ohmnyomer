@@ -50,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("비밀번호"),
         "passwordNotSet":
             MessageLookupByLibrary.simpleMessage("패스워드가 설정되지 않았다냥"),
+        "pet_delete_confirm":
+            MessageLookupByLibrary.simpleMessage("삭제할거다냥? ㅠㅠ"),
         "register": MessageLookupByLibrary.simpleMessage("가입하기"),
         "rememberMe": MessageLookupByLibrary.simpleMessage("아이디 기억하기"),
         "save": MessageLookupByLibrary.simpleMessage("저장"),

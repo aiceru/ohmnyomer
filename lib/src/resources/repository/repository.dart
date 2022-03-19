@@ -77,9 +77,14 @@ class Repository {
   }
 
   checkPetId(List<String> petIds) {
-    if (petIds.isNotEmpty && !petIds.contains(petId)) {
-      petId = petIds[0];
+    if (petIds.isNotEmpty) {
+      if (!petIds.contains(petId)) {
+        petId = petIds[0];
+      }
+    } else {
+      petId = null;
     }
+    debugPrint('pet id - $petId');
   }
 
   Future<bool> initSharedPreference() async {

@@ -34,5 +34,6 @@
   "tooShort": "너무 짧다냥 {chars}자 이상 입력하라냥",
   "enterValidEmail": "메일 주소가 이상하다냥!",
   "addNewPet": "새로 추가하기",
-  "edit": "정보 수정하기"
+  "edit": "정보 수정하기",
+  "pet_delete_confirm": "삭제할거다냥? ㅠㅠ"
 }

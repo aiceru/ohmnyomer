@@ -52,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("Password"),
         "passwordNotSet":
             MessageLookupByLibrary.simpleMessage("Password not set"),
+        "pet_delete_confirm": MessageLookupByLibrary.simpleMessage("Delete?"),
         "register": MessageLookupByLibrary.simpleMessage("REGISTER"),
         "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),

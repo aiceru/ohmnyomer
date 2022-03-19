@@ -8,6 +8,18 @@ extension RepositoryPetExt on Repository {
   Future<List<Pet>> addPet(Pet pet, String? cType, Uint8List? content) async {
     PetListWithAccount resp = await petApiProvider.addPet(authToken!, pet, cType, content);
     account = resp.account;
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
+    return resp.petList;
+  }
+
+  Future<List<Pet>> deletePet(String petId) async {
+    PetListWithAccount resp = await petApiProvider.deletePet(authToken!, petId);
+    account = resp.account;
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
     return resp.petList;
   }
 

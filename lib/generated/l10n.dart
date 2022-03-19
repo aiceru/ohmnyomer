@@ -389,6 +389,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Delete?`
+  String get pet_delete_confirm {
+    return Intl.message(
+      'Delete?',
+      name: 'pet_delete_confirm',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
