@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:dartnyom/protonyom_models.pb.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
@@ -6,9 +9,11 @@ import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
+import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
+import 'package:ohmnyomer/src/ui/widgets/feed_dialog.dart';
 
 import 'account_route.dart';
 
@@ -25,6 +30,14 @@ class _FeedRouteState extends State<FeedRoute> {
   bool _init = false;
   String? _petId;
 
+  set petId(String? value) {
+    _petId = value;
+    _bloc.setPetId(value);
+  }
+
+  late List<Feed> _feeds;
+  late Account _account;
+
   @override
   void didChangeDependencies() {
     if (!_init) {
@@ -33,8 +46,9 @@ class _FeedRouteState extends State<FeedRoute> {
       _init = true;
     }
     _petId = _bloc.getPetId();
-    if (_petId != null) {
-      _bloc.fetchPetWithFeeds(_petId!);
+    if (_petId != null && _petId != '') {
+      _bloc.fetchPet(_petId!);
+      _bloc.fetchFeeds(_petId!, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10);
     }
     super.didChangeDependencies();
   }
@@ -159,104 +173,117 @@ class _FeedRouteState extends State<FeedRoute> {
     Widget petAvatar = const BorderedCircleAvatar(22.0, iconData: Icons.add);
     String petName = S.of(context).addNewPet;
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).padding.top,
-          ),
-          SizedBox(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                StreamBuilder(
-                  stream: _bloc.petFeedsSubject,
-                  builder: (context, AsyncSnapshot<PetFeeds?> snapshot) {
-                    if (snapshot.hasError) {
-                      WidgetsBinding.instance?.addPostFrameCallback((_) {
-                        ErrorDialog().show(context, snapshot.error!);
-                      });
-                    }
-                    if (snapshot.hasData) {
-                      Pet p = snapshot.data!.pet;
-                      petAvatar = BorderedCircleAvatar(22.0, networkSrc: p.photourl, iconData: Icons.pets);
-                      petName = p.name;
-                    }
-                    return Expanded(
-                        child:Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              child: petAvatar,
-                              onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName)
-                                  .then((value) {
-                                _bloc.setPetId(value as String?);
-                                didChangeDependencies();
-                              }),
-                            ),
-                            Expanded(
-                                child: Container(
-                                  padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(petName, style: const TextStyle(fontSize: 22)),
-                                )
-                            ),
-                          ],
-                        )
-                    );
-                  },
-                ),
-                StreamBuilder(
-                    stream: _bloc.accountSubject,
-                    builder: (context, AsyncSnapshot<Account?> snapshot) {
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        child: Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).padding.top,
+            ),
+            SizedBox(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  StreamBuilder(
+                    stream: _bloc.petSubject,
+                    builder: (context, AsyncSnapshot<Pet?> snapshot) {
                       if (snapshot.hasError) {
                         WidgetsBinding.instance?.addPostFrameCallback((_) {
                           ErrorDialog().show(context, snapshot.error!);
                         });
+                        petId = null;
                       }
                       if (snapshot.hasData) {
-                        Account account = snapshot.data!;
-                        return GestureDetector(
-                          onTap: () => _dialogAccountDetail(context, account),
-                          child: BorderedCircleAvatar(20.0, networkSrc: account.photourl),
-                        );
+                        Pet p = snapshot.data!;
+                        petAvatar = BorderedCircleAvatar(22.0, networkSrc: p.photourl, iconData: Icons.pets);
+                        petName = p.name;
                       }
-                      return const SizedBox.shrink();
-                    })
-              ],
-            ),
-            height: MediaQuery
-                .of(context)
-                .size
-                .height * 0.1,
-          )
-        ],
-      ),
+                      return Expanded(
+                          child:Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                child: petAvatar,
+                                onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName)
+                                    .then((value) {
+                                  _bloc.setPetId(value as String?);
+                                  didChangeDependencies();
+                                }),
+                              ),
+                              Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(petName, style: const TextStyle(fontSize: 22)),
+                                  )
+                              ),
+                            ],
+                          )
+                      );
+                    },
+                  ),
+                  StreamBuilder(
+                      stream: _bloc.accountSubject,
+                      builder: (context, AsyncSnapshot<Account?> snapshot) {
+                        if (snapshot.hasError) {
+                          WidgetsBinding.instance?.addPostFrameCallback((_) {
+                            ErrorDialog().show(context, snapshot.error!);
+                          });
+                        }
+                        if (snapshot.hasData) {
+                          _account = snapshot.data!;
+                          return GestureDetector(
+                            onTap: () => _dialogAccountDetail(context, _account),
+                            child: BorderedCircleAvatar(20.0, networkSrc: _account.photourl),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      })
+                ],
+              ),
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height * 0.1,
+            )
+          ],
+        ),
         color: const Color.fromRGBO(33, 87, 82, 0.7)
     );
   }
 
   Widget _feedList() {
-    return MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: ListView.separated(
-        itemCount: 20,
-        itemBuilder: (BuildContext context, int index) {
-          return const ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
-            ),
-            title: Text('오전 07:23'),
-            trailing: Text('1/4 컵'),
-            // tileColor: Colors.lightGreenAccent,
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) {
-          return const Divider();
-        },
-      ),
+    return StreamBuilder(
+        stream: _bloc.feedListSubject,
+        builder: (context, AsyncSnapshot<List<Feed>> snapshot) {
+          if (snapshot.hasError) {
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              ErrorDialog().show(context, snapshot.error!);
+            });
+          }
+          if (snapshot.hasData) {
+            _feeds = snapshot.data!;
+            return MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: ListView.separated(
+                  itemCount: _feeds.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
+                        ),
+                        title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDateTime()),
+                        trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
+                    );
+                      // tileColor: Colors.lightGreenAccent,
+                  },
+                  separatorBuilder: (BuildContext context, int index) { return const Divider(); },
+                )
+            );
+          }
+          return const SizedBox.shrink();
+        }
     );
   }
 
@@ -269,30 +296,40 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
+  addFeed(Feed f) {
+    _bloc.addFeed(f)
+    .then((value) => setState(() {
+      _feeds.insert(0, value);
+    }));
+  }
+
+  void _dialogFeedDetail(double amount, String unit, DateTime t) {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return DialogFeedDetail(amount, unit, t);
+        }
+    ).then((value) {
+      if (value != null) {
+        Feed f = value;
+        f.petId = _petId!;
+        f.feederId = _account.id;
+        addFeed(f);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        // body: StreamBuilder(
-        //   stream: _bloc.accountSubject,
-        //   builder: (context, AsyncSnapshot<Account?> snapshot) {
-        //     if (snapshot.hasError) {
-        //       WidgetsBinding.instance?.addPostFrameCallback((_) {
-        //         ErrorDialog().show(context, snapshot.error!);
-        //       });
-        //     }
-        //     if (snapshot.hasData) {
-        //       Account account = snapshot.data!;
-        //       return _feedRoute(account);
-        //     }
-        //     return const SizedBox.shrink();
-        //   },
-        // ),
         body: _feedRoute(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () { debugPrint('밥이다냥!'); },
+            onPressed: () {
+              _dialogFeedDetail(0.0, unitGram, DateTime.now());
+            },
             backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
-          child: const Icon(Icons.add)
+            child: const Icon(Icons.add)
         )
     );
   }

@@ -14,6 +14,10 @@ extension Timestamp on DateTime {
     return DateFormat('yyyy. M. d').format(this);
   }
 
+  String formatTime() {
+    return DateFormat('K:mm a').format(this);
+  }
+
   String formatDateTime() {
     return DateFormat('yyyy. M. d / K:mm a').format(this);
   }

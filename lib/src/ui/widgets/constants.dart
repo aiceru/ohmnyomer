@@ -111,6 +111,6 @@ Text infoText(String content) {
 const kInfoTextStyle = TextStyle(
   color: Colors.black54,
   fontSize: 16.0,
-  // height: 2.0,
+  height: 1.0,
   textBaseline: TextBaseline.ideographic,
 );

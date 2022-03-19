@@ -11,8 +11,8 @@ extension RepositoryPetExt on Repository {
     return resp.petList;
   }
 
-  Future<PetFeeds> fetchPetWithFeeds(String petId) {
-    return petApiProvider.getPetWithFeeds(authToken!, petId);
+  Future<Pet> fetchPet(String petId) {
+    return petApiProvider.getPet(authToken!, petId);
   }
 
   Future<List<Pet>> updatePet(Pet pet, String? cType, Uint8List? content) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/apis/account_api_provider.dart';
+import 'package:ohmnyomer/src/resources/apis/feed_api_provider.dart';
 import 'package:ohmnyomer/src/resources/credential_provider.dart';
 import 'package:ohmnyomer/src/resources/apis/pet_api_provider.dart';
 import 'package:ohmnyomer/src/resources/apis/sign_api_provider.dart';
@@ -32,11 +33,13 @@ class Repository {
   final SignApiProvider _signApiProvider = SignApiProvider();
   final AccountApiProvider _accountApiProvider = AccountApiProvider();
   final PetApiProvider _petApiProvider = PetApiProvider();
+  final FeedApiProvider _feedApiProvider = FeedApiProvider();
 
   CredentialProvider get credentialProvider => _credentialProvider;
   SignApiProvider get signApiProvider => _signApiProvider;
   AccountApiProvider get accountApiProvider => _accountApiProvider;
   PetApiProvider get petApiProvider => _petApiProvider;
+  FeedApiProvider get feedApiProvider => _feedApiProvider;
 
   String _locale = 'en';
   String get locale => _locale;
@@ -76,7 +79,6 @@ class Repository {
   checkPetId(List<String> petIds) {
     if (petIds.isNotEmpty && !petIds.contains(petId)) {
       petId = petIds[0];
-      debugPrint('$petId');
     }
   }
 

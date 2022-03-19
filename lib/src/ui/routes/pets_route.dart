@@ -121,8 +121,6 @@ class _PetsRouteState extends State<PetsRoute> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // GestureDetector(
-                    //   onTap: () => _uploadProfileImage(pet.id),
                     BorderedCircleAvatar(28.0,
                       networkSrc: pet.photourl == '' ? null : pet.photourl,
                       iconData: pet.photourl == '' ? Icons.pets : null,

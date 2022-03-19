@@ -35,6 +35,28 @@ Widget buildTextField(
   );
 }
 
+Widget buildSimpleTextField(
+    TextInputType? keyboardType, TextEditingController controller) {
+  return Container(
+    padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+    alignment: Alignment.centerLeft,
+    decoration: kBoxDecorationStyle,
+    height: 60.0,
+    child: TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      controller: controller,
+      keyboardType: keyboardType,
+      style: const TextStyle(
+        color: Colors.black54,
+      ),
+      cursorColor: Colors.grey,
+      decoration: const InputDecoration(
+        border: InputBorder.none,
+      ),
+    ),
+  );
+}
+
 Widget socialLogo(String provider, double size) {
   ImageProvider img;
   switch (provider) {

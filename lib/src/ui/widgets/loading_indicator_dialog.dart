@@ -22,7 +22,7 @@ class LoadingIndicatorDialog {
         _isShowing = true;
         return WillPopScope(
           onWillPop: () async => false,
-          child: Center(child: CircularProgressIndicator())
+          child: const Center(child: CircularProgressIndicator())
         );
       },
     );

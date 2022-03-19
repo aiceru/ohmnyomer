@@ -74,9 +74,11 @@ packages:
   dartnyom:
     dependency: "direct main"
     description:
-      path: "../protonyom/dartnyom"
-      relative: true
-    source: path
+      path: dartnyom
+      ref: "v0.9.0"
+      resolved-ref: "5a642cede3f0416d23f653c51f54154956d4d816"
+      url: "git@github.com:aiceru/protonyom"
+    source: git
     version: "0.0.0"
   dio:
     dependency: transitive

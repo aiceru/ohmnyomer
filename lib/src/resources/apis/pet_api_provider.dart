@@ -104,11 +104,11 @@ class PetApiProvider{
     return resp.pets;
   }
 
-  Future<PetFeeds> getPetWithFeeds(String authToken, String petId) async {
+  Future<Pet> getPet(String authToken, String petId) async {
     final client = _newClientWithAuth(authToken);
-    final resp = await client.getPetWithFeeds(
-      GetPetWithFeedsRequest()..petId = petId
+    final resp = await client.getPet(
+      GetPetRequest()..petId = petId
     );
-    return resp.petFeeds;
+    return resp.pet;
   }
 }
