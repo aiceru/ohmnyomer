@@ -1,9 +1,11 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
+import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
@@ -23,6 +25,7 @@ class AccountRoute extends StatefulWidget {
 class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
   late AccountBloc _bloc;
   bool _init = false;
+  BannerAd? _bannerAd;
 
   @override
   void didChangeDependencies() {
@@ -30,12 +33,18 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
       _bloc = AccountBlocProvider.of(context);
       _bloc.getAccount();
       _init = true;
+      AdHelper().loadBanner((ad) => {
+        setState(() {
+          _bannerAd = ad;
+        })
+      });
     }
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _bloc.dispose();
     super.dispose();
   }
@@ -177,6 +186,8 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
       children: [
         _topPanel(account),
         Expanded(child: _detailListView(account)),
+        if (_bannerAd != null)
+        AdHelper().bottomBannerWidget(_bannerAd!),
       ],
     );
   }

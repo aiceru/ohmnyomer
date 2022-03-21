@@ -1,7 +1,6 @@
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/apis/account_api_provider.dart';
 import 'package:ohmnyomer/src/resources/apis/feed_api_provider.dart';

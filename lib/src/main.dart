@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
+import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
+import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/ui/routes/account_route.dart';
 import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
@@ -24,8 +26,8 @@ class AppMain extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-       statusBarColor: Colors.transparent,
-       systemNavigationBarColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
     ));
 
     return MaterialApp(

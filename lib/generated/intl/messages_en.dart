@@ -28,6 +28,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "addNewPet": MessageLookupByLibrary.simpleMessage("Add new pet"),
         "adoptedAt": MessageLookupByLibrary.simpleMessage("Adopted at"),
         "appName": MessageLookupByLibrary.simpleMessage("OhmNyom"),
+        "appTitle": MessageLookupByLibrary.simpleMessage("Ohmnyom"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("Don\'t have an Account? "),

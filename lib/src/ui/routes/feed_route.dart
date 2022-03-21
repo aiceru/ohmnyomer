@@ -1,10 +1,12 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
+import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
@@ -27,6 +29,7 @@ class _FeedRouteState extends State<FeedRoute> {
   late FeedBloc _bloc;
   bool _init = false;
   String? _petId;
+  BannerAd? _bannerAd;
 
   set petId(String? value) {
     _petId = value;
@@ -42,6 +45,11 @@ class _FeedRouteState extends State<FeedRoute> {
       _bloc = FeedBlocProvider.of(context);
       _bloc.getAccount();
       _init = true;
+      AdHelper().loadBanner((ad) => {
+        setState(() {
+          _bannerAd = ad;
+        })
+      });
     }
     _petId = _bloc.getPetId();
     _bloc.fetchPet(_petId);
@@ -51,6 +59,7 @@ class _FeedRouteState extends State<FeedRoute> {
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _bloc.dispose();
     super.dispose();
   }
@@ -326,6 +335,8 @@ class _FeedRouteState extends State<FeedRoute> {
       children: [
         _topPanel(),
         Expanded(child: _feedList()),
+        if (_bannerAd != null)
+        AdHelper().bottomBannerWidget(_bannerAd!)
       ],
     );
   }
@@ -356,16 +367,19 @@ class _FeedRouteState extends State<FeedRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: _feedRoute(),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              _petId == null || _petId!.isEmpty ? null :
-              _dialogFeedDetail(0.0, unitGram, DateTime.now());
-            },
-            backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
-            child: const Icon(Icons.add)
-        )
+      resizeToAvoidBottomInset: false,
+      body: _feedRoute(),
+      floatingActionButton: Padding(
+          padding: AdHelper().getFabPadding(),
+          child: FloatingActionButton(
+              onPressed: () {
+                _petId == null || _petId!.isEmpty ? null :
+                _dialogFeedDetail(0.0, unitGram, DateTime.now());
+              },
+              backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
+              child: const Icon(Icons.add)
+          )
+      ),
     );
   }
 }

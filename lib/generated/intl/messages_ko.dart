@@ -27,6 +27,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "addNewPet": MessageLookupByLibrary.simpleMessage("새로 추가하기"),
         "adoptedAt": MessageLookupByLibrary.simpleMessage("입양일"),
         "appName": MessageLookupByLibrary.simpleMessage("옴뇸뇸뇸"),
+        "appTitle": MessageLookupByLibrary.simpleMessage("옴뇸뇸"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("아직 가입하지 않았다냥? "),

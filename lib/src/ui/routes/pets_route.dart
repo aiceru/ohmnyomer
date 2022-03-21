@@ -1,9 +1,11 @@
 import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
+import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
@@ -32,6 +34,7 @@ class _PetsRouteState extends State<PetsRoute> {
   late PetsBloc _bloc;
   late List<Pet> _petList;
   bool _init = false;
+  BannerAd? _bannerAd;
 
   @override
   void didChangeDependencies() {
@@ -41,12 +44,18 @@ class _PetsRouteState extends State<PetsRoute> {
       _bloc.fetchPetList();
       _families = _bloc.getSupportedFamilies();
       _init = true;
+      AdHelper().loadBanner((ad) => {
+        setState(() {
+          _bannerAd = ad;
+        })
+      });
     }
     super.didChangeDependencies();
   }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _bloc.dispose();
     super.dispose();
   }
@@ -246,6 +255,8 @@ class _PetsRouteState extends State<PetsRoute> {
       children: [
         _buildTopPanel(),
         Expanded(child: _buildPetListView()),
+        if (_bannerAd != null)
+        AdHelper().bottomBannerWidget(_bannerAd!)
       ],
     );
   }
@@ -254,13 +265,16 @@ class _PetsRouteState extends State<PetsRoute> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: _editPetsRoute(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => {
-            _dialogPetDetail(context, null)
-          },
-          child: const Icon(Icons.add),
-          backgroundColor: const Color.fromRGBO(252, 232, 187, 1.0),
-          foregroundColor: Colors.black,
+        floatingActionButton: Padding(
+          padding: AdHelper().getFabPadding(),
+          child: FloatingActionButton(
+            onPressed: () => {
+              _dialogPetDetail(context, null)
+            },
+            child: const Icon(Icons.add),
+            backgroundColor: const Color.fromRGBO(252, 232, 187, 1.0),
+            foregroundColor: Colors.black,
+          ),
         )
     );
   }
