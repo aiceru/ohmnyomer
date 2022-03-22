@@ -7,6 +7,7 @@ import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
+import 'package:sizer/sizer.dart';
 
 import '../widgets/constants.dart';
 import '../widgets/error_dialog.dart';
@@ -74,7 +75,6 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
     return GestureDetector(
       onTap: () => print('Forgot Password Button Pressed'),
       child: Container(
-        // padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: smallLabel(S.of(context).forgotPassword),
       ),
     );
@@ -139,23 +139,23 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
 
   Widget _buildLoginBtn() {
     return Container(
-      padding: const EdgeInsets.only(top: 25.0),
+      padding: EdgeInsets.only(top: 3.0.h),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _formValidated ? _doLogin : null,
         style: ElevatedButton.styleFrom(
           elevation: 5.0,
-          padding: const EdgeInsets.all(15.0),
+          padding: EdgeInsets.all(4.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
         child: Text(
           S.of(context).login,
-          style: const TextStyle(
+          style: TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
-            fontSize: 18.0,
+            fontSize: fontSizeLarge.sp,
           ),
         ),
       ),
@@ -165,13 +165,13 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   Widget _buildSocialBtn(VoidCallback onTap, String provider) {
     return GestureDetector(
       onTap: onTap,
-      child: socialLogo(provider, 60.0)
+      child: socialLogo(provider, 14.w)
     );
   }
 
   Widget _buildSocialBtnRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      padding: EdgeInsets.symmetric(vertical: 7.w),
       width: double.infinity,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -198,11 +198,11 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
           children: [
             TextSpan(
               text: S.of(context).dontHaveAnAccount,
-              style: kSmallLabelStyle,
+              style: smallLabelTextStyle(),
             ),
             TextSpan(
               text: S.of(context).signUp,
-              style: kSmallLabelStyle,
+              style: smallLabelTextStyle(),
             ),
           ],
         ),
@@ -223,30 +223,30 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
           height: double.infinity,
           child: SingleChildScrollView(
             physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 40.0,
-              vertical: 100.0,
+            padding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 15.h,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 RichText(text: TextSpan(
                   text: S.of(context).signIn,
-                  style: kLabelStyle,
+                  style: labelTextStyle(),
                 )),
                 Form(
                   key: _formKey,
                   onChanged: () => setState(() => _formValidated = _formKey.currentState!.validate()),
                   child: Column(
                     children: [
-                      const SizedBox(height: 30.0),
+                      SizedBox(height: 3.5.h),
                       _buildEmailTF(),
-                      const SizedBox(height: 10.0),
+                      SizedBox(height: 1.h),
                       _buildPasswordTF(),
                     ],
                   ),
                 ),
-                const SizedBox(height: 10.0),
+                SizedBox(height: 1.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -256,12 +256,12 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                 ),
                 _buildLoginBtn(),
                 _buildAutoLoginCheckBox(),
-                const SizedBox(height: 20.0),
+                SizedBox(height: 2.h),
                 smallLabel(S.of(context).or),
                 smallLabel(S.of(context).signInWith),
-                const SizedBox(height: 20.0),
+                SizedBox(height: 2.h),
                 _buildSocialBtnRow(),
-                const SizedBox(height: 50.0),
+                SizedBox(height: 5.h),
                 _buildSignupBtn(splashPath),
               ],
             ),

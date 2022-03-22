@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
+import 'package:sizer/sizer.dart';
 
 Widget buildTextField(
     IconData? icon, String? hintText, TextInputType? keyboardType,
     String? Function (String?) validator, TextEditingController controller,
     {bool? obsecureText}) {
   return Container(
-    padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+    padding: EdgeInsets.symmetric(vertical: 1.0.h, horizontal: 2.0.h),
     alignment: Alignment.centerLeft,
     decoration: kBoxDecorationStyle,
-    height: 60.0,
+    height: 6.7.h,
     child: TextFormField(
       validator: (value) => validator(value),
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -29,7 +30,7 @@ Widget buildTextField(
           color: Colors.black38,
         ),
         hintText: hintText,
-        hintStyle: kHintTextStyle,
+        hintStyle: hintTextStyle(),
       ),
     ),
   );
@@ -38,10 +39,10 @@ Widget buildTextField(
 Widget buildSimpleTextField(String? hintText,
     TextInputType? keyboardType, TextEditingController controller) {
   return Container(
-    padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 16.0),
+    padding: EdgeInsets.symmetric(vertical: 1.0.h, horizontal: 2.0.h),
     alignment: Alignment.centerLeft,
     decoration: kBoxDecorationStyle,
-    height: 60.0,
+    height: 6.7.h,
     child: TextFormField(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
@@ -53,7 +54,7 @@ Widget buildSimpleTextField(String? hintText,
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: hintText,
-        hintStyle: kHintTextStyle,
+        hintStyle: hintTextStyle(),
       ),
     ),
   );

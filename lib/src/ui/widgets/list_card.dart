@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:sizer/sizer.dart';
 
 class ListCard extends StatelessWidget {
   const ListCard(Widget leading, String content, String subContent,
-      {Key? key, void Function()? ontap, Widget? trailing})
+      {Key? key, void Function()? onTap, Widget? trailing})
       : _leading = leading,
         _trailing = trailing,
         _content = content,
         _subContent = subContent,
-        _onTap = ontap,
+        _onTap = onTap,
         super(key: key);
 
   final Widget _leading;
@@ -22,7 +23,7 @@ class ListCard extends StatelessWidget {
       child: ListTile(
         onTap: _onTap,
         leading: SizedBox(
-            width: 60,
+            width: 15.w,
             child: Center(
               child: _leading,
             )

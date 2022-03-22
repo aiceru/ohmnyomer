@@ -13,9 +13,7 @@ import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 import 'package:ohmnyomer/src/ui/routes/signup_route.dart';
 import 'package:ohmnyomer/src/ui/routes/splash_route.dart';
-
-import 'blocs/account_bloc_provider.dart';
-import 'blocs/pets_bloc_provider.dart';
+import 'package:sizer/sizer.dart';
 
 void main() => runApp(const AppMain());
 
@@ -30,37 +28,42 @@ class AppMain extends StatelessWidget {
       systemNavigationBarColor: Colors.transparent,
     ));
 
-    return MaterialApp(
-      title: '옴뇸뇸뇸',
-      theme: ThemeData(
-          textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                  primary: Colors.yellow,
-                  onPrimary: Colors.black,
-                  minimumSize: const Size(124, 60),
-                  fixedSize: const Size(124, 60),
-                  elevation: 6,
-                  alignment: Alignment.center
-              )
-          )
-      ),
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: S.delegate.supportedLocales,
-      initialRoute: SplashRoute.routeName,
-      routes: {
-        SplashRoute.routeName: (context) => const SplashRoute(),
-        SignInRoute.routeName: (context) => SignBlocProvider(child: const SignInRoute()),
-        SignUpRoute.routeName : (context) => SignBlocProvider(child: const SignUpRoute()),
-        FeedRoute.routeName: (context) => FeedBlocProvider(child: const FeedRoute()),
-        AccountRoute.routeName: (context) => AccountBlocProvider(child: const AccountRoute()),
-        PetsRoute.routeName: (context) => PetsBlocProvider(child: const PetsRoute()),
-      },
-    );
+    return Sizer(
+        builder: (context, orientation, deviceType) {
+          return MaterialApp(
+            onGenerateTitle: (context) {
+              return S.of(context).appTitle;
+            },
+            theme: ThemeData(
+                textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.yellow,
+                        onPrimary: Colors.black,
+                        // minimumSize: const Size(124, 60),
+                        // fixedSize: const Size(124, 60),
+                        elevation: 6,
+                        alignment: Alignment.center
+                    )
+                )
+            ),
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            initialRoute: SplashRoute.routeName,
+            routes: {
+              SplashRoute.routeName: (context) => const SplashRoute(),
+              SignInRoute.routeName: (context) => SignBlocProvider(child: const SignInRoute()),
+              SignUpRoute.routeName : (context) => SignBlocProvider(child: const SignUpRoute()),
+              FeedRoute.routeName: (context) => FeedBlocProvider(child: const FeedRoute()),
+              AccountRoute.routeName: (context) => AccountBlocProvider(child: const AccountRoute()),
+              PetsRoute.routeName: (context) => PetsBlocProvider(child: const PetsRoute()),
+            },
+          );
+        });
   }
 }

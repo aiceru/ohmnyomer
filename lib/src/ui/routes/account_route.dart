@@ -9,10 +9,12 @@ import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
+import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/dialog_text_form_field.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 import 'package:ohmnyomer/src/ui/widgets/list_card.dart';
+import 'package:sizer/sizer.dart';
 
 class AccountRoute extends StatefulWidget {
   const AccountRoute({Key? key}) : super(key: key);
@@ -98,7 +100,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
 
   Widget _topPanel(Account account) {
     return Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: routeTopPanelPadding(),
         child: Column(
           children: [
             Container(
@@ -108,24 +110,19 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  BorderedCircleAvatar(22.0, networkSrc: account.photourl),
+                  BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl),
                   Expanded(
                       child: Container(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                        padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
                         alignment: Alignment.centerLeft,
                         child: Text(account.email,
-                          style: const TextStyle(
-                            fontSize: 22,
-                          ),
+                          style: TextStyle(fontSize: fontSizeLarge.sp),
                         ),
                       )
                   ),
                 ],
               ),
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.1,
+              height: topPanelHeight.h,
             )
           ],
         ),
@@ -135,25 +132,25 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
 
   Widget _buildNameListCard(Account account) {
     return ListCard(
-      const Icon(Icons.face, size: 32.0),
+      Icon(Icons.face, size: iconSize.w),
       account.name,
       S.of(context).tapToEditName,
-      ontap: () => _showEditNameDialog(context)
+      onTap: () => _showEditNameDialog(context)
     );
   }
 
   Widget _buildPasswordListCard(Account account) {
     return ListCard(
-      const Icon(Icons.password, size: 32.0),
+      Icon(Icons.password, size: iconSize.w),
       account.hasPassword ? S.of(context).obscuredPassword : S.of(context).passwordNotSet,
       S.of(context).tapToEditPassword,
-      ontap: () => _showEditPasswordDialog(context)
+      onTap: () => _showEditPasswordDialog(context)
     );
   }
 
   Widget _buildSocialListCards(String provider, Account account) {
     return ListCard(
-      socialLogo(provider, 36.0),
+      socialLogo(provider, socialLogoSize.w),
       account.oauthinfo[provider] == null ?
       S.of(context).oauthNotLinked : account.oauthinfo[provider]!.email,
       S.of(context).linkedAccount,
@@ -162,7 +159,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
 
   Widget _buildSinceListCard(Account account) {
     return ListCard(
-      const Icon(Icons.access_time, size: 32.0),
+      Icon(Icons.access_time, size: iconSize.w),
       dateTimeFromEpochSeconds(account.signedup.toInt()).formatDateTime(),
       S.of(context).joinedAt,
     );
@@ -170,7 +167,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
 
   Widget _detailListView(Account account) {
     return ListView(
-      padding: const EdgeInsets.all(4.0),
+      padding: routeBodyPadding(),
       children: <Widget>[
         _buildNameListCard(account),
         _buildPasswordListCard(account),

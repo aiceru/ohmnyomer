@@ -7,6 +7,7 @@ import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
+import 'package:ohmnyomer/src/ui/routes/account_route.dart';
 import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
@@ -14,8 +15,7 @@ import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 import 'package:ohmnyomer/src/ui/widgets/dialog_feed_detail.dart';
-
-import 'account_route.dart';
+import 'package:sizer/sizer.dart';
 
 class FeedRoute extends StatefulWidget {
   const FeedRoute({Key? key}) : super(key: key);
@@ -69,22 +69,21 @@ class _FeedRouteState extends State<FeedRoute> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        BorderedCircleAvatar(22.0, networkSrc: account.photourl),
-        const SizedBox(width: 20),
-        Text(account.email, style: const TextStyle(fontSize: 16.0)),
-        const SizedBox(width: 20),
+        BorderedCircleAvatar(avatarSizeLarge.w, networkSrc: account.photourl),
+        SizedBox(width: 5.w),
+        Text(account.email, style: TextStyle(fontSize: fontSizeMedium.sp)),
       ],
     );
   }
 
   Widget _buildNameRow(Account account) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      height: 40,
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      height: 5.h,
       child: Row(
         children: [
           const Icon(Icons.face, color: Colors.grey),
-          const SizedBox(width: 35),
+          SizedBox(width: 9.w),
           Text(account.name),
         ],
       ),
@@ -103,12 +102,12 @@ class _FeedRouteState extends State<FeedRoute> {
 
   Widget _buildOAuthLinkRow(Account account) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      height: 40,
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      height: 5.h,
       child: Row(
         children: [
           const Icon(Icons.link, color: Colors.grey),
-          const SizedBox(width: 20),
+          SizedBox(width: 5.w),
           for (var p in account.oauthinfo.keys)
             _buildOAuthLinkAvatar(p),
         ],
@@ -139,8 +138,8 @@ class _FeedRouteState extends State<FeedRoute> {
 
   Widget _buildActionsRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      height: 40,
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      height: 5.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -168,7 +167,7 @@ class _FeedRouteState extends State<FeedRoute> {
             _buildActionsRow(),
           ],
           elevation: 10.0,
-          contentPadding: const EdgeInsets.all(20.0),
+          contentPadding: EdgeInsets.all(5.w),
         );
       },
     );
@@ -176,7 +175,7 @@ class _FeedRouteState extends State<FeedRoute> {
 
   Widget _topPanel() {
     return Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: routeTopPanelPadding(),
         child: Column(
           children: [
             Container(
@@ -197,13 +196,13 @@ class _FeedRouteState extends State<FeedRoute> {
                       }
 
                       Pet? p;
-                      Widget petAvatar = const BorderedCircleAvatar(22.0, iconData: Icons.add);
+                      Widget petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, iconData: Icons.add);
                       String petName = S.of(context).addNewPet;
                       if (snapshot.hasData) {
                         p = snapshot.data!;
                       }
                       if (_petId != null && p != null) {
-                        petAvatar = BorderedCircleAvatar(22.0, networkSrc: p.photourl, iconData: Icons.pets);
+                        petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: p.photourl, iconData: Icons.pets);
                         petName = p.name;
                       }
                       return Expanded(
@@ -221,9 +220,9 @@ class _FeedRouteState extends State<FeedRoute> {
                               ),
                               Expanded(
                                   child: Container(
-                                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                                    padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
                                     alignment: Alignment.centerLeft,
-                                    child: Text(petName, style: const TextStyle(fontSize: 22)),
+                                    child: Text(petName, style: TextStyle(fontSize: fontSizeLarge.sp)),
                                   )
                               ),
                             ],
@@ -243,17 +242,14 @@ class _FeedRouteState extends State<FeedRoute> {
                           _account = snapshot.data!;
                           return GestureDetector(
                             onTap: () => _dialogAccountDetail(context, _account),
-                            child: BorderedCircleAvatar(20.0, networkSrc: _account.photourl),
+                            child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: _account.photourl),
                           );
                         }
                         return const SizedBox.shrink();
                       })
                 ],
               ),
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.1,
+              height: topPanelHeight.h,
             )
           ],
         ),
@@ -262,10 +258,10 @@ class _FeedRouteState extends State<FeedRoute> {
   }
 
   deleteFeed(int index) {
-    _bloc.deleteFeed(_petId!, _feeds[index].id)
-        .then((value) => setState(() => {
-      _feeds.removeAt(index)
-    }));
+    _bloc.deleteFeed(_petId!, _feeds[index].id);
+    setState(() {
+      _feeds.removeAt(index);
+    });
   }
 
   void _onLongPressFeedItem(int index) {
@@ -312,11 +308,11 @@ class _FeedRouteState extends State<FeedRoute> {
                         backgroundColor: Colors.transparent,
                         foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
                       ),
-                      minLeadingWidth: 50.0,
-                      title: infoTitleText(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
-                      subtitle: infoText(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
-                      trailing: infoTitleText(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 30.0),
+                      minLeadingWidth: 10.w,
+                      title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
+                      subtitle: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
+                      trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
                       onLongPress: () => _onLongPressFeedItem(index),
                     );
                     // tileColor: Colors.lightGreenAccent,
@@ -373,8 +369,9 @@ class _FeedRouteState extends State<FeedRoute> {
           padding: AdHelper().getFabPadding(),
           child: FloatingActionButton(
               onPressed: () {
-                _petId == null || _petId!.isEmpty ? null :
-                _dialogFeedDetail(0.0, unitGram, DateTime.now());
+                _petId == null || _petId!.isEmpty
+                    ? null
+                    : _dialogFeedDetail(_feeds.isEmpty ? 0.0 : _feeds[0].amount, unitGram, DateTime.now());
               },
               backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
               child: const Icon(Icons.add)

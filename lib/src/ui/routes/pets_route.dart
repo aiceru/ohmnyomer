@@ -5,12 +5,14 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
+import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/dialog_pet_detail.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+import 'package:sizer/sizer.dart';
 
 String itemKey(int index, String id) {
   return index.toString() + ':' + id;
@@ -74,30 +76,23 @@ class _PetsRouteState extends State<PetsRoute> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          BorderedCircleAvatar(22.0, networkSrc: account.photourl),
+          BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl),
           Expanded(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
                 alignment: Alignment.centerLeft,
-                child: Text(account.email,
-                  style: const TextStyle(
-                    fontSize: 22,
-                  ),
-                ),
-              )
-          ),
+                child: Text(account.email, style: TextStyle(fontSize: fontSizeLarge.sp)),
+              ),
+          )
         ],
       ),
-      height: MediaQuery
-          .of(context)
-          .size
-          .height * 0.1,
+      height: 10.h,
     );
   }
 
   Widget _buildTopPanel() {
     return Container(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        padding: routeTopPanelPadding(),
         child: Column(
           children: [
             Container(
@@ -127,32 +122,32 @@ class _PetsRouteState extends State<PetsRoute> {
   Widget _buildPetListCard(Pet pet) {
     return Card(
         elevation: 2.0,
-        margin: const EdgeInsets.all(5.0),
+        margin: EdgeInsets.all(1.w),
         child: InkWell(
             onTap: () => Navigator.of(context).pop(pet.id),
             child: Padding(
-                padding: const EdgeInsets.fromLTRB(26, 20, 26, 26),
+                padding: EdgeInsets.fromLTRB(6.w, 5.w, 6.w, 6.w),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    BorderedCircleAvatar(28.0,
+                    BorderedCircleAvatar(avatarSizeLarge.w,
                       networkSrc: pet.photourl == '' ? null : pet.photourl,
                       iconData: pet.photourl == '' ? Icons.pets : null,
                     ),
                     // ),
-                    const SizedBox(width: 30.0),
+                    SizedBox(width: 8.w),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(padding: const EdgeInsets.all(6.0), child: infoTitleText(pet.name)),
-                        Padding(padding: const EdgeInsets.all(6.0),
+                        Padding(padding: EdgeInsets.all(1.5.w), child: infoTitleText(pet.name)),
+                        Padding(padding: EdgeInsets.all(1.5.w),
                             child: infoText(
                                 _families![pet.family]!.name +
                                     ' ('+ _families![pet.family]!.species[pet.species]! +')'
                             )
                         ),
                         if (pet.adopted.toInt() > 0)
-                          Padding(padding: const EdgeInsets.all(6.0),
+                          Padding(padding: EdgeInsets.all(1.5.w),
                               child: infoText(
                                   S.of(context).adoptedAt + ': ' +
                                       dateTimeFromEpochSeconds(pet.adopted.toInt()).formatDate()
@@ -208,15 +203,15 @@ class _PetsRouteState extends State<PetsRoute> {
         return Future.value(false);
       },
       background: Container(
-          padding: const EdgeInsets.only(left: 30.0),
+          padding: EdgeInsets.only(left: 8.w),
           alignment: Alignment.centerLeft,
-          child: const Icon(Icons.delete, color: Colors.white, size: 32.0),
+          child: Icon(Icons.delete, color: Colors.white, size: iconSize.w),
           color: const Color.fromRGBO(200, 50, 50, 1.0)
       ),
       secondaryBackground: Container(
-          padding: const EdgeInsets.only(right: 30.0),
+          padding: EdgeInsets.only(right: 8.w),
           alignment: Alignment.centerRight,
-          child: const Icon(Icons.edit, color: Colors.white, size: 32.0),
+          child: Icon(Icons.edit, color: Colors.white, size: iconSize.w),
           color: const Color.fromRGBO(54, 115, 81, 1.0)
       ),
       child: child,
@@ -235,7 +230,7 @@ class _PetsRouteState extends State<PetsRoute> {
         if (snapshot.hasData && snapshot.data != null) {
           _petList = snapshot.data!;
           return ListView.builder(
-            padding: const EdgeInsets.all(4.0),
+            padding: EdgeInsets.all(1.w),
             itemCount: _petList.length,
             itemBuilder: (BuildContext context, int index) {
               return _buildDismissibleListItem(

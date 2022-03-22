@@ -6,6 +6,7 @@ import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+import 'package:sizer/sizer.dart';
 
 class DialogFeedDetail extends StatefulWidget {
   const DialogFeedDetail(this._amount, this._unit, this._feedTime, {Key? key}) : super(key: key);
@@ -38,7 +39,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
 
   Widget _buildFeedRow() {
     return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40.0),
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -46,7 +47,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
               child: buildSimpleTextField('0.0', TextInputType.number, _amountInputController),
               flex: 5,
             ),
-            const SizedBox(width: 20.0),
+            SizedBox(width: 5.w),
             Expanded(child: infoText(_unit), flex: 1,),
       ],
     ));
@@ -58,7 +59,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
           children: [
             InkWell(
               child: Container(
-                height: 60.0,
+                height: 6.7.h,
                 alignment: Alignment.center,
                 child: infoText(_feedTime.formatDate()),
               ),
@@ -81,7 +82,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
             ),
             InkWell(
               child: Container(
-                height: 60.0,
+                height: 6.7.h,
                 alignment: Alignment.center,
                 child: infoText(_feedTime.formatTime()),
               ),
@@ -139,13 +140,13 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
 
   Widget _buildActionsRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      height: 60.0,
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      height: 6.7.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _buildCancelButton(),
-          const SizedBox(width: 20.0),
+          SizedBox(width: 5.w),
           _buildSaveButton(),
         ],
       ),
@@ -172,7 +173,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
         _buildActionsRow(),
       ],
       elevation: 10.0,
-      contentPadding: const EdgeInsets.all(20.0),
+      contentPadding: EdgeInsets.all(5.w),
     );
   }
 }

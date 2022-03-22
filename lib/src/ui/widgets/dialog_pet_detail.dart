@@ -8,12 +8,14 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
+import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+import 'package:sizer/sizer.dart';
 
 class DialogPetDetail extends StatefulWidget {
   const DialogPetDetail(this._bloc, this._pet, this._familyMap, {Key? key}) :super(key: key);
@@ -81,7 +83,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
   Widget _buildPetDetailTitleRow() {
     return GestureDetector(
       onTap: () => _pickAndCropImage(),
-      child: BorderedCircleAvatar(28.0,
+      child: BorderedCircleAvatar(avatarSizeLarge.w,
           file: _localProfile,
           networkSrc: _photourl,
           iconData: Icons.add_a_photo,
@@ -128,7 +130,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     }
     return Container(
       decoration: kBoxDecorationStyle,
-      height: 60.0,
+      height: 6.7.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -148,7 +150,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
                     });
                   },
                   style: TextButton.styleFrom(
-                    textStyle: kInfoTextStyle,
+                    textStyle: infoTextStyle(),
                     primary: Colors.black54,
                   ),
                   child: Align(
@@ -171,7 +173,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
                     }
                   },
                   style: TextButton.styleFrom(
-                    textStyle: kInfoTextStyle,
+                    textStyle: infoTextStyle(),
                     primary: Colors.black54,
                   ),
                   child: Align(
@@ -189,7 +191,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
   Widget _buildAdoptedDateRow() {
     return Container(
       decoration: kBoxDecorationStyle,
-      height: 60.0,
+      height: 6.7.h,
       child: InkWell(
         child: Center(child: infoText(S.of(context).adoptedAt + ': ' + _adopted.formatDate())),
         onTap: () {
@@ -248,13 +250,13 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
 
   Widget _buildActionsRow() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      height: 60.0,
+      padding: EdgeInsets.symmetric(horizontal: 5.w),
+      height: 6.7.h,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           _buildCancelButton(),
-          const SizedBox(width: 20.0),
+          SizedBox(width: 5.w),
           _buildSaveButton(),
         ],
       ),
@@ -280,7 +282,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
           _buildActionsRow(),
         ],
         elevation: 10.0,
-        contentPadding: const EdgeInsets.all(20.0),
+        contentPadding: EdgeInsets.all(5.w),
       );
     });
   }

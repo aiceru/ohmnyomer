@@ -8,6 +8,7 @@ import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
+import 'package:sizer/sizer.dart';
 
 class SignUpRoute extends StatefulWidget {
   const SignUpRoute({Key? key}) : super(key: key);
@@ -67,23 +68,23 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
 
   Widget _buildRegisterBtn() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      padding: EdgeInsets.symmetric(vertical: 3.h),
       width: double.infinity,
       child: ElevatedButton(
         onPressed: _formValidated ? _doSignUp : null,
         style: ElevatedButton.styleFrom(
           elevation: 5.0,
-          padding: const EdgeInsets.all(15.0),
+          padding: EdgeInsets.all(4.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
         ),
         child: Text(
           S.of(context).register,
-          style: const TextStyle(
+          style: TextStyle(
             color: Color(0xFF527DAA),
             letterSpacing: 1.5,
-            fontSize: 18.0,
+            fontSize: fontSizeLarge.sp,
           ),
         ),
       ),
@@ -103,32 +104,32 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
         height: double.infinity,
         child: SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 40.0,
-            vertical: 100.0,
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.w,
+            vertical: 15.h,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               RichText(text: TextSpan(
                 text: S.of(context).signUp,
-                style: kLabelStyle,
+                style: labelTextStyle(),
               )),
               Form(
                 key: _formKey,
                 onChanged: () => setState(() => _formValidated = _formKey.currentState!.validate()),
                 child: Column(
                   children: [
-                    const SizedBox(height: 30.0),
+                    SizedBox(height: 3.5.h),
                     _buildNameTF(),
-                    const SizedBox(height: 10.0),
+                    SizedBox(height: 1.h),
                     _buildEmailTF(),
-                    const SizedBox(height: 10.0),
+                    SizedBox(height: 1.h),
                     _buildPasswordTF(),
                   ],
                 ),
               ),
-              const SizedBox(height: 10.0),
+              SizedBox(height: 1.h),
               _buildRegisterBtn(),
             ],
           ),
