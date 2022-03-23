@@ -9,10 +9,9 @@ Widget buildTextField(
     String? Function (String?) validator, TextEditingController controller,
     {bool? obsecureText}) {
   return Container(
-    padding: EdgeInsets.symmetric(vertical: 1.0.h, horizontal: 2.0.h),
-    alignment: Alignment.centerLeft,
-    decoration: kBoxDecorationStyle,
-    height: 6.7.h,
+    padding: EdgeInsets.symmetric(horizontal: 2.0.w),//, vertical: 1.0.h),
+    alignment: Alignment.topLeft,
+    height: 8.h,
     child: TextFormField(
       validator: (value) => validator(value),
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -24,7 +23,7 @@ Widget buildTextField(
       ),
       cursorColor: Colors.grey,
       decoration: InputDecoration(
-        border: InputBorder.none,
+        // border: InputBorder.none,
         icon: Icon(
           icon,
           color: Colors.black38,
