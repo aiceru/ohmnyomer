@@ -46,55 +46,57 @@ class SignBloc {
     _valuesSubject.sink.add(values);
   }
 
-  signUpWithEmail(BuildContext context,
-      String name, email, password) {
-    LoadingIndicatorDialog().show(context);
+  signUpWithEmail(String name, String email, String password) {
     _repository.signUpWithEmail(name, email, password)
         .then((value) {
       _resultSubject.sink.add(value);
     }).catchError((e) {
       _resultSubject.sink.addError(e);
-    }).whenComplete(() => LoadingIndicatorDialog().dismiss());
+    });
   }
 
-  signInWithEmail(BuildContext context,
-      String email, password) {
-    LoadingIndicatorDialog().show(context);
+  signInWithEmail(String email, String password) {
     _repository.signInWithEmail(email, password)
         .then((value) {
       _resultSubject.sink.add(value);
     }).catchError((e) {
       _resultSubject.sink.addError(e);
-    }).whenComplete(() => LoadingIndicatorDialog().dismiss());
+    });
   }
 
-  _signUpWithOAuthInfo(String name, email, oauthId, oauthProvider, photourl) =>
-      _repository.signUpWithOAuthInfo(name,
-          OAuthInfo.create()..email = email..id = oauthId,
-          oauthProvider, photourl)
-      .then((value) => _resultSubject.sink.add(value));
+  _signUpWithOAuthInfo(String name, String email, String oauthId,
+      String oauthProvider, String photourl) {
+    _repository.signUpWithOAuthInfo(name,
+        OAuthInfo.create()
+          ..email = email
+          ..id = oauthId,
+        oauthProvider, photourl)
+        .then((value) => _resultSubject.sink.add(value))
+        .catchError((e) => _resultSubject.sink.addError(e));
+  }
 
-  _signInWithOAuthInfo(String name, email, oauthId, oauthProvider, photourl) =>
-      _repository.signInWithOAuthInfo(OAuthInfo.create()..id = oauthId..email = email,
-          oauthProvider)
-          .then((value) => _resultSubject.sink.add(value))
-          .catchError((e) => _signUpWithOAuthInfo(name, email, oauthId, oauthProvider, photourl),
-          test: (e) => e is GrpcError && e.code == StatusCode.notFound);
+  _signInWithOAuthInfo(String name, String email, String oauthId,
+      String oauthProvider, String photourl) {
+    _repository.signInWithOAuthInfo(OAuthInfo.create()
+      ..id = oauthId
+      ..email = email,
+        oauthProvider)
+        .then((value) => _resultSubject.sink.add(value))
+        .catchError((e) => _signUpWithOAuthInfo(name, email, oauthId, oauthProvider, photourl),
+        test: (e) => e is GrpcError && e.code == StatusCode.notFound)
+        .catchError((e) => _resultSubject.sink.addError(e));
+  }
 
-  signInWithGoogle(BuildContext context) {
-    LoadingIndicatorDialog().show(context);
+  signInWithGoogle() {
     _oauthProvider.getGoogleIdentity()
         .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl))
-        .catchError((e) => _resultSubject.sink.addError(e))
-        .whenComplete(() => LoadingIndicatorDialog().dismiss());
+        .catchError((e) => _resultSubject.sink.addError(e));
   }
 
-  signInWithKakao(BuildContext context) {
-    LoadingIndicatorDialog().show(context);
+  signInWithKakao() {
     _oauthProvider.getKakaoIdentity()
         .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl))
-        .catchError((e) => _resultSubject.sink.addError(e))
-        .whenComplete(() => LoadingIndicatorDialog().dismiss());
+        .catchError((e) => _resultSubject.sink.addError(e));
   }
 
   validate(GlobalKey<FormState> key) {

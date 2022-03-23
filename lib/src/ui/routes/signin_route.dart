@@ -7,6 +7,7 @@ import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
+import 'package:ohmnyomer/src/ui/widgets/loading_indicator_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 import '../widgets/constants.dart';
@@ -130,7 +131,8 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   }
 
   void _doLogin() {
-    _bloc.signInWithEmail(context,
+    LoadingIndicatorDialog().show(context);
+    _bloc.signInWithEmail(
       _emailInputController.text,
       _passwordInputController.text,
     );
@@ -182,10 +184,14 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildSocialBtn(() => _bloc.signInWithGoogle(context),
-              oauthProviderGoogle),
-          _buildSocialBtn(() => _bloc.signInWithKakao(context),
-              oauthProviderKakao),
+          _buildSocialBtn(() {
+            LoadingIndicatorDialog().show(context);
+            _bloc.signInWithGoogle();
+          }, oauthProviderGoogle),
+          _buildSocialBtn(() {
+            LoadingIndicatorDialog().show(context);
+            _bloc.signInWithKakao();
+          }, oauthProviderKakao),
         ],
       ),
     );
@@ -283,6 +289,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
         body: StreamBuilder(
           stream: _bloc.resultSubject,
           builder: (context, AsyncSnapshot<SignInResult> snapshot) {
+            LoadingIndicatorDialog().dismiss();
             if (snapshot.hasData && snapshot.data == SignInResult.success) {
               WidgetsBinding.instance?.addPostFrameCallback((_) {
                 Navigator.of(context).pushReplacementNamed(FeedRoute.routeName);

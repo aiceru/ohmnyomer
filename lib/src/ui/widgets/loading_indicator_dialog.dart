@@ -31,6 +31,7 @@ class LoadingIndicatorDialog {
   dismiss() {
     if (_context != null && _isShowing) {
       Navigator.of(_context!).pop();
+      _context = null;
     }
   }
 }

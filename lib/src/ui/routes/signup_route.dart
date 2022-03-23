@@ -8,6 +8,7 @@ import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
+import 'package:ohmnyomer/src/ui/widgets/loading_indicator_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 class SignUpRoute extends StatefulWidget {
@@ -57,8 +58,8 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
   }
 
   void _doSignUp() {
+    LoadingIndicatorDialog().show(context);
     _bloc.signUpWithEmail(
-      context,
       _nameInputController.text,
       _emailInputController.text,
       _passwdInputController.text,
@@ -152,6 +153,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
       body: StreamBuilder(
         stream: _bloc.resultSubject,
         builder: (context, AsyncSnapshot<SignInResult> snapshot) {
+          LoadingIndicatorDialog().dismiss();
           if (snapshot.hasData && snapshot.data == SignInResult.success) {
             WidgetsBinding.instance?.addPostFrameCallback((_) {
               Navigator.of(context).pushNamedAndRemoveUntil(FeedRoute.routeName, (route) => false);

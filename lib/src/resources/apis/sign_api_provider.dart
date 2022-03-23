@@ -1,5 +1,6 @@
 import 'package:dartnyom/protonyom_api_sign.pbgrpc.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
+import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:ohmnyomer/src/constants.dart';
 
@@ -17,9 +18,11 @@ class Authorization {
 
 class SignApiProvider {
   final ClientChannel channel;
+  
   final CallOptions _callOptions = CallOptions(
+    metadata: {'x-api-key': ohmnyomApiKey},
     compression: const GzipCodec(),
-    // timeout: const Duration(seconds: 15),
+    timeout: const Duration(seconds: 5),
   );
 
   SignApiProvider()
@@ -27,8 +30,8 @@ class SignApiProvider {
     ohmnyomServerHost,
     port: ohmnyomServerPort,
     options: ChannelOptions(
-      credentials: const ChannelCredentials.insecure(),
       codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+      connectionTimeout: const Duration(seconds: 5),
     ),
   );
 
@@ -40,13 +43,13 @@ class SignApiProvider {
   }
 
   Future<Authorization> _signUp(SignUpRequest req) async {
-    final client = SignApiClient(channel);
+    final client = _newClient();
     final resp = await client.signUp(req);
     return Authorization.fromProto(resp);
   }
 
   Future<Authorization> _signIn(SignInRequest req) async {
-    final client = SignApiClient(channel);
+    final client = _newClient();
     final resp = await client.signIn(req);
     return Authorization.fromProto(resp);
   }

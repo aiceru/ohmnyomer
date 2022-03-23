@@ -49,11 +49,11 @@ dependencies:
   mime: ^1.0.1
   sizer: ^2.0.15
   dartnyom:
-    path: ../protonyom/dartnyom
-#    git:
-#      url: git@github.com:aiceru/protonyom
-#      ref: v0.9.0
-#      path: dartnyom
+#    path: ../protonyom/dartnyom
+    git:
+      url: git@github.com:aiceru/protonyom
+      ref: v0.9.1
+      path: dartnyom
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

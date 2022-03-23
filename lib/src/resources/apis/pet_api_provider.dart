@@ -25,8 +25,9 @@ class PetListWithAccount{
 class PetApiProvider{
   final ClientChannel channel;
   final CallOptions _callOptions = CallOptions(
+    metadata: {'x-api-key': ohmnyomApiKey},
     compression: const GzipCodec(),
-    // timeout: const Duration(seconds: 15),
+    timeout: const Duration(seconds: 5),
   );
 
   PetApiProvider()
@@ -34,8 +35,8 @@ class PetApiProvider{
     ohmnyomServerHost,
     port: ohmnyomServerPort,
     options: ChannelOptions(
-      credentials: const ChannelCredentials.insecure(),
       codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
+      connectionTimeout: const Duration(seconds: 5),
     ),
   );
 

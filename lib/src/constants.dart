@@ -1,6 +1,7 @@
 const androidPackageName = 'com.aiceru.ohmnyom';
-const ohmnyomServerHost = '192.168.0.10';
-const ohmnyomServerPort = 50051;
+const ohmnyomServerHost = 'ohmnyom-grpc-92cfeo76.an.gateway.dev';
+const ohmnyomServerPort = 443;
+const ohmnyomApiKey = 'AIzaSyDUPXDpD54fBV5l-MJyHdNLPmToEBrvTdk';
 
 const secureStorageKeyCredential = 'cred';
 
