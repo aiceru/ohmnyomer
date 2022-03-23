@@ -22,9 +22,11 @@ class SignBloc {
 
   final _resultSubject = PublishSubject<SignInResult>();
   final _valuesSubject = BehaviorSubject<SharedPrefValues>();
+  final _formValidationSubject = PublishSubject<bool>();
 
   Stream<SignInResult> get resultSubject => _resultSubject.stream;
   Stream<SharedPrefValues> get valuesSubject => _valuesSubject.stream;
+  Stream<bool> get formValidationSubject => _formValidationSubject.stream;
 
   checkSignInStatus() {
     Account? account = _repository.account;
@@ -93,6 +95,12 @@ class SignBloc {
         .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl))
         .catchError((e) => _resultSubject.sink.addError(e))
         .whenComplete(() => LoadingIndicatorDialog().dismiss());
+  }
+
+  validate(GlobalKey<FormState> key) {
+    if (key.currentState != null) {
+      _formValidationSubject.sink.add(key.currentState!.validate());
+    }
   }
 
   setAutoSignIn(bool value) {

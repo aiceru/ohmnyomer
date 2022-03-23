@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdHelper {
@@ -41,6 +42,9 @@ class AdHelper {
   }
 
   String _getBannerAdUnitId() {
+    if (kReleaseMode) {
+      return 'ca-app-pub-3617657034378751/7212213365';
+    }
     return 'ca-app-pub-3940256099942544/6300978111';
   }
 

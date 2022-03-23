@@ -25,7 +25,6 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   late SignBloc _bloc;
   final String _splashPath = 'assets/signin/splash-' + (Random().nextInt(5) + 1).toString() + '.jpg';
   final _formKey = GlobalKey<FormState>();
-  bool _formValidated = false;
   bool _init = false;
 
   final _emailInputController = TextEditingController();
@@ -141,24 +140,31 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
     return Container(
       padding: EdgeInsets.only(top: 3.0.h),
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _formValidated ? _doLogin : null,
-        style: ElevatedButton.styleFrom(
-          elevation: 5.0,
-          padding: EdgeInsets.all(4.w),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-        child: Text(
-          S.of(context).login,
-          style: TextStyle(
-            color: Color(0xFF527DAA),
-            letterSpacing: 1.5,
-            fontSize: fontSizeLarge.sp,
-          ),
-        ),
-      ),
+      child: StreamBuilder(
+        stream: _bloc.formValidationSubject,
+        initialData: false,
+        builder: (context, AsyncSnapshot<bool> snapshot) {
+          bool validated = snapshot.hasData ? snapshot.data! : false;
+          return ElevatedButton(
+            onPressed: validated ? _doLogin : null,
+            style: ElevatedButton.styleFrom(
+              elevation: 5.0,
+              padding: EdgeInsets.all(4.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+            child: Text(
+              S.of(context).login,
+              style: TextStyle(
+                color: const Color(0xFF527DAA),
+                letterSpacing: 1.5,
+                fontSize: fontSizeLarge.sp,
+              ),
+            ),
+          );
+        },
+      )
     );
   }
 
@@ -236,7 +242,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                 )),
                 Form(
                   key: _formKey,
-                  onChanged: () => setState(() => _formValidated = _formKey.currentState!.validate()),
+                  onChanged: () => _bloc.validate(_formKey),
                   child: Column(
                     children: [
                       SizedBox(height: 3.5.h),

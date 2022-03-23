@@ -24,7 +24,6 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
   final _emailInputController = TextEditingController();
   final _passwdInputController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _formValidated = false;
   bool _init = false;
 
   @override
@@ -70,24 +69,31 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 3.h),
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _formValidated ? _doSignUp : null,
-        style: ElevatedButton.styleFrom(
-          elevation: 5.0,
-          padding: EdgeInsets.all(4.w),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-        ),
-        child: Text(
-          S.of(context).register,
-          style: TextStyle(
-            color: Color(0xFF527DAA),
-            letterSpacing: 1.5,
-            fontSize: fontSizeLarge.sp,
-          ),
-        ),
-      ),
+      child: StreamBuilder(
+        stream: _bloc.formValidationSubject,
+        initialData: false,
+        builder: (context, AsyncSnapshot<bool> snapshot) {
+          bool validated = snapshot.hasData ? snapshot.data! : false;
+          return ElevatedButton(
+            onPressed: validated ? _doSignUp : null,
+            style: ElevatedButton.styleFrom(
+              elevation: 5.0,
+              padding: EdgeInsets.all(4.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+            child: Text(
+              S.of(context).register,
+              style: TextStyle(
+                color: const Color(0xFF527DAA),
+                letterSpacing: 1.5,
+                fontSize: fontSizeLarge.sp,
+              ),
+            ),
+          );
+        },
+      )
     );
   }
 
@@ -117,7 +123,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
               )),
               Form(
                 key: _formKey,
-                onChanged: () => setState(() => _formValidated = _formKey.currentState!.validate()),
+                onChanged: () => _bloc.validate(_formKey),
                 child: Column(
                   children: [
                     SizedBox(height: 3.5.h),
