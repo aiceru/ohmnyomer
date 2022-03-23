@@ -1,5 +1,6 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
+import 'package:ohmnyomer/src/resources/repository/repository_account_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_pet_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_feed_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_sign_ext.dart';
@@ -21,6 +22,12 @@ class FeedBloc {
 
   getAccount() {
     _accountSubject.sink.add(_repository.account);
+  }
+
+  Map<String, String>? fetchInvitedQueries() {
+    var queries = _repository.invitedInfo;
+    _repository.invitedInfo = null;
+    return queries;
   }
 
   String? getPetId() {
@@ -61,6 +68,12 @@ class FeedBloc {
 
   Future<Feed> updateFeed(Feed feed) {
     return _repository.updateFeed(feed);
+  }
+
+  acceptInvite(String petId) {
+    _repository.acceptInvite(petId)
+        .then((value) => _accountSubject.sink.add(value))
+        .catchError((e) => _accountSubject.sink.addError(e));
   }
 
   signOut() {

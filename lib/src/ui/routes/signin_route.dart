@@ -247,11 +247,11 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
                   ),
                 ),
                 SizedBox(height: 1.h),
-                Row(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildRememberMeCheckbox(),
-                    _buildForgotPasswordBtn(),
+                    // _buildForgotPasswordBtn(),
                   ],
                 ),
                 _buildLoginBtn(),

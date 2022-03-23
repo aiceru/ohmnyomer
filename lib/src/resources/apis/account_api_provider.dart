@@ -56,4 +56,13 @@ class AccountApiProvider {
     );
     return resp.account;
   }
+
+  Future<Account> acceptInvite(String authToken, String petId) async {
+    final client = _newClient(authToken);
+    final resp = await client.acceptInvite(
+      AcceptInviteRequest()
+          ..petId=petId
+    );
+    return resp.account;
+  }
 }

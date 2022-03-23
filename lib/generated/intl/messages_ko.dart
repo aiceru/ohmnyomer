@@ -26,7 +26,7 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "addNewPet": MessageLookupByLibrary.simpleMessage("새로 추가하기"),
         "adoptedAt": MessageLookupByLibrary.simpleMessage("입양일"),
-        "appName": MessageLookupByLibrary.simpleMessage("옴뇸뇸뇸"),
+        "appName": MessageLookupByLibrary.simpleMessage("옴뇸뇸"),
         "appTitle": MessageLookupByLibrary.simpleMessage("옴뇸뇸"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "dontHaveAnAccount":
@@ -43,6 +43,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "feed_zero_amount": MessageLookupByLibrary.simpleMessage("밥이 없다냥...?"),
         "forgotPassword": MessageLookupByLibrary.simpleMessage("비밀번호를 잊어버렸다냥?"),
         "input_error_title": MessageLookupByLibrary.simpleMessage("입력 오류"),
+        "invitedCoparenting":
+            MessageLookupByLibrary.simpleMessage("공동육아 초대가 있다냥"),
         "joinedAt": MessageLookupByLibrary.simpleMessage("가입한 날짜"),
         "linkedAccount": MessageLookupByLibrary.simpleMessage("연결된 계정"),
         "login": MessageLookupByLibrary.simpleMessage("로그인"),

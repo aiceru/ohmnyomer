@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "710382514434",
+    "project_id": "ohmnyom",
+    "storage_bucket": "ohmnyom.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710382514434:android:4075df64e393dac835121b",
+        "android_client_info": {
+          "package_name": "com.aiceru.ohmnyom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "710382514434-5l7ug10egdmulrjharruh7k6v9oq3s5r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCeyhmPAol2jTptd5MVlzcj6OxIBphGNZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "710382514434-5l7ug10egdmulrjharruh7k6v9oq3s5r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

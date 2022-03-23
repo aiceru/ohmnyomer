@@ -19,4 +19,12 @@ extension RepositoryAccountExt on Repository {
     account = await accountApiProvider.updatePassword(authToken!, password);
     return account!;
   }
+
+  Future<Account> acceptInvite(String petId) async {
+    account = await accountApiProvider.acceptInvite(authToken!, petId);
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
+    return account!;
+  }
 }

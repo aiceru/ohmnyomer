@@ -22,10 +22,10 @@ class AppMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Colors.transparent,
+      // systemNavigationBarColor: Colors.transparent,
     ));
 
     return Sizer(
@@ -40,8 +40,6 @@ class AppMain extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                         primary: Colors.yellow,
                         onPrimary: Colors.black,
-                        // minimumSize: const Size(124, 60),
-                        // fixedSize: const Size(124, 60),
                         elevation: 6,
                         alignment: Alignment.center
                     )

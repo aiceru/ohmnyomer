@@ -459,6 +459,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Invited co-parenting`
+  String get invitedCoparenting {
+    return Intl.message(
+      'Invited co-parenting',
+      name: 'invitedCoparenting',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

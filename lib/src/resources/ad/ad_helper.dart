@@ -8,20 +8,16 @@ class AdHelper {
     return _adHelper;
   }
 
-  static bool _isInitialized = false;
+  bool _isInitialized = false;
 
-  static Future<void> _initialize() async {
+  Future<void> initialize() async {
     if (!_isInitialized) {
-      debugPrint('AdHelper initialize()');
       await MobileAds.instance.initialize();
       _isInitialized = true;
     }
-    debugPrint('AdHelper initialize() - already initialized');
   }
 
   void loadBanner(Function(BannerAd) onBannerAdLoaded) async {
-    await _initialize();
-
     BannerAd banner = BannerAd(
       size: AdSize.banner,
       adUnitId: _getBannerAdUnitId(),

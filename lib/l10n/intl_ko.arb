@@ -1,6 +1,6 @@
 {
   "@@locale": "ko",
-  "appName": "옴뇸뇸뇸",
+  "appName": "옴뇸뇸",
 
   "login": "로그인",
   "editName": "이름 변경하기",
@@ -41,5 +41,6 @@
   "feed_zero_amount": "밥이 없다냥...?",
   "more_food_please": "인심 좀 써라냥 =ㅅ=)",
   "feed_delete_confirm": "삭제할거다냥?",
-  "appTitle": "옴뇸뇸"
+  "appTitle": "옴뇸뇸",
+  "invitedCoparenting": "공동육아 초대가 있다냥"
 }

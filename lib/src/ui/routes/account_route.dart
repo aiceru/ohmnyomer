@@ -5,7 +5,7 @@ import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
+import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';

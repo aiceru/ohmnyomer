@@ -6,7 +6,7 @@ import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
+import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/routes/account_route.dart';
 import 'package:ohmnyomer/src/ui/routes/pets_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
@@ -38,6 +38,7 @@ class _FeedRouteState extends State<FeedRoute> {
 
   late List<Feed> _feeds;
   late Account _account;
+  late Map<String, String>? _invitedInfo;
 
   @override
   void didChangeDependencies() {
@@ -51,6 +52,7 @@ class _FeedRouteState extends State<FeedRoute> {
         })
       });
     }
+    _invitedInfo = _bloc.fetchInvitedQueries();
     _petId = _bloc.getPetId();
     _bloc.fetchPet(_petId);
     _bloc.fetchFeeds(_petId, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10);
@@ -71,7 +73,7 @@ class _FeedRouteState extends State<FeedRoute> {
       children: [
         BorderedCircleAvatar(avatarSizeLarge.w, networkSrc: account.photourl),
         SizedBox(width: 5.w),
-        Text(account.email, style: TextStyle(fontSize: fontSizeMedium.sp)),
+        Expanded(child: Text(account.email, style: TextStyle(fontSize: fontSizeMedium.sp))),
       ],
     );
   }
@@ -326,7 +328,42 @@ class _FeedRouteState extends State<FeedRoute> {
     );
   }
 
+  void _dialogAcceptInvite(String petId, String petName, String petFamily) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(S.of(context).invitedCoparenting),
+          content: Text(petName + '(' + petFamily + ')'),
+          actions: [
+            IconButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              icon: const Icon(Icons.cancel_outlined, color: Colors.black54,),
+            ),
+            IconButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              icon: const Icon(Icons.thumb_up_alt_outlined, color: Colors.black54),
+            )
+          ],
+        );
+      },
+    ).then((value) {
+      if (value) {
+        _bloc.acceptInvite(petId);
+        Navigator.of(context).pushNamed(PetsRoute.routeName);
+      }
+    });
+  }
+
   Widget _feedRoute() {
+    String? id = _invitedInfo?['id'];
+    String? name = _invitedInfo?['name'];
+    String? family = _invitedInfo?['family'];
+    if (id != null && name != null && family != null) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _dialogAcceptInvite(id, name, family);
+      });
+    }
     return Column(
       children: [
         _topPanel(),

@@ -1,3 +1,4 @@
+const androidPackageName = 'com.aiceru.ohmnyom';
 const ohmnyomServerHost = '192.168.0.10';
 const ohmnyomServerPort = 50051;
 

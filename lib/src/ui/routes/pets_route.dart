@@ -6,7 +6,8 @@ import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
-import 'package:ohmnyomer/src/resources/admob/ad_helper.dart';
+import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
+import 'package:ohmnyomer/src/resources/invite/inviter.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
@@ -128,18 +129,24 @@ class _PetsRouteState extends State<PetsRoute> {
             child: Padding(
                 padding: EdgeInsets.fromLTRB(6.w, 5.w, 6.w, 6.w),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    BorderedCircleAvatar(avatarSizeLarge.w,
-                      networkSrc: pet.photourl == '' ? null : pet.photourl,
-                      iconData: pet.photourl == '' ? Icons.pets : null,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        BorderedCircleAvatar(avatarSizeLarge.w,
+                          networkSrc: pet.photourl == '' ? null : pet.photourl,
+                          iconData: pet.photourl == '' ? Icons.pets : null,
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 1.5.h), child: infoText(pet.name)),
+                      ],
                     ),
                     // ),
-                    SizedBox(width: 8.w),
+                    // SizedBox(width: 8.w),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(padding: EdgeInsets.all(1.5.w), child: infoTitleText(pet.name)),
                         Padding(padding: EdgeInsets.all(1.5.w),
                             child: infoText(
                                 _families![pet.family]!.name +
@@ -154,7 +161,13 @@ class _PetsRouteState extends State<PetsRoute> {
                               )
                           ),
                       ],
-                    )
+                    ),
+                    IconButton(
+                        onPressed: () => {
+                          // TODO: send invite
+                          Inviter().share(pet.id, pet.name, pet.family)
+                        },
+                        icon: Icon(Icons.person_add, color: Colors.black54, size: iconSize.w))
                   ],
                 )
             )

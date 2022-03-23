@@ -42,6 +42,7 @@ class Repository {
 
   String _locale = 'en';
   String get locale => _locale;
+  Map<String, String>? invitedInfo;
 
   bool get rememberMe => _rememberMe;
   set rememberMe(bool value) {
@@ -83,22 +84,19 @@ class Repository {
     } else {
       petId = null;
     }
-    debugPrint('pet id - $petId');
   }
 
-  Future<bool> initSharedPreference() async {
+  Future<void> initSharedPreference() async {
     _prefs = await SharedPreferences.getInstance();
     _autoSignIn = _getBoolPref(sharedPrefAutoLoginKey);
     _rememberMe = _getBoolPref(sharedPrefRememberMeKey);
     _signInEmail = _getStringPref(sharedPrefEmailKey);
     petId = _getStringPref(sharedPrefPetIdKey);
-    return true;
   }
 
-  Future<bool> initConfigData(BuildContext context) async {
+  Future<void> initConfigData(BuildContext context) async {
     _locale = Localizations.localeOf(context).languageCode;
     familyMap = await _petApiProvider.getSupportedFamilies(_locale);
-    return true;
   }
 
   bool _getBoolPref(String key) {

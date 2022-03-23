@@ -48,6 +48,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Forgot Password?"),
         "input_error_title":
             MessageLookupByLibrary.simpleMessage("Input error"),
+        "invitedCoparenting":
+            MessageLookupByLibrary.simpleMessage("Invited co-parenting"),
         "joinedAt": MessageLookupByLibrary.simpleMessage("Joined at"),
         "linkedAccount": MessageLookupByLibrary.simpleMessage("Linked account"),
         "login": MessageLookupByLibrary.simpleMessage("LOG IN"),
