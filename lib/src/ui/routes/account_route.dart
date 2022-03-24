@@ -110,7 +110,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl),
+                  BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl, iconData: Icons.person),
                   Expanded(
                       child: Container(
                         padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),

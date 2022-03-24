@@ -77,7 +77,7 @@ class _PetsRouteState extends State<PetsRoute> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl),
+          BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl, iconData: Icons.person),
           Expanded(
               child: Container(
                 padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),

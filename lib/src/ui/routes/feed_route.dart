@@ -71,7 +71,7 @@ class _FeedRouteState extends State<FeedRoute> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        BorderedCircleAvatar(avatarSizeLarge.w, networkSrc: account.photourl),
+        BorderedCircleAvatar(avatarSizeLarge.w, networkSrc: account.photourl, iconData: Icons.person),
         SizedBox(width: 5.w),
         Expanded(child: Text(account.email, style: TextStyle(fontSize: fontSizeMedium.sp))),
       ],
@@ -244,7 +244,7 @@ class _FeedRouteState extends State<FeedRoute> {
                           _account = snapshot.data!;
                           return GestureDetector(
                             onTap: () => _dialogAccountDetail(context, _account),
-                            child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: _account.photourl),
+                            child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: _account.photourl, iconData: Icons.person),
                           );
                         }
                         return const SizedBox.shrink();

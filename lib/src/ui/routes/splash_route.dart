@@ -5,6 +5,7 @@ import 'package:ohmnyomer/src/resources/invite/inviter.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
 import 'package:ohmnyomer/src/ui/routes/feed_route.dart';
 import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
+import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 
 class SplashRoute extends StatefulWidget {
   const SplashRoute({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _SplashRouteState extends State<SplashRoute> {
           Repository().initConfigData(context),
           AdHelper().initialize(),
           Inviter().initialize(),
-        ]),
+        ]).catchError((e) => ErrorDialog().show(context, e)),
         builder: (context, AsyncSnapshot<List<void>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             FirebaseDynamicLinks.instance.onLink.listen((event) {
@@ -40,7 +41,6 @@ class _SplashRouteState extends State<SplashRoute> {
               }
               WidgetsBinding.instance?.addPostFrameCallback((_) {
                 Navigator.of(context).pushReplacementNamed(SignInRoute.routeName);
-
               });
             });
           }

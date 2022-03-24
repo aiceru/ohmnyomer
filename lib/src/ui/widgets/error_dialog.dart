@@ -4,6 +4,7 @@ import 'package:grpc/grpc.dart';
 class ErrorDialog {
   static final ErrorDialog _singleton =
   ErrorDialog._internal();
+  bool _isShowing = false;
 
   factory ErrorDialog() {
     return _singleton;
@@ -12,39 +13,45 @@ class ErrorDialog {
   ErrorDialog._internal();
 
   show(BuildContext context, Object e) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(_title(e)),
-          content: Text(_content(e)),
-          actions: [
-            TextButton(
+    if (!_isShowing) {
+      _isShowing = true;
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(_title(e)),
+            content: Text(_content(e)),
+            actions: [
+              TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
+              ),
+            ],
+          );
+        },
+      ).then((value) => _isShowing = false);
+    }
   }
 
   showInputAssert(BuildContext context, String title, String content) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
+    if (!_isShowing) {
+      _isShowing = true;
+      showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      ).then((value) => _isShowing = false);
+    }
   }
 
   String _title(Object e) {
