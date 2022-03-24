@@ -1,8 +1,8 @@
 import 'package:dartnyom/protonyom_api_sign.pbgrpc.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
-import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 import 'package:ohmnyomer/src/constants.dart';
+import 'package:ohmnyomer/src/secrets.dart';
 
 class Authorization {
   final Account _account;
