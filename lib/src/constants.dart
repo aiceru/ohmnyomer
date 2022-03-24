@@ -16,6 +16,8 @@ const listProviders = [oauthProviderGoogle, oauthProviderKakao];
 const ciPathGoogle = 'assets/ci/google.svg';
 const ciPathKakao = 'assets/ci/kakao.svg';
 
+const grpcAuthHeaderKey = 'user-auth';
+
 const unitGram = 'g';
 
 enum SignInResult {

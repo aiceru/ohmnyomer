@@ -1,17 +1,18 @@
 import 'package:grpc/grpc.dart';
+import 'package:ohmnyomer/src/constants.dart';
 
 class AuthInterceptor implements ClientInterceptor {
   AuthInterceptor(String authToken)
   : _authToken = authToken;
 
-  String _authToken;
+  final String _authToken;
 
   @override
   ResponseStream<R> interceptStreaming<Q, R>(ClientMethod<Q, R> method, Stream<Q> requests, CallOptions options, ClientStreamingInvoker<Q, R> invoker) {
     var _options = options.mergedWith(
         CallOptions(
             metadata: <String, String>{
-              'authorization': _authToken
+              grpcAuthHeaderKey: _authToken
             }
         )
     );
@@ -23,7 +24,7 @@ class AuthInterceptor implements ClientInterceptor {
     var _options = options.mergedWith(
       CallOptions(
         metadata: <String, String>{
-          'authorization': _authToken
+          grpcAuthHeaderKey: _authToken
         }
       )
     );

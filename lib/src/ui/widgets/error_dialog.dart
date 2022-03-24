@@ -12,10 +12,10 @@ class ErrorDialog {
 
   ErrorDialog._internal();
 
-  show(BuildContext context, Object e) {
+  Future? show(BuildContext context, Object e) {
     if (!_isShowing) {
       _isShowing = true;
-      showDialog<void>(
+      return showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -31,6 +31,7 @@ class ErrorDialog {
         },
       ).then((value) => _isShowing = false);
     }
+    return null;
   }
 
   showInputAssert(BuildContext context, String title, String content) {

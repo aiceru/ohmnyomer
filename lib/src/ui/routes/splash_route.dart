@@ -1,5 +1,6 @@
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
 import 'package:ohmnyomer/src/resources/invite/inviter.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
@@ -26,7 +27,12 @@ class _SplashRouteState extends State<SplashRoute> {
           Repository().initConfigData(context),
           AdHelper().initialize(),
           Inviter().initialize(),
-        ]).catchError((e) => ErrorDialog().show(context, e)),
+        ]).catchError((e) {
+        var f = ErrorDialog().show(context, e);
+        if (f != null) {
+          f.then((value) => SystemNavigator.pop());
+        }
+        }),
         builder: (context, AsyncSnapshot<List<void>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             FirebaseDynamicLinks.instance.onLink.listen((event) {
