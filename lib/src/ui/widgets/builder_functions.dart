@@ -7,7 +7,7 @@ import 'package:sizer/sizer.dart';
 Widget buildTextField(
     IconData? icon, String? hintText, TextInputType? keyboardType,
     String? Function (String?) validator, TextEditingController controller,
-    {bool? obsecureText}) {
+    {bool? obscureText}) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 2.0.w),//, vertical: 1.0.h),
     alignment: Alignment.topLeft,
@@ -16,7 +16,7 @@ Widget buildTextField(
       validator: (value) => validator(value),
       autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
-      obscureText: obsecureText ?? false,
+      obscureText: obscureText ?? false,
       keyboardType: keyboardType,
       style: const TextStyle(
         color: Colors.black54,

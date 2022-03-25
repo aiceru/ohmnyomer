@@ -54,7 +54,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
 
   Widget _buildPasswordTF() {
     return buildTextField(Icons.password, S.of(context).password, TextInputType.visiblePassword,
-        validatePasswordFunc(context), _passwdInputController, obsecureText: true);
+        validatePasswordFunc(context), _passwdInputController, obscureText: true);
   }
 
   void _doSignUp() {
