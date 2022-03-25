@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -25,7 +26,7 @@ class FeedRoute extends StatefulWidget {
   _FeedRouteState createState() => _FeedRouteState();
 }
 
-class _FeedRouteState extends State<FeedRoute> {
+class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
   late FeedBloc _bloc;
   bool _init = false;
   String? _petId;
@@ -41,6 +42,11 @@ class _FeedRouteState extends State<FeedRoute> {
   late Map<String, String>? _invitedInfo;
 
   @override
+  void onError(Object e) {
+    ErrorDialog().show(context, e);
+  }
+
+  @override
   void didChangeDependencies() {
     if (!_init) {
       _bloc = FeedBlocProvider.of(context);
@@ -54,8 +60,8 @@ class _FeedRouteState extends State<FeedRoute> {
     }
     _invitedInfo = _bloc.fetchInvitedQueries();
     _petId = _bloc.getPetId();
-    _bloc.fetchPet(_petId);
-    _bloc.fetchFeeds(_petId, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10);
+    _bloc.fetchPet(_petId, this);
+    _bloc.fetchFeeds(_petId, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10, this);
     super.didChangeDependencies();
   }
 
@@ -260,10 +266,9 @@ class _FeedRouteState extends State<FeedRoute> {
   }
 
   deleteFeed(int index) {
-    _bloc.deleteFeed(_petId!, _feeds[index].id);
-    setState(() {
-      _feeds.removeAt(index);
-    });
+    _bloc.deleteFeed(_petId!, _feeds[index].id)
+        .then((_) => setState(() => _feeds.removeAt(index)))
+        .onError((error, stackTrace) => {if (error != null) onError(error)});
   }
 
   void _onLongPressFeedItem(int index) {
@@ -349,7 +354,7 @@ class _FeedRouteState extends State<FeedRoute> {
       },
     ).then((value) {
       if (value) {
-        _bloc.acceptInvite(petId);
+        _bloc.acceptInvite(petId, this);
         Navigator.of(context).pushNamed(PetsRoute.routeName);
       }
     });
@@ -376,9 +381,8 @@ class _FeedRouteState extends State<FeedRoute> {
 
   addFeed(Feed f) {
     _bloc.addFeed(f)
-    .then((value) => setState(() {
-      _feeds.insert(0, value);
-    }));
+        .then((value) => setState(() => _feeds.insert(0, value)))
+        .onError((error, stackTrace) => {if (error != null) onError(error)});
   }
 
   void _dialogFeedDetail(double amount, String unit, DateTime t) {

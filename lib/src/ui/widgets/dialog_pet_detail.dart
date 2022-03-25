@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
@@ -28,7 +29,7 @@ class DialogPetDetail extends StatefulWidget {
   _DialogPetDetailState createState() => _DialogPetDetailState();
 }
 
-class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin {
+class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin implements ErrorHandler {
   String _id = '';
   String _photourl = '';
   String _name = '';
@@ -41,6 +42,17 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
 
   late PetsBloc _bloc;
   final TextEditingController _nameInputController = TextEditingController();
+
+  @override
+  void onError(Object e) {
+    ErrorDialog().show(context, e);
+  }
+
+  @override
+  void dispose() {
+    _nameInputController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -237,9 +249,9 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
             ..family = _familyKey
             ..species = _speciesKey;
           if (pet.id == "") {
-            _bloc.addPet(pet, _localProfile);
+            _bloc.addPet(pet, _localProfile, this);
           } else {
-            _bloc.updatePet(pet, _localProfile);
+            _bloc.updatePet(pet, _localProfile, this);
           }
           Navigator.of(context).pop();
         }

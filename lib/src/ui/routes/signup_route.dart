@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -19,13 +20,18 @@ class SignUpRoute extends StatefulWidget {
   _SignUpRouteState createState() => _SignUpRouteState();
 }
 
-class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
+class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin implements ErrorHandler {
   late SignBloc _bloc;
   final _nameInputController = TextEditingController();
   final _emailInputController = TextEditingController();
   final _passwdInputController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _init = false;
+
+  @override
+  void onError(Object e) {
+    ErrorDialog().show(context, e);
+  }
 
   @override
   void didChangeDependencies() {
@@ -63,6 +69,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin {
       _nameInputController.text,
       _emailInputController.text,
       _passwdInputController.text,
+      this,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -32,19 +33,24 @@ class PetsRoute extends StatefulWidget {
   _PetsRouteState createState() => _PetsRouteState();
 }
 
-class _PetsRouteState extends State<PetsRoute> {
+class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
   Map<String, Family>? _families = {};
   late PetsBloc _bloc;
-  late List<Pet> _petList;
+  List<Pet> _petList = List.empty();
   bool _init = false;
   BannerAd? _bannerAd;
+
+  @override
+  void onError(Object e) {
+    ErrorDialog().show(context, e);
+  }
 
   @override
   void didChangeDependencies() {
     if (!_init) {
       _bloc = PetsBlocProvider.of(context);
       _bloc.getAccount();
-      _bloc.fetchPetList();
+      _bloc.fetchPetList(this);
       _families = _bloc.getSupportedFamilies();
       _init = true;
       AdHelper().loadBanner((ad) => {
@@ -181,7 +187,7 @@ class _PetsRouteState extends State<PetsRoute> {
       onDismissed: (direction) {
         if (direction == DismissDirection.startToEnd) {
           int index = indexFromKey(key);
-          _bloc.deletePet(_petList[index].id);
+          _bloc.deletePet(_petList[index].id, this);
         }
       },
       dismissThresholds: const {
@@ -236,24 +242,24 @@ class _PetsRouteState extends State<PetsRoute> {
       stream: _bloc.petListSubject,
       builder: (context, AsyncSnapshot<List<Pet>> snapshot) {
         if (snapshot.hasError) {
+          debugPrint('=======================akakakakakak======================');
           WidgetsBinding.instance?.addPostFrameCallback((_) {
             ErrorDialog().show(context, snapshot.error!);
           });
         }
         if (snapshot.hasData && snapshot.data != null) {
           _petList = snapshot.data!;
-          return ListView.builder(
-            padding: EdgeInsets.all(1.w),
-            itemCount: _petList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildDismissibleListItem(
-                itemKey(index, _petList[index].id),
-                _buildPetListCard(_petList[index]),
-              );
-            },
-          );
         }
-        return const SizedBox.shrink();
+        return ListView.builder(
+          padding: EdgeInsets.all(1.w),
+          itemCount: _petList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _buildDismissibleListItem(
+              itemKey(index, _petList[index].id),
+              _buildPetListCard(_petList[index]),
+            );
+          },
+        );
       },
     );
   }

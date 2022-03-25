@@ -1,8 +1,8 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_account_ext.dart';
-import 'package:ohmnyomer/src/ui/widgets/loading_indicator_dialog.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AccountBloc {
@@ -19,25 +19,21 @@ class AccountBloc {
     _accountSubject.sink.add(_repository.account!);
   }
 
-  fetchAccount() {
+  fetchAccount(ErrorHandler? handler) {
     _repository.fetchAccount()
         .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => _accountSubject.sink.addError(e));
+        .catchError((e) => handler?.onError(e));
   }
 
-  updateName(BuildContext context, String name) {
-    // LoadingIndicatorDialog().show(context);
+  updateName(BuildContext context, String name, ErrorHandler? handler) {
     _repository.updateName(name)
         .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => _accountSubject.sink.addError(e));
-        // .whenComplete(() => LoadingIndicatorDialog().dismiss());
+        .catchError((e) => handler?.onError(e));
   }
 
-  updatePassword(BuildContext context, String password) {
-    // LoadingIndicatorDialog().show(context);
+  updatePassword(BuildContext context, String password, ErrorHandler? handler) {
     _repository.updatePassword(password)
         .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => _accountSubject.sink.addError(e));
-        // .whenComplete(() => LoadingIndicatorDialog().dismiss());
+        .catchError((e) => handler?.onError(e));
   }
 }

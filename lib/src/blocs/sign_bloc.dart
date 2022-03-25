@@ -1,6 +1,7 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/oauth_provider.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
@@ -28,12 +29,12 @@ class SignBloc {
   Stream<SharedPrefValues> get valuesSubject => _valuesSubject.stream;
   Stream<bool> get formValidationSubject => _formValidationSubject.stream;
 
-  checkSignInStatus() {
+  checkSignInStatus(ErrorHandler? handler) {
     Account? account = _repository.account;
     if (account == null && _repository.autoSignIn) {
       _repository.signInWithCredential()
           .then((value) => _resultSubject.sink.add(value))
-          .catchError((e) => _resultSubject.sink.addError(e));
+          .catchError((e) => handler?.onError(e));
     }
   }
 
@@ -46,57 +47,51 @@ class SignBloc {
     _valuesSubject.sink.add(values);
   }
 
-  signUpWithEmail(String name, String email, String password) {
+  signUpWithEmail(String name, String email, String password, ErrorHandler? handler) {
     _repository.signUpWithEmail(name, email, password)
-        .then((value) {
-      _resultSubject.sink.add(value);
-    }).catchError((e) {
-      _resultSubject.sink.addError(e);
-    });
+        .then((value) => _resultSubject.sink.add(value))
+        .catchError((e) => handler?.onError(e));
   }
 
-  signInWithEmail(String email, String password) {
+  signInWithEmail(String email, String password, ErrorHandler? handler) {
     _repository.signInWithEmail(email, password)
-        .then((value) {
-      _resultSubject.sink.add(value);
-    }).catchError((e) {
-      _resultSubject.sink.addError(e);
-    });
+        .then((value) => _resultSubject.sink.add(value))
+        .catchError((e) => handler?.onError(e));
   }
 
   _signUpWithOAuthInfo(String name, String email, String oauthId,
-      String oauthProvider, String photourl) {
+      String oauthProvider, String photourl, ErrorHandler? handler) {
     _repository.signUpWithOAuthInfo(name,
         OAuthInfo.create()
           ..email = email
           ..id = oauthId,
         oauthProvider, photourl)
         .then((value) => _resultSubject.sink.add(value))
-        .catchError((e) => _resultSubject.sink.addError(e));
+        .catchError((e) => handler?.onError(e));
   }
 
   _signInWithOAuthInfo(String name, String email, String oauthId,
-      String oauthProvider, String photourl) {
+      String oauthProvider, String photourl, ErrorHandler? handler) {
     _repository.signInWithOAuthInfo(OAuthInfo.create()
       ..id = oauthId
       ..email = email,
         oauthProvider)
         .then((value) => _resultSubject.sink.add(value))
-        .catchError((e) => _signUpWithOAuthInfo(name, email, oauthId, oauthProvider, photourl),
+        .catchError((e) => _signUpWithOAuthInfo(name, email, oauthId, oauthProvider, photourl, handler),
         test: (e) => e is GrpcError && e.code == StatusCode.notFound)
-        .catchError((e) => _resultSubject.sink.addError(e));
+        .catchError((e) => handler?.onError(e));
   }
 
-  signInWithGoogle() {
+  signInWithGoogle(ErrorHandler? handler) {
     _oauthProvider.getGoogleIdentity()
-        .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl))
-        .catchError((e) => _resultSubject.sink.addError(e));
+        .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl, handler))
+        .catchError((e) => handler?.onError(e));
   }
 
-  signInWithKakao() {
+  signInWithKakao(ErrorHandler? handler) {
     _oauthProvider.getKakaoIdentity()
-        .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl))
-        .catchError((e) => _resultSubject.sink.addError(e));
+        .then((value) => _signInWithOAuthInfo(value.name, value.email, value.id, value.provider, value.photourl, handler))
+        .catchError((e) => handler?.onError(e));
   }
 
   validate(GlobalKey<FormState> key) {

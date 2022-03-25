@@ -4,6 +4,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
@@ -24,10 +25,15 @@ class AccountRoute extends StatefulWidget {
   _AccountRouteState createState() => _AccountRouteState();
 }
 
-class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
+class _AccountRouteState extends State<AccountRoute> with ValidationMixin implements ErrorHandler {
   late AccountBloc _bloc;
   bool _init = false;
   BannerAd? _bannerAd;
+
+  @override
+  void onError(Object e) {
+    ErrorDialog().show(context, e);
+  }
 
   @override
   void didChangeDependencies() {
@@ -68,7 +74,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
           onSave: () =>
           {
             Navigator.of(context).pop(),
-            _bloc.updateName(context, _textEditingController.text),
+            _bloc.updateName(context, _textEditingController.text, this),
           }
         );
       },
@@ -91,7 +97,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin {
             onSave: () =>
             {
               Navigator.of(context).pop(),
-              _bloc.updatePassword(context, _textEditingController.text),
+              _bloc.updatePassword(context, _textEditingController.text, this),
             }
         );
       },

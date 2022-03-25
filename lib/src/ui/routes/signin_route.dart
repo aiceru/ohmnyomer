@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc.dart';
 import 'package:ohmnyomer/src/blocs/sign_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
@@ -22,7 +23,7 @@ class SignInRoute extends StatefulWidget {
   SignInRouteState createState() => SignInRouteState();
 }
 
-class SignInRouteState extends State<SignInRoute> with ValidationMixin {
+class SignInRouteState extends State<SignInRoute> with ValidationMixin implements ErrorHandler {
   late SignBloc _bloc;
   final String _splashPath = 'assets/signin/splash-' + (Random().nextInt(5) + 1).toString() + '.jpg';
   final _formKey = GlobalKey<FormState>();
@@ -34,11 +35,16 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
   StreamBuilder<SharedPrefValues>? _emailTFBuilder;
 
   @override
+  void onError(Object e) {
+    ErrorDialog().show(context, e);
+  }
+
+  @override
   void didChangeDependencies() {
     if (!_init) {
       _bloc = SignBlocProvider.of(context);
       _bloc.getSharedPrefValues();
-      _bloc.checkSignInStatus();
+      _bloc.checkSignInStatus(this);
       _init = true;
     }
     super.didChangeDependencies();
@@ -68,7 +74,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
 
   Widget _buildPasswordTF() {
     return buildTextField(Icons.password, S.of(context).password, TextInputType.visiblePassword,
-        validatePasswordFunc(context), _passwordInputController, obsecureText: true);
+        validatePasswordFunc(context), _passwordInputController, obscureText: true);
   }
 
   Widget _buildForgotPasswordBtn() {
@@ -135,6 +141,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
     _bloc.signInWithEmail(
       _emailInputController.text,
       _passwordInputController.text,
+      this,
     );
   }
 
@@ -186,11 +193,11 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin {
         children: [
           _buildSocialBtn(() {
             LoadingIndicatorDialog().show(context);
-            _bloc.signInWithGoogle();
+            _bloc.signInWithGoogle(this);
           }, oauthProviderGoogle),
           _buildSocialBtn(() {
             LoadingIndicatorDialog().show(context);
-            _bloc.signInWithKakao();
+            _bloc.signInWithKakao(this);
           }, oauthProviderKakao),
         ],
       ),

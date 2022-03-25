@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 
 class ErrorDialog {
-  static final ErrorDialog _singleton =
-  ErrorDialog._internal();
-  bool _isShowing = false;
+  static final ErrorDialog _singleton = ErrorDialog._internal();
 
   factory ErrorDialog() {
     return _singleton;
@@ -13,31 +11,25 @@ class ErrorDialog {
   ErrorDialog._internal();
 
   Future? show(BuildContext context, Object e) {
-    if (!_isShowing) {
-      _isShowing = true;
-      return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(_title(e)),
-            content: Text(_content(e)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
-      ).then((value) => _isShowing = false);
-    }
-    return null;
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(_title(e)),
+          content: Text(_content(e)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   showInputAssert(BuildContext context, String title, String content) {
-    if (!_isShowing) {
-      _isShowing = true;
-      showDialog<void>(
+    showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -50,9 +42,8 @@ class ErrorDialog {
               ),
             ],
           );
-        },
-      ).then((value) => _isShowing = false);
-    }
+        }
+    );
   }
 
   String _title(Object e) {

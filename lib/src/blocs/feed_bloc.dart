@@ -1,4 +1,5 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
+import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_account_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_pet_ext.dart';
@@ -38,13 +39,13 @@ class FeedBloc {
     _repository.petId = petId;
   }
 
-  fetchPet(String? petId) {
+  fetchPet(String? petId, ErrorHandler? handler) {
     if (petId == null || petId.isEmpty) {
       _petSubject.sink.add(null);
     } else {
       _repository.fetchPet(petId)
           .then((value) => _petSubject.sink.add(value))
-          .catchError((e) => _petSubject.sink.addError(e));
+          .catchError((e) => handler?.onError(e));
     }
   }
 
@@ -52,13 +53,13 @@ class FeedBloc {
     return _repository.addFeed(feed);
   }
 
-  fetchFeeds(String? petId, int startAfter, int limit) {
+  fetchFeeds(String? petId, int startAfter, int limit, ErrorHandler? handler) {
     if (petId == null || petId.isEmpty) {
       _feedListSubject.sink.add(<Feed>[]);
     } else {
       _repository.getFeeds(petId, startAfter, limit)
           .then((value) => _feedListSubject.sink.add(value))
-          .catchError((e) => _feedListSubject.sink.addError(e));
+          .catchError((e) => handler?.onError(e));
     }
   }
 
@@ -70,10 +71,10 @@ class FeedBloc {
     return _repository.updateFeed(feed);
   }
 
-  acceptInvite(String petId) {
+  acceptInvite(String petId, ErrorHandler? handler) {
     _repository.acceptInvite(petId)
         .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => _accountSubject.sink.addError(e));
+        .catchError((e) => handler?.onError(e));
   }
 
   signOut() {
