@@ -36,6 +36,7 @@ class SignInRouteState extends State<SignInRoute> with ValidationMixin implement
 
   @override
   void onError(Object e) {
+    LoadingIndicatorDialog().dismiss();
     ErrorDialog().show(context, e);
   }
 

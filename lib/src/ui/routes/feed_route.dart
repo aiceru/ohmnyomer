@@ -407,7 +407,7 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
       resizeToAvoidBottomInset: false,
       body: _feedRoute(),
       floatingActionButton: Padding(
-          padding: AdHelper().getFabPadding(),
+          padding: _bannerAd == null ? EdgeInsets.zero : AdHelper().getFabPadding(),
           child: FloatingActionButton(
               onPressed: () {
                 _petId == null || _petId!.isEmpty

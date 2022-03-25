@@ -30,6 +30,7 @@ class _SignUpRouteState extends State<SignUpRoute> with ValidationMixin implemen
 
   @override
   void onError(Object e) {
+    LoadingIndicatorDialog().dismiss();
     ErrorDialog().show(context, e);
   }
 

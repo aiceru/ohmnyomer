@@ -280,7 +280,7 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
     return Scaffold(
         body: _editPetsRoute(),
         floatingActionButton: Padding(
-          padding: AdHelper().getFabPadding(),
+          padding: _bannerAd == null ? EdgeInsets.zero : AdHelper().getFabPadding(),
           child: FloatingActionButton(
             onPressed: () => {
               _dialogPetDetail(context, null)
