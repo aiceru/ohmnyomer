@@ -242,7 +242,6 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
       stream: _bloc.petListSubject,
       builder: (context, AsyncSnapshot<List<Pet>> snapshot) {
         if (snapshot.hasError) {
-          debugPrint('=======================akakakakakak======================');
           WidgetsBinding.instance?.addPostFrameCallback((_) {
             ErrorDialog().show(context, snapshot.error!);
           });

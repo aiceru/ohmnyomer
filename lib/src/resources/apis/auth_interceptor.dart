@@ -18,8 +18,7 @@ class AuthInterceptor implements ClientInterceptor {
       meta['x-api-key'] = ohmnyomApiKey;
     }
     var _options = options.mergedWith(CallOptions(metadata: meta));
-    var err = invoker(method, requests, _options);
-    return err;
+    return invoker(method, requests, _options);
   }
 
   @override
@@ -31,9 +30,6 @@ class AuthInterceptor implements ClientInterceptor {
       meta['x-api-key'] = ohmnyomApiKey;
     }
     var _options = options.mergedWith(CallOptions(metadata: meta));
-    final resp = invoker(method, request, _options);
-    resp.then((e) => debugPrint('then, $e'))
-    .catchError((e) => debugPrint('error, $e'));
-    return resp;
+    return invoker(method, request, _options);
   }
 }
