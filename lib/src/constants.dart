@@ -1,6 +1,8 @@
 const androidPackageName = 'com.aiceru.ohmnyom';
 const ohmnyomServerHost = 'ohmnyom-grpc-92cfeo76.an.gateway.dev';
 const ohmnyomServerPort = 443;
+const ohmnyomServerHostDebug = '192.168.0.10';
+const ohmnyomServerPortDebug = 8080;
 
 const secureStorageKeyCredential = 'cred';
 
@@ -16,7 +18,7 @@ const listProviders = [oauthProviderGoogle, oauthProviderKakao];
 const ciPathGoogle = 'assets/ci/google.svg';
 const ciPathKakao = 'assets/ci/kakao.svg';
 
-const grpcAuthHeaderKey = 'user-auth';
+const userAuthHeaderKey = 'user-auth';
 
 const unitGram = 'g';
 

@@ -76,6 +76,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            applicationIdSuffix = ".dbg"
         }
         release {
             // TODO: Add your own signing config for the release build.
