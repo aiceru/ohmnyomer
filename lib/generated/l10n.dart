@@ -469,6 +469,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Auth token expired`
+  String get authTokenExpired {
+    return Intl.message(
+      'Auth token expired',
+      name: 'authTokenExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please log in again`
+  String get pleaseLogInAgain {
+    return Intl.message(
+      'Please log in again',
+      name: 'pleaseLogInAgain',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -42,5 +42,7 @@
   "more_food_please": "인심 좀 써라냥 =ㅅ=)",
   "feed_delete_confirm": "삭제할거다냥?",
   "appTitle": "옴뇸뇸",
-  "invitedCoparenting": "공동육아 초대가 있다냥"
+  "invitedCoparenting": "공동육아 초대가 있다냥",
+  "authTokenExpired": "토큰이 만료되었다냥!!",
+  "pleaseLogInAgain": "다시 로그인 해달라냥..."
 }

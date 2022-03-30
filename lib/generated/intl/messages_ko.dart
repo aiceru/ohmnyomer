@@ -28,6 +28,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "adoptedAt": MessageLookupByLibrary.simpleMessage("입양일"),
         "appName": MessageLookupByLibrary.simpleMessage("옴뇸뇸"),
         "appTitle": MessageLookupByLibrary.simpleMessage("옴뇸뇸"),
+        "authTokenExpired":
+            MessageLookupByLibrary.simpleMessage("토큰이 만료되었다냥!!"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("아직 가입하지 않았다냥? "),
@@ -62,6 +64,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("삭제할거다냥? ㅠㅠ"),
         "pet_detail_input_error":
             MessageLookupByLibrary.simpleMessage("입력 칸을 모두 채워달라냥"),
+        "pleaseLogInAgain":
+            MessageLookupByLibrary.simpleMessage("다시 로그인 해달라냥..."),
         "register": MessageLookupByLibrary.simpleMessage("가입하기"),
         "rememberMe": MessageLookupByLibrary.simpleMessage("아이디 기억하기"),
         "save": MessageLookupByLibrary.simpleMessage("저장"),

@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
-import 'package:ohmnyomer/src/blocs/err_handler.dart';
-import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
@@ -18,18 +16,23 @@ import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:sizer/sizer.dart';
 
+class PetWithProfile {
+  Pet pet;
+  File? profile;
+  PetWithProfile(this.pet, {this.profile});
+}
+
 class DialogPetDetail extends StatefulWidget {
-  const DialogPetDetail(this._bloc, this._pet, this._familyMap, {Key? key}) :super(key: key);
+  const DialogPetDetail(this._pet, this._familyMap, {Key? key}) :super(key: key);
 
   final Pet? _pet;
-  final PetsBloc _bloc;
   final Map<String, Family> _familyMap;
 
   @override
   _DialogPetDetailState createState() => _DialogPetDetailState();
 }
 
-class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin implements ErrorHandler {
+class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin {
   String _id = '';
   String _photourl = '';
   String _name = '';
@@ -40,13 +43,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
   Map<String, Family> _familyMap = {};
   File? _localProfile;
 
-  late PetsBloc _bloc;
   final TextEditingController _nameInputController = TextEditingController();
-
-  @override
-  void onError(Object e) {
-    ErrorDialog().show(context, e);
-  }
 
   @override
   void dispose() {
@@ -65,7 +62,6 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
       _speciesKey = pet.species;
       _adopted = dateTimeFromEpochSeconds(pet.adopted.toInt());
     }
-    _bloc = widget._bloc;
     _familyMap = widget._familyMap;
     _nameInputController.text = _name;
     super.initState();
@@ -236,7 +232,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     return IconButton(
       onPressed: () {
         if (_nameInputController.text.isEmpty || _familyKey.isEmpty || _speciesKey.isEmpty) {
-          ErrorDialog().showInputAssert(context,
+          ErrorDialog().showAlert(context,
             S.of(context).input_error_title,
             S.of(context).pet_detail_input_error,
           );
@@ -248,12 +244,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
             ..adopted = Int64(_adopted.toSecondsSinceEpoch())
             ..family = _familyKey
             ..species = _speciesKey;
-          if (pet.id == "") {
-            _bloc.addPet(pet, _localProfile, this);
-          } else {
-            _bloc.updatePet(pet, _localProfile, this);
-          }
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(PetWithProfile(pet, profile: _localProfile));
         }
       },
       icon: const Icon(Icons.send, color: Colors.black54),
