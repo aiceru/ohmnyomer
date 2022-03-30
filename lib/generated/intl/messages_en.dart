@@ -29,6 +29,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "adoptedAt": MessageLookupByLibrary.simpleMessage("Adopted at"),
         "appName": MessageLookupByLibrary.simpleMessage("OhmNyom"),
         "appTitle": MessageLookupByLibrary.simpleMessage("Ohmnyom"),
+        "authTokenExpired":
+            MessageLookupByLibrary.simpleMessage("Auth token expired"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("Don\'t have an Account? "),
@@ -65,6 +67,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "pet_delete_confirm": MessageLookupByLibrary.simpleMessage("Delete?"),
         "pet_detail_input_error":
             MessageLookupByLibrary.simpleMessage("Fill all inputs"),
+        "pleaseLogInAgain":
+            MessageLookupByLibrary.simpleMessage("Please log in again"),
         "register": MessageLookupByLibrary.simpleMessage("REGISTER"),
         "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
         "save": MessageLookupByLibrary.simpleMessage("Save"),

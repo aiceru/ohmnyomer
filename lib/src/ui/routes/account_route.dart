@@ -1,12 +1,14 @@
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:grpc/grpc.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc.dart';
 import 'package:ohmnyomer/src/blocs/account_bloc_provider.dart';
 import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
+import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
@@ -32,7 +34,16 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
 
   @override
   void onError(Object e) {
-    ErrorDialog().show(context, e);
+    if (e is GrpcError && e.code == StatusCode.unauthenticated
+        && e.message != null && e.message!.contains('token is expired')) {
+      ErrorDialog().showAlert(context,
+          S.of(context).authTokenExpired,
+          S.of(context).pleaseLogInAgain)
+          ?.then((_) => Navigator.of(context).pushNamedAndRemoveUntil(
+          SignInRoute.routeName, (route) => false));
+    } else {
+      ErrorDialog().show(context, e);
+    }
   }
 
   @override
@@ -107,30 +118,23 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
   Widget _topPanel(Account account) {
     return Container(
         padding: routeTopPanelPadding(),
-        child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).padding.top,
-            ),
-            SizedBox(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl, iconData: Icons.person),
-                  Expanded(
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
-                        alignment: Alignment.centerLeft,
-                        child: Text(account.email,
-                          style: TextStyle(fontSize: fontSizeLarge.sp),
-                        ),
-                      )
-                  ),
-                ],
+        child: SizedBox(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl, iconData: Icons.person),
+              Expanded(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
+                    alignment: Alignment.centerLeft,
+                    child: Text(account.email,
+                      style: TextStyle(fontSize: fontSizeLarge.sp),
+                    ),
+                  )
               ),
-              height: topPanelHeight.h,
-            )
-          ],
+            ],
+          ),
+          height: topPanelHeight.h,
         ),
         color: const Color.fromRGBO(54, 69, 102, 0.7)
     );
@@ -198,6 +202,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: StreamBuilder(
         stream: _bloc.accountSubject,
         builder: (context, AsyncSnapshot<Account> snapshot) {

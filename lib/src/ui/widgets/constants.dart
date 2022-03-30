@@ -129,7 +129,7 @@ TextStyle infoTextStyle() {
 }
 
 EdgeInsets routeTopPanelPadding() {
-  return EdgeInsets.fromLTRB(6.w, 1.h, 6.w, 0);
+  return EdgeInsets.fromLTRB(6.w, 5.3.h, 6.w, 0);
 }
 
 EdgeInsets routeBodyPadding() {

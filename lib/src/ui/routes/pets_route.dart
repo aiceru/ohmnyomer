@@ -2,6 +2,7 @@ import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:grpc/grpc.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:ohmnyomer/src/blocs/pets_bloc_provider.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/resources/ad/ad_helper.dart';
 import 'package:ohmnyomer/src/resources/invite/inviter.dart';
+import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
@@ -42,7 +44,16 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
 
   @override
   void onError(Object e) {
-    ErrorDialog().show(context, e);
+    if (e is GrpcError && e.code == StatusCode.unauthenticated
+        && e.message != null && e.message!.contains('token is expired')) {
+      ErrorDialog().showAlert(context,
+          S.of(context).authTokenExpired,
+          S.of(context).pleaseLogInAgain)
+          ?.then((_) => Navigator.of(context).pushNamedAndRemoveUntil(
+          SignInRoute.routeName, (route) => false));
+    } else {
+      ErrorDialog().show(context, e);
+    }
   }
 
   @override
@@ -100,27 +111,20 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
   Widget _buildTopPanel() {
     return Container(
         padding: routeTopPanelPadding(),
-        child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).padding.top,
-            ),
-            StreamBuilder(
-              stream: _bloc.accountSubject,
-              builder: (context, AsyncSnapshot<Account> snapshot) {
-                if (snapshot.hasData) {
-                  return _buildTopPanelTitleRow(snapshot.data!);
-                }
-                if (snapshot.hasError) {
-                  WidgetsBinding.instance?.addPostFrameCallback((_) {
-                    ErrorDialog().show(context, snapshot.error!);
-                  });
-                  _bloc.getAccount(); // fetch locally saved account
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ],
+        child: StreamBuilder(
+          stream: _bloc.accountSubject,
+          builder: (context, AsyncSnapshot<Account> snapshot) {
+            if (snapshot.hasData) {
+              return _buildTopPanelTitleRow(snapshot.data!);
+            }
+            if (snapshot.hasError) {
+              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                ErrorDialog().show(context, snapshot.error!);
+              });
+              _bloc.getAccount(); // fetch locally saved account
+            }
+            return const SizedBox.shrink();
+          },
         ),
         color: const Color.fromRGBO(202, 182, 137, 0.7)
     );
@@ -277,6 +281,7 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: _editPetsRoute(),
         floatingActionButton: Padding(
           padding: _bannerAd == null ? EdgeInsets.zero : AdHelper().getFabPadding(),

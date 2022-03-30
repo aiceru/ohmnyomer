@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:grpc/grpc.dart';
 
+class AlertContents {
+  String title;
+  String content;
+  AlertContents(this.title, this.content);
+}
+
 class ErrorDialog {
   static final ErrorDialog _singleton = ErrorDialog._internal();
+  static bool _isShowing = false;
 
   factory ErrorDialog() {
     return _singleton;
@@ -10,16 +17,24 @@ class ErrorDialog {
 
   ErrorDialog._internal();
 
-  Future? show(BuildContext context, Object e) {
+  Future? _show(BuildContext context, AlertContents alert) {
+    if (_isShowing) {
+      return null;
+    }
+    _isShowing = true;
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(_title(e)),
-          content: Text(_content(e)),
+          title: Text(alert.title),
+          content: Text(_content(alert.content)),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () =>
+              {
+                _isShowing = false,
+                Navigator.of(context).pop(),
+              },
               child: const Text('Close'),
             ),
           ],
@@ -28,22 +43,12 @@ class ErrorDialog {
     );
   }
 
-  showInputAssert(BuildContext context, String title, String content) {
-    showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(content),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        }
-    );
+  Future? show(BuildContext context, Object e) {
+    return _show(context, AlertContents(_title(e), _content(e)));
+  }
+
+  Future? showAlert(BuildContext context, String title, String content) {
+    return _show(context, AlertContents(title, content));
   }
 
   String _title(Object e) {

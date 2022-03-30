@@ -2,6 +2,7 @@ import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:grpc/grpc.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/feed_bloc.dart';
@@ -43,7 +44,16 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
 
   @override
   void onError(Object e) {
-    ErrorDialog().show(context, e);
+    if (e is GrpcError && e.code == StatusCode.unauthenticated
+        && e.message != null && e.message!.contains('token is expired')) {
+      ErrorDialog().showAlert(context,
+          S.of(context).authTokenExpired,
+          S.of(context).pleaseLogInAgain)
+          ?.then((_) => Navigator.of(context).pushNamedAndRemoveUntil(
+          SignInRoute.routeName, (route) => false));
+    } else {
+      ErrorDialog().show(context, e);
+    }
   }
 
   @override
@@ -184,82 +194,75 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
   Widget _topPanel() {
     return Container(
         padding: routeTopPanelPadding(),
-        child: Column(
-          children: [
-            Container(
-              height: MediaQuery.of(context).padding.top,
-            ),
-            SizedBox(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  StreamBuilder(
-                    stream: _bloc.petSubject,
-                    builder: (context, AsyncSnapshot<Pet?> snapshot) {
-                      if (snapshot.hasError) {
-                        WidgetsBinding.instance?.addPostFrameCallback((_) {
-                          ErrorDialog().show(context, snapshot.error!);
-                        });
-                        petId = null;
-                      }
+        child: SizedBox(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              StreamBuilder(
+                stream: _bloc.petSubject,
+                builder: (context, AsyncSnapshot<Pet?> snapshot) {
+                  if (snapshot.hasError) {
+                    WidgetsBinding.instance?.addPostFrameCallback((_) {
+                      ErrorDialog().show(context, snapshot.error!);
+                    });
+                    petId = null;
+                  }
 
-                      Pet? p;
-                      Widget petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, iconData: Icons.add);
-                      String petName = S.of(context).addNewPet;
-                      if (snapshot.hasData) {
-                        p = snapshot.data!;
-                      }
-                      if (_petId != null && p != null) {
-                        petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: p.photourl, iconData: Icons.pets);
-                        petName = p.name;
-                      }
-                      return Expanded(
-                          child:Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                child: petAvatar,
-                                onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName).then((value) {
-                                  if (value != null) {
-                                    _bloc.setPetId(value as String?);
-                                  }
-                                  didChangeDependencies();
-                                }),
-                              ),
-                              Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(petName, style: TextStyle(fontSize: fontSizeLarge.sp)),
-                                  )
-                              ),
-                            ],
-                          )
-                      );
-                    },
-                  ),
-                  StreamBuilder(
-                      stream: _bloc.accountSubject,
-                      builder: (context, AsyncSnapshot<Account?> snapshot) {
-                        if (snapshot.hasError) {
-                          WidgetsBinding.instance?.addPostFrameCallback((_) {
-                            ErrorDialog().show(context, snapshot.error!);
-                          });
-                        }
-                        if (snapshot.hasData) {
-                          _account = snapshot.data!;
-                          return GestureDetector(
-                            onTap: () => _dialogAccountDetail(context, _account),
-                            child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: _account.photourl, iconData: Icons.person),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      })
-                ],
+                  Pet? p;
+                  Widget petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, iconData: Icons.add);
+                  String petName = S.of(context).addNewPet;
+                  if (snapshot.hasData) {
+                    p = snapshot.data!;
+                  }
+                  if (_petId != null && p != null) {
+                    petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: p.photourl, iconData: Icons.pets);
+                    petName = p.name;
+                  }
+                  return Expanded(
+                      child:Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            child: petAvatar,
+                            onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName).then((value) {
+                              if (value != null) {
+                                _bloc.setPetId(value as String?);
+                              }
+                              didChangeDependencies();
+                            }),
+                          ),
+                          Expanded(
+                              child: Container(
+                                padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),
+                                alignment: Alignment.centerLeft,
+                                child: Text(petName, style: TextStyle(fontSize: fontSizeLarge.sp)),
+                              )
+                          ),
+                        ],
+                      )
+                  );
+                },
               ),
-              height: topPanelHeight.h,
-            )
-          ],
+              StreamBuilder(
+                  stream: _bloc.accountSubject,
+                  builder: (context, AsyncSnapshot<Account?> snapshot) {
+                    if (snapshot.hasError) {
+                      WidgetsBinding.instance?.addPostFrameCallback((_) {
+                        ErrorDialog().show(context, snapshot.error!);
+                      });
+                    }
+                    if (snapshot.hasData) {
+                      _account = snapshot.data!;
+                      return GestureDetector(
+                        onTap: () => _dialogAccountDetail(context, _account),
+                        child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: _account.photourl, iconData: Icons.person),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  })
+            ],
+          ),
+          height: topPanelHeight.h,
         ),
         color: const Color.fromRGBO(33, 87, 82, 0.7)
     );
@@ -304,28 +307,25 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
           }
           if (snapshot.hasData) {
             _feeds = snapshot.data!;
-            return MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: ListView.separated(
-                  itemCount: _feeds.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: const CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
-                      ),
-                      minLeadingWidth: 10.w,
-                      title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
-                      subtitle: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
-                      trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
-                      onLongPress: () => _onLongPressFeedItem(index),
-                    );
-                    // tileColor: Colors.lightGreenAccent,
-                  },
-                  separatorBuilder: (BuildContext context, int index) { return const Divider(); },
-                )
+            return ListView.separated(
+              padding: EdgeInsets.only(top: 0.4.h),
+              itemCount: _feeds.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
+                  ),
+                  minLeadingWidth: 10.w,
+                  title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
+                  subtitle: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
+                  trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
+                  onLongPress: () => _onLongPressFeedItem(index),
+                );
+                // tileColor: Colors.lightGreenAccent,
+              },
+              separatorBuilder: (BuildContext context, int index) { return const Divider(); },
             );
           }
           return const SizedBox.shrink();

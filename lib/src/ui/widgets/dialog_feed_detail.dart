@@ -122,7 +122,7 @@ class _DialogFeedDetailState extends State<DialogFeedDetail> {
             amount = 0.0;
           }
           if (amount <= 0.0) {
-            ErrorDialog().showInputAssert(context,
+            ErrorDialog().showAlert(context,
               S.of(context).feed_zero_amount,
               S.of(context).more_food_please,
             );

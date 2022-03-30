@@ -41,5 +41,7 @@
   "more_food_please": "Give me some more...",
   "feed_delete_confirm": "Delete?",
   "appTitle": "Ohmnyom",
-  "invitedCoparenting": "Invited co-parenting"
+  "invitedCoparenting": "Invited co-parenting",
+  "authTokenExpired": "Auth token expired",
+  "pleaseLogInAgain": "Please log in again"
 }

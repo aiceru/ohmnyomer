@@ -4,12 +4,14 @@ import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
+import 'package:grpc/grpc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/blocs/pets_bloc.dart';
 import 'package:ohmnyomer/src/constants.dart';
+import 'package:ohmnyomer/src/ui/routes/signin_route.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
 import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
@@ -45,7 +47,17 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
 
   @override
   void onError(Object e) {
-    ErrorDialog().show(context, e);
+    if (e is GrpcError && e.code == StatusCode.unauthenticated
+        && e.message != null && e.message!.contains('token is expired')) {
+      ErrorDialog().showAlert(context,
+          S.of(context).authTokenExpired,
+          S.of(context).pleaseLogInAgain)
+          ?.then((_) =>
+          Navigator.of(context).pushNamedAndRemoveUntil(
+          SignInRoute.routeName, (route) => false));
+    } else {
+      ErrorDialog().show(context, e);
+    }
   }
 
   @override
@@ -236,7 +248,7 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     return IconButton(
       onPressed: () {
         if (_nameInputController.text.isEmpty || _familyKey.isEmpty || _speciesKey.isEmpty) {
-          ErrorDialog().showInputAssert(context,
+          ErrorDialog().showAlert(context,
             S.of(context).input_error_title,
             S.of(context).pet_detail_input_error,
           );
