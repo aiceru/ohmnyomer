@@ -80,11 +80,11 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
     super.dispose();
   }
 
-  void _dialogPetDetail(BuildContext context, Pet? pet) {
-    showDialog(
+  Future<PetWithProfile?> _dialogPetDetail(BuildContext context, Pet? pet) {
+    return showDialog<PetWithProfile?>(
       context: context,
       builder: (_) {
-        return DialogPetDetail(_bloc, pet, _families!);
+        return DialogPetDetail(pet, _families!);
       },
     );
   }
@@ -221,7 +221,12 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
           );
         }
         if (direction == DismissDirection.endToStart) {
-          _dialogPetDetail(context, _petList[indexFromKey(key)]);
+          _dialogPetDetail(context, _petList[indexFromKey(key)]).then((value) =>
+          {
+            if (value != null) {
+              _bloc.updatePet(value.pet, value.profile, this)
+            }
+          });
         }
         return Future.value(false);
       },
@@ -287,7 +292,12 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
           padding: _bannerAd == null ? EdgeInsets.zero : AdHelper().getFabPadding(),
           child: FloatingActionButton(
             onPressed: () => {
-              _dialogPetDetail(context, null)
+              _dialogPetDetail(context, null).then((value) =>
+              {
+                if (value != null) {
+                  _bloc.addPet(value.pet, value.profile, this)
+                }
+              })
             },
             child: const Icon(Icons.add),
             backgroundColor: const Color.fromRGBO(252, 232, 187, 1.0),
