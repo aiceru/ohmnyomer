@@ -52,7 +52,7 @@ dependencies:
 #    path: ../protonyom/dartnyom
     git:
       url: git@github.com:aiceru/protonyom
-      ref: v0.9.1
+      ref: v1.0.3
       path: dartnyom
 
   # The following adds the Cupertino Icons font to your application.
