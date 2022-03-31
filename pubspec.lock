@@ -75,8 +75,8 @@ packages:
     dependency: "direct main"
     description:
       path: dartnyom
-      ref: "v0.9.1"
-      resolved-ref: "3c29f21a14b276dd0c94d45d7d99bec0f913bf2b"
+      ref: "v1.0.3"
+      resolved-ref: "51c5d897034c8415517e4e7c4054219cf601d477"
       url: "git@github.com:aiceru/protonyom"
     source: git
     version: "0.0.0"

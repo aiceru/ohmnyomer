@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartnyom/protonyom_api_account.pbgrpc.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/apis/api_provider.dart';
@@ -50,6 +52,16 @@ class AccountApiProvider {
     final resp = await client.acceptInvite(
       AcceptInviteRequest()
           ..petId=petId
+    );
+    return resp.account;
+  }
+
+  Future<Account> uploadProfile(String authToken, String? contentType, Uint8List? bytes) async {
+    final client = _newClientWithAuth(authToken);
+    final resp = await client.uploadProfile(
+      UploadProfileRequest()
+          ..profileContentType=contentType ?? ''
+          ..profilePhoto=bytes ?? Uint8List(0)
     );
     return resp.account;
   }

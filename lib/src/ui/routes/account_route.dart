@@ -16,6 +16,7 @@ import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/dialog_text_form_field.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
 import 'package:ohmnyomer/src/ui/validation_mixin.dart';
+import 'package:ohmnyomer/src/ui/widgets/image_picker.dart';
 import 'package:ohmnyomer/src/ui/widgets/list_card.dart';
 import 'package:sizer/sizer.dart';
 
@@ -85,7 +86,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
           onSave: () =>
           {
             Navigator.of(context).pop(),
-            _bloc.updateName(context, _textEditingController.text, this),
+            _bloc.updateName(_textEditingController.text, this),
           }
         );
       },
@@ -108,7 +109,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
             onSave: () =>
             {
               Navigator.of(context).pop(),
-              _bloc.updatePassword(context, _textEditingController.text, this),
+              _bloc.updatePassword(_textEditingController.text, this),
             }
         );
       },
@@ -122,7 +123,10 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl, iconData: Icons.person),
+              GestureDetector(
+                child: BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: account.photourl, iconData: Icons.person),
+                onTap: () => pickAndCropImage((value) => _bloc.uploadProfile(value, this)),
+              ),
               Expanded(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(topPanelTitleLeftPadding.w, 0, 0, 0),

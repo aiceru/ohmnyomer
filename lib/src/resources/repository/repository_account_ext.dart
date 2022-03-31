@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
 
@@ -22,6 +24,14 @@ extension RepositoryAccountExt on Repository {
 
   Future<Account> acceptInvite(String petId) async {
     account = await accountApiProvider.acceptInvite(authToken!, petId);
+    if (account != null) {
+      checkPetId(account!.pets);
+    }
+    return account!;
+  }
+
+  Future<Account> uploadProfile(String? contentType, Uint8List? bytes) async {
+    account = await accountApiProvider.uploadProfile(authToken!, contentType, bytes);
     if (account != null) {
       checkPetId(account!.pets);
     }

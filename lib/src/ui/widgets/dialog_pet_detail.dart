@@ -4,8 +4,6 @@ import 'package:dartnyom/protonyom_api_pet.pb.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ohmnyomer/generated/l10n.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:ohmnyomer/src/ui/timestamp.dart';
@@ -14,6 +12,7 @@ import 'package:ohmnyomer/src/ui/widgets/bordered_circle_avatar.dart';
 import 'package:ohmnyomer/src/ui/widgets/builder_functions.dart';
 import 'package:ohmnyomer/src/ui/widgets/constants.dart';
 import 'package:ohmnyomer/src/ui/widgets/error_dialog.dart';
+import 'package:ohmnyomer/src/ui/widgets/image_picker.dart';
 import 'package:sizer/sizer.dart';
 
 class PetWithProfile {
@@ -67,30 +66,10 @@ class _DialogPetDetailState extends State<DialogPetDetail> with ValidationMixin 
     super.initState();
   }
 
-  _pickAndCropImage() {
-    ImagePicker().pickImage(source: ImageSource.gallery)
-        .then((value) =>
-    {
-      if (value != null) {
-        ImageCropper.cropImage(
-            sourcePath: value.path,
-            maxWidth: 512,
-            maxHeight: 512,
-            aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
-            cropStyle: CropStyle.circle)
-            .then((value) =>
-        {
-          setState(() {
-            _localProfile = value;
-          })
-        })
-      }
-    });
-  }
 
   Widget _buildPetDetailTitleRow() {
     return GestureDetector(
-      onTap: () => _pickAndCropImage(),
+      onTap: () => pickAndCropImage((image) => setState(() => { _localProfile = image })),
       child: BorderedCircleAvatar(avatarSizeLarge.w,
           file: _localProfile,
           networkSrc: _photourl,
