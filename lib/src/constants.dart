@@ -1,6 +1,7 @@
 const androidPackageName = 'com.aiceru.ohmnyom';
 const ohmnyomServerHost = 'ohmnyom-grpc-92cfeo76.an.gateway.dev';
 const ohmnyomServerPort = 443;
+const androidPackageNameDebug = 'com.aiceru.ohmnyom.dbg';
 const ohmnyomServerHostDebug = '192.168.0.10';
 const ohmnyomServerPortDebug = 8080;
 

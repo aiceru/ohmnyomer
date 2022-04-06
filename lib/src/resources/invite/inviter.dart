@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ohmnyomer/src/constants.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -35,7 +36,7 @@ class Inviter {
       link: Uri.parse('https://ohmnyom.io/co-parenting?id=$petId&name=$petName&family=$petFamily'),
       // Android application details needed for opening correct app on device/Play Store
       androidParameters: const AndroidParameters(
-        packageName: androidPackageName,
+        packageName: kReleaseMode ? androidPackageName : androidPackageNameDebug,
         minimumVersion: 1,
       ),
       // iOS application details needed for opening correct app on device/App Store
