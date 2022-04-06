@@ -36,6 +36,7 @@ class _SplashRouteState extends State<SplashRoute> {
         builder: (context, AsyncSnapshot<List<void>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             FirebaseDynamicLinks.instance.onLink.listen((event) {
+              Repository().invitedInfo = event.link.queryParameters;
               Repository().account == null
                   ? Navigator.of(context).pushNamed(SignInRoute.routeName)
                   : Navigator.of(context).pushNamed(FeedRoute.routeName);
