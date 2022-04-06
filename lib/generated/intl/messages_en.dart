@@ -32,6 +32,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "authTokenExpired":
             MessageLookupByLibrary.simpleMessage("Auth token expired"),
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "cannotUndo": MessageLookupByLibrary.simpleMessage(
+            "You cannot undo this, continue to delete account?"),
+        "dangerDeleteAccount":
+            MessageLookupByLibrary.simpleMessage("[DANGER] Delete account"),
+        "delete": MessageLookupByLibrary.simpleMessage("Delete"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("Don\'t have an Account? "),
         "edit": MessageLookupByLibrary.simpleMessage("Edit"),
@@ -78,6 +83,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "signInAutomatically":
             MessageLookupByLibrary.simpleMessage("Sign in automatically"),
         "signInWith": MessageLookupByLibrary.simpleMessage("Sign In with"),
+        "signOutAndDeleteAccountForever": MessageLookupByLibrary.simpleMessage(
+            "Sign out and delete account forever"),
         "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
         "tapToEditName":
             MessageLookupByLibrary.simpleMessage("Display name, Tap to edit"),

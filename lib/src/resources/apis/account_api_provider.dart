@@ -65,4 +65,11 @@ class AccountApiProvider {
     );
     return resp.account;
   }
+
+  Future deleteAccount(String authToken, String id) async {
+    final client = _newClientWithAuth(authToken);
+    return client.delete(
+      DeleteAccountRequest()..id = id
+    );
+  }
 }

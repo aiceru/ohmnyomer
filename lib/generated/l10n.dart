@@ -489,6 +489,46 @@ class S {
       args: [],
     );
   }
+
+  /// `[DANGER] Delete account`
+  String get dangerDeleteAccount {
+    return Intl.message(
+      '[DANGER] Delete account',
+      name: 'dangerDeleteAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign out and delete account forever`
+  String get signOutAndDeleteAccountForever {
+    return Intl.message(
+      'Sign out and delete account forever',
+      name: 'signOutAndDeleteAccountForever',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You cannot undo this, continue to delete account?`
+  String get cannotUndo {
+    return Intl.message(
+      'You cannot undo this, continue to delete account?',
+      name: 'cannotUndo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message(
+      'Delete',
+      name: 'delete',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

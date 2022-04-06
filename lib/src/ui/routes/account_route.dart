@@ -116,6 +116,32 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
     );
   }
 
+  Future<void> _showDeleteAccountConfirmDialog() async {
+    return showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: Text(S.of(context).dangerDeleteAccount),
+        content: Text(S.of(context).cannotUndo),
+        actions: [
+          TextButton(
+            child: Text(S.of(context).cancel),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          TextButton(
+            child: Text(S.of(context).delete),
+            onPressed: () => Navigator.of(context).pop(true),
+          )
+        ],
+      );
+    }).then((confirm) => {
+      if (confirm) {
+        _bloc.deleteAccount()
+            .then((_) => Navigator.of(context).pushNamedAndRemoveUntil(
+            SignInRoute.routeName, (route) => false))
+            .catchError(onError)
+      }
+    });
+  }
+
   Widget _topPanel(Account account) {
     return Container(
         padding: routeTopPanelPadding(),
@@ -179,6 +205,15 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
     );
   }
 
+  Widget _buildDeleteAccountCard(Account account) {
+    return ListCard(
+      Icon(Icons.delete_forever_outlined, size: iconSize.w),
+      S.of(context).dangerDeleteAccount,
+      S.of(context).signOutAndDeleteAccountForever,
+      onTap: () => _showDeleteAccountConfirmDialog(),
+    );
+  }
+
   Widget _detailListView(Account account) {
     return ListView(
       padding: routeBodyPadding(),
@@ -187,7 +222,8 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
         _buildPasswordListCard(account),
         for (var provider in listProviders)
           _buildSocialListCards(provider, account),
-        _buildSinceListCard(account)
+        _buildSinceListCard(account),
+        _buildDeleteAccountCard(account),
       ],
     );
   }

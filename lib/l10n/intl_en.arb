@@ -43,5 +43,9 @@
   "appTitle": "Ohmnyom",
   "invitedCoparenting": "Invited co-parenting",
   "authTokenExpired": "Auth token expired",
-  "pleaseLogInAgain": "Please log in again"
+  "pleaseLogInAgain": "Please log in again",
+  "dangerDeleteAccount": "[DANGER] Delete account",
+  "signOutAndDeleteAccountForever": "Sign out and delete account forever",
+  "cannotUndo": "You cannot undo this, continue to delete account?",
+  "delete": "Delete"
 }

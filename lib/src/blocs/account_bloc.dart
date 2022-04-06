@@ -6,6 +6,7 @@ import 'package:mime/mime.dart';
 import 'package:ohmnyomer/src/blocs/err_handler.dart';
 import 'package:ohmnyomer/src/resources/repository/repository.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_account_ext.dart';
+import 'package:ohmnyomer/src/resources/repository/repository_sign_ext.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AccountBloc {
@@ -51,5 +52,13 @@ class AccountBloc {
     _repository.uploadProfile(cType, content)
         .then((value) => _accountSubject.sink.add(value))
         .catchError((e) => handler?.onError(e));
+  }
+
+  Future deleteAccount() {
+    return _repository.deleteAccount();
+  }
+
+  signOut() {
+    _repository.signOut();
   }
 }

@@ -79,6 +79,5 @@ class FeedBloc {
 
   signOut() {
     _repository.signOut();
-    // _accountSubject.sink.add(null);
   }
 }
