@@ -12,7 +12,7 @@ class ApiProvider {
   final ClientChannel channel;
   final CallOptions callOptions = CallOptions(
     compression: const GzipCodec(),
-    timeout: const Duration(seconds: kReleaseMode ? 5 : 10000),
+    timeout: const Duration(seconds: kReleaseMode ? 10 : 10000),
   );
 
   ApiProvider._createInstance()
@@ -24,7 +24,7 @@ class ApiProvider {
           ? const ChannelCredentials.secure()
           : const ChannelCredentials.insecure(),
       codecRegistry: CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
-      connectionTimeout: const Duration(seconds: kReleaseMode ? 5 : 10000),
+      connectionTimeout: const Duration(seconds: kReleaseMode ? 10 : 10000),
     ),
   );
 }

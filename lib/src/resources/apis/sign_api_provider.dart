@@ -1,6 +1,7 @@
 import 'package:dartnyom/protonyom_api_sign.pbgrpc.dart';
 import 'package:dartnyom/protonyom_models.pb.dart';
 import 'package:ohmnyomer/src/resources/apis/api_provider.dart';
+import 'package:ohmnyomer/src/resources/apis/auth_interceptor.dart';
 
 class Authorization {
   final Account _account;
@@ -24,6 +25,7 @@ class SignApiProvider {
     return SignApiClient(
       _apiProvider.channel,
       options: _apiProvider.callOptions,
+      interceptors: [AuthInterceptor()],
     );
   }
 

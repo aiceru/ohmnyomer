@@ -14,7 +14,7 @@ class FeedApiProvider {
     return FeedApiClient(
       _apiProvider.channel,
       options: _apiProvider.callOptions,
-      interceptors: [AuthInterceptor(authToken)],
+      interceptors: [AuthInterceptor.withToken(authToken)],
     );
   }
 

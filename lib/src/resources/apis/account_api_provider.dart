@@ -15,7 +15,7 @@ class AccountApiProvider {
     return AccountApiClient(
       _apiProvider.channel,
       options: _apiProvider.callOptions,
-      interceptors: [AuthInterceptor(authToken)],
+      interceptors: [AuthInterceptor.withToken(authToken)],
     );
   }
 
