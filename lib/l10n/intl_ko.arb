@@ -44,5 +44,9 @@
   "appTitle": "옴뇸뇸",
   "invitedCoparenting": "공동육아 초대가 있다냥",
   "authTokenExpired": "토큰이 만료되었다냥!!",
-  "pleaseLogInAgain": "다시 로그인 해달라냥..."
+  "pleaseLogInAgain": "다시 로그인 해달라냥...",
+  "dangerDeleteAccount": "[DANGER] 탈퇴하고 계정 삭제하기",
+  "signOutAndDeleteAccountForever": "계정을 완전히 삭제한다냥",
+  "cannotUndo": "이 작업은 되돌릴 수 없다냥, 계정 삭제를 계속할거다냥?",
+  "delete": "삭제"
 }

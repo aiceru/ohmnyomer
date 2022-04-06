@@ -37,4 +37,8 @@ extension RepositoryAccountExt on Repository {
     }
     return account!;
   }
+
+  Future deleteAccount() async {
+    return accountApiProvider.deleteAccount(authToken!, account!.id);
+  }
 }

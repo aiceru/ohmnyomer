@@ -31,6 +31,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "authTokenExpired":
             MessageLookupByLibrary.simpleMessage("토큰이 만료되었다냥!!"),
         "cancel": MessageLookupByLibrary.simpleMessage("취소"),
+        "cannotUndo": MessageLookupByLibrary.simpleMessage(
+            "이 작업은 되돌릴 수 없다냥, 계정 삭제를 계속할거다냥?"),
+        "dangerDeleteAccount":
+            MessageLookupByLibrary.simpleMessage("[DANGER] 탈퇴하고 계정 삭제하기"),
+        "delete": MessageLookupByLibrary.simpleMessage("삭제"),
         "dontHaveAnAccount":
             MessageLookupByLibrary.simpleMessage("아직 가입하지 않았다냥? "),
         "edit": MessageLookupByLibrary.simpleMessage("정보 수정하기"),
@@ -75,6 +80,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "signInAutomatically": MessageLookupByLibrary.simpleMessage("자동 로그인"),
         "signInWith":
             MessageLookupByLibrary.simpleMessage("아래 서비스로도 로그인할 수 있다냥"),
+        "signOutAndDeleteAccountForever":
+            MessageLookupByLibrary.simpleMessage("계정을 완전히 삭제한다냥"),
         "signUp": MessageLookupByLibrary.simpleMessage("가입하기"),
         "tapToEditName": MessageLookupByLibrary.simpleMessage("변경하려면 탭하라냥"),
         "tapToEditPassword": MessageLookupByLibrary.simpleMessage("변경하려면 탭하라냥"),
