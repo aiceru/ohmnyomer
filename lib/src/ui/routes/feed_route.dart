@@ -33,11 +33,6 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
   String? _petId;
   BannerAd? _bannerAd;
 
-  set petId(String? value) {
-    _petId = value;
-    _bloc.setPetId(value);
-  }
-
   late List<Feed> _feeds;
   late Account _account;
   late Map<String, String>? _invitedInfo;
@@ -205,7 +200,7 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
                     WidgetsBinding.instance?.addPostFrameCallback((_) {
                       ErrorDialog().show(context, snapshot.error!);
                     });
-                    petId = null;
+                    _petId = null;
                   }
 
                   Pet? p;
@@ -226,7 +221,8 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
                             child: petAvatar,
                             onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName).then((value) {
                               if (value != null) {
-                                _bloc.setPetId(value as String?);
+                                _petId = value as String?;
+                                _bloc.setPetId(_petId);
                               }
                               didChangeDependencies();
                             }),
@@ -333,31 +329,31 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     );
   }
 
-  void _dialogAcceptInvite(String petId, String petName, String petFamily) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(S.of(context).invitedCoparenting),
-          content: Text(petName + '(' + petFamily + ')'),
-          actions: [
-            IconButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              icon: const Icon(Icons.cancel_outlined, color: Colors.black54,),
-            ),
-            IconButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              icon: const Icon(Icons.thumb_up_alt_outlined, color: Colors.black54),
-            )
-          ],
-        );
-      },
-    ).then((value) {
-      if (value) {
-        _bloc.acceptInvite(petId, this);
-        Navigator.of(context).pushNamed(PetsRoute.routeName);
-      }
-    });
+  bool _isInviteDialogShowing = false;
+  Future? _dialogAcceptInvite(String petName, String petFamily) {
+    if (!_isInviteDialogShowing) {
+      _isInviteDialogShowing = true;
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(S.of(context).invitedCoparenting),
+            content: Text(petName + '(' + petFamily + ')'),
+            actions: [
+              IconButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                icon: const Icon(Icons.cancel_outlined, color: Colors.black54,),
+              ),
+              IconButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                icon: const Icon(Icons.thumb_up_alt_outlined, color: Colors.black54),
+              )
+            ],
+          );
+        },
+      );
+    }
+    return null;
   }
 
   Widget _feedRoute() {
@@ -365,8 +361,22 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     String? name = _invitedInfo?['name'];
     String? family = _invitedInfo?['family'];
     if (id != null && name != null && family != null) {
+      debugPrint('==============adding dialog===========');
       WidgetsBinding.instance!.addPostFrameCallback((_) {
-        _dialogAcceptInvite(id, name, family);
+        _dialogAcceptInvite(name, family)?.then((value) {
+          _isInviteDialogShowing = false;
+          if (value) {
+            _bloc.acceptInvite(id, this).then((_) {
+              Navigator.of(context).pushNamed(PetsRoute.routeName).then((ret) {
+                if (ret != null) {
+                  _petId = ret as String;
+                  _bloc.setPetId(_petId);
+                  didChangeDependencies();
+                }
+              });
+            });
+          }
+        });
       });
     }
     return Column(

@@ -135,8 +135,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
     }).then((confirm) => {
       if (confirm) {
         _bloc.deleteAccount()
-            .then((_) => Navigator.of(context).pushNamedAndRemoveUntil(
-            SignInRoute.routeName, (route) => false))
+            .then((_) => Navigator.of(context).pushNamedAndRemoveUntil(SignInRoute.routeName, (route) => false))
             .catchError(onError)
       }
     });

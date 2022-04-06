@@ -71,10 +71,8 @@ class FeedBloc {
     return _repository.updateFeed(feed);
   }
 
-  acceptInvite(String petId, ErrorHandler? handler) {
-    _repository.acceptInvite(petId)
-        .then((value) => _accountSubject.sink.add(value))
-        .catchError((e) => handler?.onError(e));
+  Future acceptInvite(String petId, ErrorHandler? handler) {
+    return _repository.acceptInvite(petId);
   }
 
   signOut() {
