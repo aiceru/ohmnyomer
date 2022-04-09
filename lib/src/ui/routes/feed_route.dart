@@ -143,7 +143,9 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     return IconButton(
       onPressed:() {
         Navigator.of(context).pop();
-        Navigator.of(context).pushNamed(AccountRoute.routeName);  // go to sign in route
+        Navigator.of(context).pushNamed(AccountRoute.routeName).then(
+          _bloc.getAccount()
+        );
       },
       icon: const Icon(Icons.edit, color: Colors.black54),
     );
@@ -361,7 +363,6 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     String? name = _invitedInfo?['name'];
     String? family = _invitedInfo?['family'];
     if (id != null && name != null && family != null) {
-      debugPrint('==============adding dialog===========');
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _dialogAcceptInvite(name, family)?.then((value) {
           _isInviteDialogShowing = false;
