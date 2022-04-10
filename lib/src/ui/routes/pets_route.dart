@@ -245,6 +245,12 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
     );
   }
 
+  onRefresh() {
+    _bloc.getAccount();
+    _bloc.fetchPetList(this);
+    return Future.value(null);
+  }
+
   Widget _buildPetListView() {
     return StreamBuilder(
       stream: _bloc.petListSubject,
@@ -256,15 +262,19 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
         }
         if (snapshot.hasData && snapshot.data != null) {
           List<Pet> petList = snapshot.data!;
-          return ListView.builder(
-            padding: EdgeInsets.all(1.w),
-            itemCount: petList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return _buildDismissibleListItem(
-                petList[index],
-                _buildPetListCard(petList[index]),
-              );
-            },
+          return RefreshIndicator(
+              onRefresh: () => onRefresh(),
+              child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(1.w),
+                itemCount: petList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _buildDismissibleListItem(
+                    petList[index],
+                    _buildPetListCard(petList[index]),
+                  );
+                },
+              )
           );
         }
         return const SizedBox.shrink();
