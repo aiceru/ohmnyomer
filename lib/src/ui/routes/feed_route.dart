@@ -327,19 +327,19 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
                           )
                       );
                     }
+                    Feed feed = _feeds[index];
                     return ListTile(
                       leading: const CircleAvatar(
                         backgroundColor: Colors.transparent,
                         foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
                       ),
-                      minLeadingWidth: 10.w,
-                      title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
-                      subtitle: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
-                      trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
+                      minLeadingWidth: 14.w,
+                      title: Text(dateTimeFromEpochSeconds(feed.timestamp.toInt()).formatDateTime()),
+                      subtitle: Text(feed.feederName),
+                      trailing: Text(feed.amount.toString() + ' ' + feed.unit),
                       contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
                       onLongPress: () => _onLongPressFeedItem(index),
                     );
-                    // tileColor: Colors.lightGreenAccent,
                   },
                   separatorBuilder: (BuildContext context, int index) { return const Divider(); },
                 )
