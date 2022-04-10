@@ -5,6 +5,7 @@ import 'package:ohmnyomer/src/resources/repository/repository_account_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_pet_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_feed_ext.dart';
 import 'package:ohmnyomer/src/resources/repository/repository_sign_ext.dart';
+import 'package:ohmnyomer/src/ui/timestamp.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FeedBloc {
@@ -17,58 +18,101 @@ class FeedBloc {
   Stream<Pet?> get petSubject => _petSubject.stream;
   Stream<List<Feed>> get feedListSubject => _feedListSubject.stream;
 
+  List<Feed> _feeds = List.empty(growable: true);
+  String? _petId;
+
   dispose() {
     _accountSubject.close();
+    _petSubject.close();
+    _feedListSubject.close();
   }
 
   getAccount() {
     _accountSubject.sink.add(_repository.account);
   }
 
-  Map<String, String>? fetchInvitedQueries() {
+  Map<String, String>? getInvitedQueries() {
     var queries = _repository.invitedInfo;
     _repository.invitedInfo = null;
     return queries;
   }
 
-  String? getPetId() {
-    return _repository.petId;
+  String? get petId => _petId;
+  set petId(String? value) {
+    if (_petId != value) {  // pet changed
+      _feeds = List.empty(growable: true);
+    }
+    _petId = value;
+    _repository.petId = value;
   }
 
-  setPetId(String? petId) {
-    _repository.petId = petId;
-  }
-
-  fetchPet(String? petId, ErrorHandler? handler) {
-    if (petId == null || petId.isEmpty) {
+  fetchPet(ErrorHandler? handler) {
+    _petId = _repository.petId;
+    if (_petId == null || _petId!.isEmpty) {
       _petSubject.sink.add(null);
     } else {
-      _repository.fetchPet(petId)
+      _repository.fetchPet(_petId!)
           .then((value) => _petSubject.sink.add(value))
           .catchError((e) => handler?.onError(e));
     }
   }
 
-  Future<Feed> addFeed(Feed feed) {
-    return _repository.addFeed(feed);
+  addFeed(Feed feed, ErrorHandler? handler) {
+    feed.petId = _petId!;
+    feed.feederId = _repository.account!.id;
+    _repository.addFeed(feed).then((value) {
+      int index = _feeds.indexWhere((f) => value.timestamp > f.timestamp);
+      if (index >= 0) {
+        _feeds.insert(index, value);
+        _feedListSubject.sink.add(_feeds);
+      }
+    }).catchError((e) {
+      handler?.onError(e);
+    });
   }
 
-  fetchFeeds(String? petId, int startAfter, int limit, ErrorHandler? handler) {
-    if (petId == null || petId.isEmpty) {
+  fetchFeeds(int limit, ErrorHandler? handler) async {
+    if (_petId == null || _petId!.isEmpty) {
       _feedListSubject.sink.add(<Feed>[]);
     } else {
-      _repository.getFeeds(petId, startAfter, limit)
-          .then((value) => _feedListSubject.sink.add(value))
-          .catchError((e) => handler?.onError(e));
+      try {
+        List<Feed> got = await _repository.getFeeds(_petId!,
+            _feeds.isEmpty
+                ? DateTime.now().toUtc().toSecondsSinceEpoch()
+                : _feeds.last.timestamp.toInt(),
+            limit);
+        _feeds.addAll(got);
+        _feedListSubject.sink.add(_feeds);
+      } catch(e) {
+        handler?.onError(e);
+      }
+          // .then((value) => _feedListSubject.sink.add(value))
+          // .catchError((e) => handler?.onError(e));
     }
   }
 
-  Future deleteFeed(String petId, String feedId) {
-    return _repository.deleteFeed(petId, feedId);
+  deleteFeed(int index, ErrorHandler? handler) async {
+    if (index < 0 || index >= _feeds.length) {
+      return;
+    }
+    _repository.deleteFeed(_petId!, _feeds[index].id).then((value) {
+      _feeds.removeAt(index);
+      _feedListSubject.sink.add(_feeds);
+    }).catchError((e) {
+      handler?.onError(e);
+    });
   }
 
-  Future<Feed> updateFeed(Feed feed) {
-    return _repository.updateFeed(feed);
+  updateFeed(int index, ErrorHandler? handler) {
+    if (index < 0 || index >= _feeds.length) {
+      return;
+    }
+    _repository.updateFeed(_feeds[index]).then((value) {
+      _feeds[index] = value;
+      _feedListSubject.sink.add(_feeds);
+    }).catchError((e) {
+      handler?.onError(e);
+    });
   }
 
   Future acceptInvite(String petId, ErrorHandler? handler) {

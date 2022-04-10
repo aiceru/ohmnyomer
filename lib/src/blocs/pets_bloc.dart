@@ -62,8 +62,8 @@ class PetsBloc {
         .catchError((e) => handler?.onError(e));
   }
 
-  deletePet(String petId, ErrorHandler? handler) {
-    _repository.deletePet(petId)
+  deletePet(Pet pet, ErrorHandler? handler) {
+    _repository.deletePet(pet.id)
         .then((value) => _petListSubject.sink.add(value))
         .catchError((e) => handler?.onError(e));
   }

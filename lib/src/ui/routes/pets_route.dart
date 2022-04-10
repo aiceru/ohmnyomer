@@ -38,7 +38,7 @@ class PetsRoute extends StatefulWidget {
 class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
   Map<String, Family>? _families = {};
   late PetsBloc _bloc;
-  List<Pet> _petList = List.empty();
+  // List<Pet> _petList = List.empty();
   bool _init = false;
   BannerAd? _bannerAd;
 
@@ -185,13 +185,12 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
     );
   }
 
-  Widget _buildDismissibleListItem(String key, Widget child) {
+  Widget _buildDismissibleListItem(Pet pet, Widget child) {
     return Dismissible(
-      key: Key(key),
+      key: ObjectKey(pet),
       onDismissed: (direction) {
         if (direction == DismissDirection.startToEnd) {
-          int index = indexFromKey(key);
-          _bloc.deletePet(_petList[index].id, this);
+          _bloc.deletePet(pet, this);
         }
       },
       dismissThresholds: const {
@@ -204,7 +203,7 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  title: Text(_petList[indexFromKey(key)].name),
+                  title: Text(pet.name),
                   content: Text(S.of(context).pet_delete_confirm),
                   actions: [
                     IconButton(
@@ -221,7 +220,7 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
           );
         }
         if (direction == DismissDirection.endToStart) {
-          _dialogPetDetail(context, _petList[indexFromKey(key)]).then((value) =>
+          _dialogPetDetail(context, pet).then((value) =>
           {
             if (value != null) {
               _bloc.updatePet(value.pet, value.profile, this)
@@ -256,18 +255,19 @@ class _PetsRouteState extends State<PetsRoute> implements ErrorHandler {
           });
         }
         if (snapshot.hasData && snapshot.data != null) {
-          _petList = snapshot.data!;
+          List<Pet> petList = snapshot.data!;
+          return ListView.builder(
+            padding: EdgeInsets.all(1.w),
+            itemCount: petList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return _buildDismissibleListItem(
+                petList[index],
+                _buildPetListCard(petList[index]),
+              );
+            },
+          );
         }
-        return ListView.builder(
-          padding: EdgeInsets.all(1.w),
-          itemCount: _petList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _buildDismissibleListItem(
-              itemKey(index, _petList[index].id),
-              _buildPetListCard(_petList[index]),
-            );
-          },
-        );
+        return const SizedBox.shrink();
       },
     );
   }

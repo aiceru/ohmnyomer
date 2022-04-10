@@ -28,14 +28,14 @@ class FeedRoute extends StatefulWidget {
 }
 
 class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
+  final int _pageSize = 10;
   late FeedBloc _bloc;
   bool _init = false;
-  String? _petId;
   BannerAd? _bannerAd;
 
-  late List<Feed> _feeds;
-  late Account _account;
+  // late Account _account;
   late Map<String, String>? _invitedInfo;
+  // late ScrollController _scrollController;
 
   @override
   void onError(Object e) {
@@ -54,20 +54,25 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
   @override
   void didChangeDependencies() {
     if (!_init) {
+      // _scrollController = ScrollController();
+      // _scrollController.addListener(pagination);
       _bloc = FeedBlocProvider.of(context);
-      _bloc.getAccount();
-      _init = true;
       AdHelper().loadBanner((ad) => {
         setState(() {
           _bannerAd = ad;
         })
       });
+      _init = true;
     }
-    _invitedInfo = _bloc.fetchInvitedQueries();
-    _petId = _bloc.getPetId();
-    _bloc.fetchPet(_petId, this);
-    _bloc.fetchFeeds(_petId, DateTime.now().toUtc().toSecondsSinceEpoch()+1, 10, this);
+    _invitedInfo = _bloc.getInvitedQueries();
+    refreshRoute();
     super.didChangeDependencies();
+  }
+
+  void refreshRoute() {
+    _bloc.getAccount();
+    _bloc.fetchPet(this);
+    _bloc.fetchFeeds(_pageSize, this);
   }
 
   @override
@@ -141,11 +146,10 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
 
   Widget _buildEditButton() {
     return IconButton(
-      onPressed:() {
+      onPressed:() async {
         Navigator.of(context).pop();
-        Navigator.of(context).pushNamed(AccountRoute.routeName).then(
-          _bloc.getAccount()
-        );
+        await Navigator.of(context).pushNamed(AccountRoute.routeName);
+        _bloc.getAccount();
       },
       icon: const Icon(Icons.edit, color: Colors.black54),
     );
@@ -202,16 +206,14 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
                     WidgetsBinding.instance?.addPostFrameCallback((_) {
                       ErrorDialog().show(context, snapshot.error!);
                     });
-                    _petId = null;
                   }
-
                   Pet? p;
                   Widget petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, iconData: Icons.add);
                   String petName = S.of(context).addNewPet;
                   if (snapshot.hasData) {
                     p = snapshot.data!;
                   }
-                  if (_petId != null && p != null) {
+                  if (p != null) {
                     petAvatar = BorderedCircleAvatar(avatarSizeMedium.w, networkSrc: p.photourl, iconData: Icons.pets);
                     petName = p.name;
                   }
@@ -223,10 +225,9 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
                             child: petAvatar,
                             onTap: () => Navigator.of(context).pushNamed(PetsRoute.routeName).then((value) {
                               if (value != null) {
-                                _petId = value as String?;
-                                _bloc.setPetId(_petId);
+                                _bloc.petId = value as String?;
                               }
-                              didChangeDependencies();
+                              refreshRoute();
                             }),
                           ),
                           Expanded(
@@ -250,10 +251,10 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
                       });
                     }
                     if (snapshot.hasData) {
-                      _account = snapshot.data!;
+                      Account? account = snapshot.data;
                       return GestureDetector(
-                        onTap: () => _dialogAccountDetail(context, _account),
-                        child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: _account.photourl, iconData: Icons.person),
+                        onTap: () => _dialogAccountDetail(context, account!),
+                        child: BorderedCircleAvatar(avatarSizeSmall.w, networkSrc: account!.photourl, iconData: Icons.person),
                       );
                     }
                     return const SizedBox.shrink();
@@ -264,12 +265,6 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
         ),
         color: const Color.fromRGBO(33, 87, 82, 0.7)
     );
-  }
-
-  deleteFeed(int index) {
-    _bloc.deleteFeed(_petId!, _feeds[index].id)
-        .then((_) => setState(() => _feeds.removeAt(index)))
-        .onError((error, stackTrace) => {if (error != null) onError(error)});
   }
 
   void _onLongPressFeedItem(int index) {
@@ -289,7 +284,7 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
       );
     }).then((confirm) => {
       if (confirm) {
-        deleteFeed(index)
+          _bloc.deleteFeed(index, this)
       }
     });
   }
@@ -304,7 +299,7 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
             });
           }
           if (snapshot.hasData) {
-            _feeds = snapshot.data!;
+            List<Feed> _feeds = snapshot.data!;
             return ListView.separated(
               padding: EdgeInsets.only(top: 0.4.h),
               itemCount: _feeds.length,
@@ -330,6 +325,12 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
         }
     );
   }
+
+  // void pagination() {
+  //   if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+  //     // _bloc.fetchFeeds(_petId, _feeds.last.timestamp.toInt(), _pageSize, this);
+  //   }
+  // }
 
   bool _isInviteDialogShowing = false;
   Future? _dialogAcceptInvite(String petName, String petFamily) {
@@ -370,9 +371,8 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
             _bloc.acceptInvite(id, this).then((_) {
               Navigator.of(context).pushNamed(PetsRoute.routeName).then((ret) {
                 if (ret != null) {
-                  _petId = ret as String;
-                  _bloc.setPetId(_petId);
-                  didChangeDependencies();
+                  _bloc.petId = ret as String?;
+                  refreshRoute();
                 }
               });
             });
@@ -390,12 +390,6 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     );
   }
 
-  addFeed(Feed f) {
-    _bloc.addFeed(f)
-        .then((value) => setState(() => _feeds.insert(0, value)))
-        .onError((error, stackTrace) => {if (error != null) onError(error)});
-  }
-
   void _dialogFeedDetail(double amount, String unit, DateTime t) {
     showDialog(
         context: context,
@@ -404,10 +398,7 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
         }
     ).then((value) {
       if (value != null) {
-        Feed f = value;
-        f.petId = _petId!;
-        f.feederId = _account.id;
-        addFeed(f);
+        _bloc.addFeed(value, this);
       }
     });
   }
@@ -421,9 +412,10 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
           padding: _bannerAd == null ? EdgeInsets.zero : AdHelper().getFabPadding(),
           child: FloatingActionButton(
               onPressed: () {
-                _petId == null || _petId!.isEmpty
+                String? petId = _bloc.petId;
+                (petId == null || petId.isEmpty)
                     ? null
-                    : _dialogFeedDetail(_feeds.isEmpty ? 0.0 : _feeds[0].amount, unitGram, DateTime.now());
+                    : _dialogFeedDetail(0.0, unitGram, DateTime.now());
               },
               backgroundColor: const Color.fromRGBO(83, 137, 132, 1.0),
               child: const Icon(Icons.add)
