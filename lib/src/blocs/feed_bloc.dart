@@ -20,6 +20,8 @@ class FeedBloc {
 
   List<Feed> _feeds = List.empty(growable: true);
   String? _petId;
+  bool hasMore = false;
+  final int _pageSize = 10;
 
   dispose() {
     _accountSubject.close();
@@ -46,6 +48,11 @@ class FeedBloc {
     _repository.petId = value;
   }
 
+  reset() {
+    _feeds = List.empty(growable: true);
+    hasMore = false;
+  }
+
   fetchPet(ErrorHandler? handler) {
     _petId = _repository.petId;
     if (_petId == null || _petId!.isEmpty) {
@@ -61,17 +68,19 @@ class FeedBloc {
     feed.petId = _petId!;
     feed.feederId = _repository.account!.id;
     _repository.addFeed(feed).then((value) {
-      int index = _feeds.indexWhere((f) => value.timestamp > f.timestamp);
+      int index = _feeds.isEmpty ? 0 : _feeds.indexWhere((f) => value.timestamp > f.timestamp);
       if (index >= 0) {
         _feeds.insert(index, value);
-        _feedListSubject.sink.add(_feeds);
+      } else if (!hasMore) {
+        _feeds.add(value);
       }
+      _feedListSubject.sink.add(_feeds);
     }).catchError((e) {
       handler?.onError(e);
     });
   }
 
-  fetchFeeds(int limit, ErrorHandler? handler) async {
+  fetchFeeds(ErrorHandler? handler) async {
     if (_petId == null || _petId!.isEmpty) {
       _feedListSubject.sink.add(<Feed>[]);
     } else {
@@ -80,14 +89,19 @@ class FeedBloc {
             _feeds.isEmpty
                 ? DateTime.now().toUtc().toSecondsSinceEpoch()
                 : _feeds.last.timestamp.toInt(),
-            limit);
-        _feeds.addAll(got);
+            _pageSize);
+        if (got.isEmpty || got.length < _pageSize) {
+          hasMore = false;
+        } else {
+          hasMore = true;
+        }
+        if (_feeds.isEmpty || (got.isNotEmpty && got.first.timestamp <= _feeds.last.timestamp)) {
+          _feeds.addAll(got);
+        }
         _feedListSubject.sink.add(_feeds);
       } catch(e) {
         handler?.onError(e);
       }
-          // .then((value) => _feedListSubject.sink.add(value))
-          // .catchError((e) => handler?.onError(e));
     }
   }
 

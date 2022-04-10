@@ -213,17 +213,26 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
     );
   }
 
+  onRefresh() {
+    _bloc.getAccount();
+    return Future.value(null);
+  }
+
   Widget _detailListView(Account account) {
-    return ListView(
-      padding: routeBodyPadding(),
-      children: <Widget>[
-        _buildNameListCard(account),
-        _buildPasswordListCard(account),
-        for (var provider in listProviders)
-          _buildSocialListCards(provider, account),
-        _buildSinceListCard(account),
-        _buildDeleteAccountCard(account),
-      ],
+    return RefreshIndicator(
+        onRefresh: () => onRefresh(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: routeBodyPadding(),
+          children: <Widget>[
+            _buildNameListCard(account),
+            _buildPasswordListCard(account),
+            for (var provider in listProviders)
+              _buildSocialListCards(provider, account),
+            _buildSinceListCard(account),
+            _buildDeleteAccountCard(account),
+          ],
+        )
     );
   }
 
@@ -233,7 +242,7 @@ class _AccountRouteState extends State<AccountRoute> with ValidationMixin implem
         _topPanel(account),
         Expanded(child: _detailListView(account)),
         if (_bannerAd != null)
-        AdHelper().bottomBannerWidget(_bannerAd!),
+          AdHelper().bottomBannerWidget(_bannerAd!),
       ],
     );
   }

@@ -28,14 +28,12 @@ class FeedRoute extends StatefulWidget {
 }
 
 class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
-  final int _pageSize = 10;
   late FeedBloc _bloc;
   bool _init = false;
   BannerAd? _bannerAd;
 
-  // late Account _account;
   late Map<String, String>? _invitedInfo;
-  // late ScrollController _scrollController;
+  late ScrollController _scrollController;
 
   @override
   void onError(Object e) {
@@ -51,11 +49,17 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     }
   }
 
+  void _loadMore() {
+    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      _bloc.fetchFeeds(this);
+    }
+  }
+
   @override
   void didChangeDependencies() {
     if (!_init) {
-      // _scrollController = ScrollController();
-      // _scrollController.addListener(pagination);
+      _scrollController = ScrollController();
+      _scrollController.addListener(_loadMore);
       _bloc = FeedBlocProvider.of(context);
       AdHelper().loadBanner((ad) => {
         setState(() {
@@ -72,11 +76,12 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
   void refreshRoute() {
     _bloc.getAccount();
     _bloc.fetchPet(this);
-    _bloc.fetchFeeds(_pageSize, this);
+    _bloc.fetchFeeds(this);
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _bannerAd?.dispose();
     _bloc.dispose();
     super.dispose();
@@ -289,6 +294,12 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
     });
   }
 
+  onRefresh() {
+    _bloc.reset();
+    _bloc.fetchFeeds(this);
+    return Future.value(null);
+  }
+
   Widget _feedList() {
     return StreamBuilder(
         stream: _bloc.feedListSubject,
@@ -300,37 +311,44 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
           }
           if (snapshot.hasData) {
             List<Feed> _feeds = snapshot.data!;
-            return ListView.separated(
-              padding: EdgeInsets.only(top: 0.4.h),
-              itemCount: _feeds.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: const CircleAvatar(
-                    backgroundColor: Colors.transparent,
-                    foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
-                  ),
-                  minLeadingWidth: 10.w,
-                  title: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatDate()),
-                  subtitle: Text(dateTimeFromEpochSeconds(_feeds[index].timestamp.toInt()).formatTime()),
-                  trailing: Text(_feeds[index].amount.toString() + ' ' + _feeds[index].unit),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
-                  onLongPress: () => _onLongPressFeedItem(index),
-                );
-                // tileColor: Colors.lightGreenAccent,
-              },
-              separatorBuilder: (BuildContext context, int index) { return const Divider(); },
+            return RefreshIndicator(
+                onRefresh: () => onRefresh(),
+                child: ListView.separated(
+                  controller: _scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.only(top: 0.4.h),
+                  itemCount: _bloc.hasMore ? _feeds.length + 1 : _feeds.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index >= _feeds.length) {
+                      return Padding(
+                          padding: EdgeInsets.all(4.0.w),
+                          child: const Center(
+                              child: CircularProgressIndicator()
+                          )
+                      );
+                    }
+                    Feed feed = _feeds[index];
+                    return ListTile(
+                      leading: const CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        foregroundImage: AssetImage('assets/feed/bowl-full.jpeg'),
+                      ),
+                      minLeadingWidth: 14.w,
+                      title: Text(dateTimeFromEpochSeconds(feed.timestamp.toInt()).formatDateTime()),
+                      subtitle: Text(feed.feederName),
+                      trailing: Text(feed.amount.toString() + ' ' + feed.unit),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
+                      onLongPress: () => _onLongPressFeedItem(index),
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) { return const Divider(); },
+                )
             );
           }
           return const SizedBox.shrink();
         }
     );
   }
-
-  // void pagination() {
-  //   if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-  //     // _bloc.fetchFeeds(_petId, _feeds.last.timestamp.toInt(), _pageSize, this);
-  //   }
-  // }
 
   bool _isInviteDialogShowing = false;
   Future? _dialogAcceptInvite(String petName, String petFamily) {
