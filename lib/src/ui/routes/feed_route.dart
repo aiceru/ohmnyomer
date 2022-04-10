@@ -146,11 +146,10 @@ class _FeedRouteState extends State<FeedRoute> implements ErrorHandler {
 
   Widget _buildEditButton() {
     return IconButton(
-      onPressed:() {
+      onPressed:() async {
         Navigator.of(context).pop();
-        Navigator.of(context).pushNamed(AccountRoute.routeName).then(
-          _bloc.getAccount()
-        );
+        await Navigator.of(context).pushNamed(AccountRoute.routeName);
+        _bloc.getAccount();
       },
       icon: const Icon(Icons.edit, color: Colors.black54),
     );
